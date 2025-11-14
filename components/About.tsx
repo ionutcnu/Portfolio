@@ -1,126 +1,148 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Code2, Rocket, Users, Zap } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Code2, Rocket, Zap, Brain, Coffee, Terminal } from "lucide-react"
 
 const About = () => {
   const features = [
     {
       icon: Code2,
-      title: "Full Stack Development",
-      description: "Experienced in building modern web applications with TypeScript, React, and Next.js",
+      title: "Clean Code",
+      description: "Writing maintainable, scalable, and efficient code",
+      delay: 0.1,
+      size: "col-span-1",
+      gradient: "from-blue-600 to-cyan-600",
+    },
+    {
+      icon: Brain,
+      title: "AI & ML Enthusiast",
+      description: "Exploring the frontiers of artificial intelligence and machine learning to build intelligent solutions",
+      delay: 0.2,
+      size: "col-span-1 md:col-span-2",
+      gradient: "from-purple-600 to-pink-600",
     },
     {
       icon: Rocket,
-      title: "AI & Automation",
-      description: "Passionate about leveraging AI agents and automation to solve real-world problems",
+      title: "Fast Delivery",
+      description: "Rapid prototyping and agile development",
+      delay: 0.3,
+      size: "col-span-1",
+      gradient: "from-green-600 to-emerald-600",
+    },
+    {
+      icon: Terminal,
+      title: "Full Stack Mastery",
+      description: "From database to deployment, handling every layer of modern applications",
+      delay: 0.4,
+      size: "col-span-1 md:col-span-2",
+      gradient: "from-orange-600 to-yellow-600",
     },
     {
       icon: Zap,
-      title: "Performance Focused",
-      description: "Committed to writing clean, efficient code and optimizing application performance",
+      title: "Performance",
+      description: "Optimized for speed and efficiency",
+      delay: 0.5,
+      size: "col-span-1",
+      gradient: "from-red-600 to-rose-600",
     },
     {
-      icon: Users,
-      title: "Collaborative",
-      description: "Strong team player with excellent communication and problem-solving skills",
+      icon: Coffee,
+      title: "Problem Solver",
+      description: "Turning complex challenges into elegant solutions",
+      delay: 0.6,
+      size: "col-span-1",
+      gradient: "from-indigo-600 to-purple-600",
     },
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   return (
-    <section id="about" className="py-20 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="py-20 relative overflow-hidden bg-gradient-to-b from-transparent via-muted/30 to-transparent">
+      <div className="absolute inset-0 bg-grid-white/5 bg-[size:50px_50px]" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            About <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Me</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            About <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Me</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            I&apos;m a passionate developer from Romania with a strong focus on creating innovative solutions.
-            My expertise spans across multiple technologies, from web development to AI automation.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            A passionate developer from Romania with <span className="text-primary font-semibold">8+ years</span> of experience
+            building innovative solutions. I specialize in creating robust applications with cutting-edge technologies,
+            always focusing on user experience and code quality.
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
           {features.map((feature, index) => {
             const Icon = feature.icon
             return (
-              <motion.div key={index} variants={itemVariants}>
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300 border-muted">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                      <Icon className="h-6 w-6 text-primary" />
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: feature.delay }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                className={`${feature.size} group relative overflow-hidden`}
+              >
+                {/* Glow effect */}
+                <div className={`absolute -inset-0.5 bg-gradient-to-r ${feature.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500`} />
+
+                {/* Card */}
+                <div className="relative h-full bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
+                  <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${feature.gradient} opacity-10 rounded-full blur-2xl`} />
+
+                  <div className="relative">
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                      <Icon className="h-7 w-7 text-white" />
                     </div>
-                    <CardTitle>{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base">
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       {feature.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
+                    </p>
+                  </div>
+                </div>
               </motion.div>
             )
           })}
-        </motion.div>
+        </div>
 
+        {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-12 text-center"
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6"
         >
-          <Card className="max-w-3xl mx-auto border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-            <CardHeader>
-              <CardTitle className="text-2xl">My Journey</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground space-y-4">
-              <p>
-                Since joining GitHub in 2017, I&apos;ve been on a continuous learning journey,
-                exploring everything from gaming analytics to cutting-edge AI technologies.
-              </p>
-              <p>
-                I&apos;ve worked on diverse projects including World of Tanks clan aggregators,
-                application tracking systems, and AI-powered browser automation tools.
-                Each project has strengthened my commitment to writing quality code and
-                solving complex problems.
-              </p>
-            </CardContent>
-          </Card>
+          {[
+            { label: "Years Experience", value: "8+", gradient: "from-blue-600 to-cyan-600" },
+            { label: "Projects Completed", value: "22+", gradient: "from-green-600 to-emerald-600" },
+            { label: "Technologies", value: "15+", gradient: "from-purple-600 to-pink-600" },
+            { label: "GitHub Repos", value: "22", gradient: "from-orange-600 to-yellow-600" },
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="relative group"
+            >
+              <div className={`absolute -inset-0.5 bg-gradient-to-r ${stat.gradient} rounded-xl opacity-0 group-hover:opacity-20 blur-lg transition-all duration-500`} />
+              <div className="relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-6 text-center shadow-lg">
+                <div className={`text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
+                  {stat.value}
+                </div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
