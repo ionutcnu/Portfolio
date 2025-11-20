@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ExternalLink, Github, Star, GitFork } from "lucide-react"
+import { Github } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,49 +9,40 @@ import { Badge } from "@/components/ui/badge"
 const Projects = () => {
   const projects = [
     {
-      name: "Watcher",
-      description: "World of Tanks Clans Aggregator - A comprehensive platform for tracking and analyzing clan statistics in World of Tanks",
-      language: "TypeScript",
-      stars: 0,
-      forks: 0,
-      url: "https://github.com/ionutcnu/Watcher",
-      topics: ["gaming", "analytics", "aggregator"],
+      name: "BATS",
+      problem: "Job hunting is exhausting. ATS systems reject good candidates for arbitrary reasons.",
+      solution: "Built a tool to understand how these systems work and optimize my applications. Because if the game has rules, I want to know them.",
+      impact: "Learned about parsing, keyword optimization, and what actually matters in a resume.",
+      language: "C#",
+      url: "https://github.com/ionutcnu/BATS",
+      topics: ["problem-solving", "automation", "career"],
     },
     {
-      name: "BATS",
-      description: "Bypass Application Tracking System - An intelligent tool designed to help optimize resumes and applications",
-      language: "C#",
-      stars: 0,
-      forks: 0,
-      url: "https://github.com/ionutcnu/BATS",
-      topics: ["automation", "career", "tools"],
+      name: "Watcher",
+      problem: "I play World of Tanks. Wanted to track clan performance and see patterns over time.",
+      solution: "Created an aggregator that pulls stats and shows trends. Started as curiosity, became useful for clan recruitment decisions.",
+      impact: "Turns out data visualization helps make better team decisions. Who knew?",
+      language: "TypeScript",
+      url: "https://github.com/ionutcnu/Watcher",
+      topics: ["data", "analytics", "user-needs"],
     },
     {
       name: "browser-use",
-      description: "Make websites accessible for AI agents - Automate complex web tasks with AI-powered browser automation",
+      problem: "AI agents are fascinating. But can they actually navigate websites like humans?",
+      solution: "Experimenting with AI-powered browser automation. Exploring what's possible when you combine AI reasoning with web interaction.",
+      impact: "Learning about AI capabilities, limitations, and practical applications.",
       language: "Python",
-      stars: 0,
-      forks: 0,
       url: "https://github.com/ionutcnu/browser-use",
-      topics: ["ai", "automation", "web-scraping"],
+      topics: ["ai-exploration", "automation", "learning"],
     },
     {
-      name: "MiniMax-M1",
-      description: "The world's first open-weight, large-scale hybrid-attention reasoning model for advanced AI capabilities",
-      language: "Python",
-      stars: 0,
-      forks: 0,
-      url: "https://github.com/ionutcnu/MiniMax-M1",
-      topics: ["ai", "machine-learning", "research"],
-    },
-    {
-      name: "rcc",
-      description: "Red Cat Quasar - A modern web application built with cutting-edge technologies",
+      name: "Portfolio",
+      problem: "Tired of pretending to be something I'm not. Needed a space that's actually me.",
+      solution: "You're looking at it. Built with AI tools (yes, I'm transparent about that) to show who I actually am: a curious problem-solver transitioning from QA to Product Owner roles.",
+      impact: "Authenticity over fake credentials. If this doesn't resonate with you, we probably wouldn't work well together anyway.",
       language: "TypeScript",
-      stars: 0,
-      forks: 0,
-      url: "https://github.com/ionutcnu/rcc",
-      topics: ["web", "typescript", "quasar"],
+      url: "https://github.com/ionutcnu/Portfolio",
+      topics: ["authenticity", "personal-brand", "next.js"],
     },
   ]
 
@@ -97,10 +88,10 @@ const Projects = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Featured <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Projects</span>
+            Things I <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Built</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Here are some of my recent projects showcasing my work in AI, automation, and web development.
+            Personal projects that solve real problems. Built with curiosity and AI tools. No fake credentials.
           </p>
         </motion.div>
 
@@ -109,7 +100,7 @@ const Projects = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {projects.map((project, index) => (
             <motion.div key={index} variants={itemVariants}>
@@ -136,12 +127,21 @@ const Projects = () => {
                   <CardTitle className="group-hover:text-primary transition-colors">
                     {project.name}
                   </CardTitle>
-                  <CardDescription className="line-clamp-3">
-                    {project.description}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow">
-                  <div className="flex flex-wrap gap-2">
+                <CardContent className="flex-grow space-y-3 text-sm">
+                  <div>
+                    <p className="text-primary/80 font-semibold mb-1">Problem</p>
+                    <CardDescription className="text-sm">{project.problem}</CardDescription>
+                  </div>
+                  <div>
+                    <p className="text-primary/80 font-semibold mb-1">Solution</p>
+                    <CardDescription className="text-sm">{project.solution}</CardDescription>
+                  </div>
+                  <div>
+                    <p className="text-primary/80 font-semibold mb-1">Impact</p>
+                    <CardDescription className="text-sm">{project.impact}</CardDescription>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-2">
                     {project.topics.map((topic, i) => (
                       <Badge key={i} variant="secondary" className="text-xs">
                         {topic}
@@ -150,19 +150,10 @@ const Projects = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4" />
-                      <span>{project.stars}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <GitFork className="h-4 w-4" />
-                      <span>{project.forks}</span>
-                    </div>
-                  </div>
                   <Button asChild variant="ghost" size="sm">
                     <a href={project.url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4" />
+                      <Github className="mr-2 h-4 w-4" />
+                      View Project
                     </a>
                   </Button>
                 </CardFooter>

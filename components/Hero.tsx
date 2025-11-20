@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowDown, Github, Mail, MapPin } from "lucide-react"
+import { ArrowDown, Github, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
@@ -73,7 +73,7 @@ const Hero = () => {
             >
               <Image
                 src="https://avatars.githubusercontent.com/u/25122138?v=4"
-                alt="Ionut"
+                alt="Lonut"
                 fill
                 className="object-cover"
               />
@@ -84,30 +84,33 @@ const Hero = () => {
             variants={itemVariants}
             className="text-5xl md:text-7xl font-bold mb-4"
           >
-            Hi, I&apos;m{" "}
             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              Ionut
+              Lonut
             </span>
           </motion.h1>
 
-          <motion.div variants={itemVariants} className="flex items-center justify-center gap-2 mb-6 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <p>Romania</p>
-          </motion.div>
-
           <motion.p
             variants={itemVariants}
-            className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+            className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
           >
-            Full Stack Developer & Tech Enthusiast
+            Think like a user. Plan like a product owner. Build like a team.
           </motion.p>
+
+          <motion.div variants={itemVariants} className="flex items-center justify-center gap-2 mb-6">
+            <div className="px-6 py-3 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm">
+              <span className="text-sm font-medium text-foreground">
+                QA → Product Thinker | Available for Product Owner / Business Analyst roles
+              </span>
+            </div>
+          </motion.div>
 
           <motion.p
             variants={itemVariants}
             className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto"
           >
-            Building innovative solutions with TypeScript, Python, and C#.
-            Passionate about AI automation, gaming analytics, and creating seamless user experiences.
+            I&apos;m the person who asks <span className="text-foreground font-medium">&apos;why&apos;</span> before{" "}
+            <span className="text-foreground font-medium">&apos;how&apos;</span>.
+            I see the complete picture: user needs, business goals, and technical constraints.
           </motion.p>
 
           <motion.div
