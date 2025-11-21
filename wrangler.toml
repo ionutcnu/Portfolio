@@ -1,0 +1,7 @@
+name = "portfolio"
+compatibility_date = "2025-11-14"
+pages_build_output_dir = "./out"
+
+# Production branch
+[env.production]
+branch = "main"
