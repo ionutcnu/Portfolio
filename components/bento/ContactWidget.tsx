@@ -27,15 +27,15 @@ export default function ContactWidget() {
   ];
 
   return (
-    <BentoBox span={2}>
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-        <Mail size={16} className="text-accent-dynamic" />
+    <BentoBox span={1}>
+      <h3 className="mb-1.5 flex items-center gap-2 text-sm font-semibold">
+        <Mail size={14} className="text-accent-dynamic" />
         Let&apos;s Connect
       </h3>
-      <p className="mb-4 text-sm text-muted-foreground">
+      <p className="mb-2 text-xs text-muted-foreground">
         Always open to interesting projects and conversations.
       </p>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {contacts.map((contact, index) => {
           const Icon = contact.icon;
           return (
@@ -44,9 +44,9 @@ export default function ContactWidget() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-1.5 text-xs"
             >
-              <Icon size={14} className="text-accent-dynamic/70" />
+              <Icon size={12} className="text-accent-dynamic/70" />
               {contact.href ? (
                 <a
                   href={contact.href}

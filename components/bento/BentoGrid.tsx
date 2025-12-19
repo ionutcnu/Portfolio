@@ -8,7 +8,7 @@ export default function BentoGrid({ children }: BentoGridProps) {
   return (
     <section className="px-4 md:px-0">
       <h2 className="sr-only">Dashboard / Highlights</h2>
-      <div className="grid grid-cols-1 justify-center gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
+      <div className="grid grid-cols-1 justify-center gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         {children}
       </div>
     </section>
@@ -31,7 +31,7 @@ export function BentoBox({ children, className = '', span = 1 }: BentoBoxProps) 
 
   return (
     <div
-      className={`rounded-xl border border-border bg-card p-4 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-accent-dynamic/20 ${spanClasses[span]} ${className}`}
+      className={`rounded-xl border border-border bg-card p-3 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-accent-dynamic/20 ${spanClasses[span]} ${className}`}
     >
       {children}
     </div>

@@ -1,76 +1,53 @@
-// Server-Sent Events endpoint for real-time click counter
+// Server-Sent Events endpoint for real-time click counter with Cloudflare D1
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
-import { getClickCount, setClickCount } from '@/lib/clicksState';
-
-// Centralized interval to prevent race conditions
-let globalInterval: NodeJS.Timeout | null = null;
-let connectionCount = 0;
-
-function startGlobalUpdater() {
-  if (globalInterval) return; // Already running
-
-  globalInterval = setInterval(() => {
-    // Random increment between 1-8 clicks to simulate other visitors
-    const currentCount = getClickCount();
-    setClickCount(currentCount + Math.floor(Math.random() * 8) + 1);
-  }, Math.floor(Math.random() * 2000) + 3000); // 3-5 seconds
-}
-
-function stopGlobalUpdater() {
-  if (globalInterval) {
-    clearInterval(globalInterval);
-    globalInterval = null;
-  }
-}
+import { createCounterService } from '@/lib/d1-counter';
 
 export async function GET() {
+  // @ts-ignore - Cloudflare binding
+  const db = process.env.DB as D1Database | undefined;
+  const counter = createCounterService(db);
+
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
-    start(controller) {
-      connectionCount++;
-      startGlobalUpdater();
-
+    async start(controller) {
       let isClosed = false;
-      let localInterval: NodeJS.Timeout;
+      let localInterval: ReturnType<typeof setInterval>;
 
-      const sendUpdate = () => {
+      const sendUpdate = async () => {
         if (!isClosed) {
           try {
+            const clicks = await counter.getCount('global-clicks');
             const data = `data: ${JSON.stringify({
-              clicks: getClickCount(),
-              timestamp: Date.now()
+              clicks,
+              timestamp: Date.now(),
             })}\n\n`;
             controller.enqueue(encoder.encode(data));
           } catch (error) {
             isClosed = true;
+            controller.close();
           }
         }
       };
 
       // Send initial state
-      sendUpdate();
+      await sendUpdate();
 
-      // Send updates periodically
-      localInterval = setInterval(() => {
+      // Send updates every second
+      localInterval = setInterval(async () => {
         if (isClosed) {
           clearInterval(localInterval);
           return;
         }
-        sendUpdate();
+        await sendUpdate();
       }, 1000);
 
       // Cleanup on connection close
       return () => {
         isClosed = true;
         clearInterval(localInterval);
-        connectionCount--;
-
-        // Stop global updater if no active connections
-        if (connectionCount === 0) {
-          stopGlobalUpdater();
-        }
       };
     },
   });
@@ -80,7 +57,7 @@ export async function GET() {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no', // Disable buffering for Nginx
+      'X-Accel-Buffering': 'no',
     },
   });
 }

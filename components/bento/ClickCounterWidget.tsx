@@ -59,10 +59,10 @@ export default function ClickCounterWidget() {
   };
 
   return (
-    <BentoBox span={2}>
-      <div className="flex items-center justify-between mb-3">
+    <BentoBox span={1}>
+      <div className="flex items-center justify-between mb-1.5">
         <h3 className="flex items-center gap-2 text-sm font-semibold">
-          <MousePointer2 size={16} className="text-[hsl(var(--accent))]" />
+          <MousePointer2 size={14} className="text-[hsl(var(--accent))]" />
           Time Waster
         </h3>
         <div className="flex items-center gap-1">
@@ -77,7 +77,7 @@ export default function ClickCounterWidget() {
         onClick={handleClick}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="relative w-full rounded-lg bg-gradient-to-br from-[hsl(var(--accent))]/20 to-[hsl(var(--accent))]/5 p-6 text-center transition-all hover:from-[hsl(var(--accent))]/30 hover:to-[hsl(var(--accent))]/10 border border-[hsl(var(--accent))]/20 overflow-hidden"
+        className="relative w-full rounded-lg bg-gradient-to-br from-[hsl(var(--accent))]/20 to-[hsl(var(--accent))]/5 p-4 text-center transition-all hover:from-[hsl(var(--accent))]/30 hover:to-[hsl(var(--accent))]/10 border border-[hsl(var(--accent))]/20 overflow-hidden"
       >
         {showSparkle && (
           <motion.div
@@ -95,7 +95,7 @@ export default function ClickCounterWidget() {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.2 }}
-          className="text-4xl font-bold text-[hsl(var(--accent))]"
+          className="text-3xl font-bold text-[hsl(var(--accent))]"
         >
           {globalClicks.toLocaleString()}
         </motion.div>

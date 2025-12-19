@@ -68,7 +68,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
   }
 }
 
@@ -97,6 +97,15 @@ html {
 .leaflet-container {
   border-radius: 0.5rem;
   z-index: 0;
+  background: hsl(var(--background)) !important;
+}
+
+.leaflet-tile-container {
+  background: hsl(var(--background)) !important;
+}
+
+.leaflet-pane {
+  background: hsl(var(--background)) !important;
 }
 
 .leaflet-popup-content-wrapper {
