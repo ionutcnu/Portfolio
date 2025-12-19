@@ -1,12 +1,10 @@
 // POST endpoint for incrementing the click counter
 export const dynamic = 'force-dynamic';
 
-// Import the global counter (shared with SSE route)
-// Note: In production, this should use a database or Redis
-let clicks = 750362;
+import { getClickCount, incrementClickCount } from '@/lib/clicksState';
 
 export async function POST() {
-  clicks++;
+  const clicks = incrementClickCount();
 
   return Response.json({
     success: true,
@@ -15,5 +13,5 @@ export async function POST() {
 }
 
 export async function GET() {
-  return Response.json({ clicks });
+  return Response.json({ clicks: getClickCount() });
 }

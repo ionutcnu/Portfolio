@@ -116,6 +116,7 @@ export default function GitHubCommitsWidget() {
         {data.map((repo, idx) => (
           <button
             key={repo.repo}
+            type="button"
             onClick={() => setSelectedRepo(idx)}
             className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-all ${
               selectedRepo === idx

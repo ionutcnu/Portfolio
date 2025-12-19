@@ -57,8 +57,15 @@
 @layer base {
   * {
     @apply border-border;
+  }
+
+  body,
+  [class*="bg-"],
+  [class*="text-"],
+  [class*="border-"] {
     transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease;
   }
+
   body {
     @apply bg-background text-foreground;
   }

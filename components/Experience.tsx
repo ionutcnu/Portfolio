@@ -49,6 +49,7 @@ export default function Experience() {
               <Popover.Root>
                 <Popover.Trigger asChild>
                   <button
+                    type="button"
                     className={`group flex cursor-pointer items-center gap-2 rounded text-sm transition-opacity duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-dynamic focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                       past
                         ? "opacity-60 hover:opacity-80 focus-visible:opacity-100"

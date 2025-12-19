@@ -1,23 +1,49 @@
 // Server-Sent Events endpoint for real-time click counter
 export const dynamic = 'force-dynamic';
 
-let globalClicks = 750362; // Starting count (inspired by Nyx)
+import { getClickCount, setClickCount } from '@/lib/clicksState';
+
+// Centralized interval to prevent race conditions
+let globalInterval: NodeJS.Timeout | null = null;
+let connectionCount = 0;
+
+function startGlobalUpdater() {
+  if (globalInterval) return; // Already running
+
+  globalInterval = setInterval(() => {
+    // Random increment between 1-8 clicks to simulate other visitors
+    const currentCount = getClickCount();
+    setClickCount(currentCount + Math.floor(Math.random() * 8) + 1);
+  }, Math.floor(Math.random() * 2000) + 3000); // 3-5 seconds
+}
+
+function stopGlobalUpdater() {
+  if (globalInterval) {
+    clearInterval(globalInterval);
+    globalInterval = null;
+  }
+}
 
 export async function GET() {
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
     start(controller) {
+      connectionCount++;
+      startGlobalUpdater();
+
       let isClosed = false;
+      let localInterval: NodeJS.Timeout;
 
       const sendUpdate = () => {
-        // Check if controller is still open before sending
         if (!isClosed) {
           try {
-            const data = `data: ${JSON.stringify({ clicks: globalClicks, timestamp: Date.now() })}\n\n`;
+            const data = `data: ${JSON.stringify({
+              clicks: getClickCount(),
+              timestamp: Date.now()
+            })}\n\n`;
             controller.enqueue(encoder.encode(data));
           } catch (error) {
-            // Controller is closed, stop sending
             isClosed = true;
           }
         }
@@ -26,21 +52,25 @@ export async function GET() {
       // Send initial state
       sendUpdate();
 
-      // Simulate global clicks from other visitors (every 3-5 seconds)
-      const interval = setInterval(() => {
+      // Send updates periodically
+      localInterval = setInterval(() => {
         if (isClosed) {
-          clearInterval(interval);
+          clearInterval(localInterval);
           return;
         }
-        // Random increment between 1-8 clicks
-        globalClicks += Math.floor(Math.random() * 8) + 1;
         sendUpdate();
-      }, Math.floor(Math.random() * 2000) + 3000); // 3-5 seconds
+      }, 1000);
 
       // Cleanup on connection close
       return () => {
         isClosed = true;
-        clearInterval(interval);
+        clearInterval(localInterval);
+        connectionCount--;
+
+        // Stop global updater if no active connections
+        if (connectionCount === 0) {
+          stopGlobalUpdater();
+        }
       };
     },
   });

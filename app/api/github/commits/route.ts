@@ -1,7 +1,8 @@
 // GitHub API proxy for fetching recent commits
 export const dynamic = 'force-dynamic';
 
-const GITHUB_USERNAME = 'ionutcnu';
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 interface GitHubRepo {
   name: string;
@@ -29,15 +30,25 @@ interface CommitData {
   }[];
 }
 
+function getHeaders() {
+  const headers: HeadersInit = {
+    'Accept': 'application/vnd.github.v3+json',
+  };
+
+  if (GITHUB_TOKEN) {
+    headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
+  }
+
+  return headers;
+}
+
 export async function GET() {
   try {
     // Fetch user's repositories
     const reposResponse = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10&type=owner`,
       {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-        },
+        headers: getHeaders(),
         next: { revalidate: 3600 } // Cache for 1 hour
       }
     );
@@ -54,9 +65,7 @@ export async function GET() {
         const commitsResponse = await fetch(
           `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=10`,
           {
-            headers: {
-              'Accept': 'application/vnd.github.v3+json',
-            },
+            headers: getHeaders(),
             next: { revalidate: 3600 }
           }
         );
