@@ -99,19 +99,25 @@ export async function GET() {
   } catch (error) {
     console.error('GitHub API error:', error);
 
-    // Return fallback data on error
-    return Response.json([
+    // Return error status to distinguish from successful data
+    return Response.json(
       {
-        repo: 'Portfolio',
-        language: 'TypeScript',
-        commits: [
+        error: 'Failed to fetch GitHub data',
+        fallback: [
           {
-            sha: 'abc1234',
-            message: 'Add Nyx-inspired widgets and multi-page structure',
-            date: new Date().toISOString(),
+            repo: 'Portfolio',
+            language: 'TypeScript',
+            commits: [
+              {
+                sha: 'abc1234',
+                message: 'Add Nyx-inspired widgets and multi-page structure',
+                date: new Date().toISOString(),
+              },
+            ],
           },
         ],
       },
-    ]);
+      { status: 503 }
+    );
   }
 }

@@ -46,6 +46,7 @@
     --muted-foreground: 227 17% 53%; /* subtext0 */
     --accent: 217 92% 76%;         /* blue */
     --accent-foreground: 240 21% 15%; /* base */
+    --accent-dynamic: 217 92% 76%; /* blue */
     --destructive: 343 81% 75%;    /* red */
     --destructive-foreground: 240 21% 15%; /* base */
     --border: 232 10% 26%;         /* surface1 */

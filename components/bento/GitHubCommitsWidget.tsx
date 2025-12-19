@@ -17,6 +17,20 @@ interface RepoCommits {
   commits: Commit[];
 }
 
+const GITHUB_USERNAME = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'ionutcnu';
+
+const languageColors: Record<string, string> = {
+  TypeScript: 'bg-blue-500',
+  JavaScript: 'bg-yellow-400',
+  Python: 'bg-yellow-600',
+  'C#': 'bg-purple-500',
+  Java: 'bg-orange-600',
+  Go: 'bg-cyan-500',
+  Rust: 'bg-orange-700',
+  Ruby: 'bg-red-500',
+  PHP: 'bg-indigo-500',
+};
+
 export default function GitHubCommitsWidget() {
   const [data, setData] = useState<RepoCommits[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,18 +96,6 @@ export default function GitHubCommitsWidget() {
 
   const currentRepo = data[selectedRepo];
 
-  const languageColors: Record<string, string> = {
-    TypeScript: 'bg-blue-500',
-    JavaScript: 'bg-yellow-400',
-    Python: 'bg-yellow-600',
-    'C#': 'bg-purple-500',
-    Java: 'bg-orange-600',
-    Go: 'bg-cyan-500',
-    Rust: 'bg-orange-700',
-    Ruby: 'bg-red-500',
-    PHP: 'bg-indigo-500',
-  };
-
   return (
     <BentoBox span={2}>
       <div className="flex items-center justify-between mb-3">
@@ -102,7 +104,7 @@ export default function GitHubCommitsWidget() {
           Recent Commits
         </h3>
         <a
-          href={`https://github.com/ionutcnu/${currentRepo.repo}`}
+          href={`https://github.com/${GITHUB_USERNAME}/${currentRepo.repo}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground hover:text-[hsl(var(--accent))] transition-colors"

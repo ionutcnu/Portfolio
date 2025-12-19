@@ -1,13 +1,12 @@
 "use client"
 
-import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { Calendar, ExternalLink, X } from "lucide-react";
 
 interface ExperienceItem {
   company: string;
   role: string;
-  url: string;
+  url?: string;
   logoUrl: string;
   logoAlt: string;
   startDate: string;
@@ -19,7 +18,6 @@ const experienceData: ExperienceItem[] = [
   {
     company: "Current Company",
     role: "QA Engineer",
-    url: "#",
     logoUrl: "https://via.placeholder.com/100x40/6c7086/ffffff?text=QA",
     logoAlt: "Company Logo",
     startDate: "2022-01-01",
@@ -119,7 +117,7 @@ export default function Experience() {
                       )}
                     </div>
 
-                    {item.url !== "#" && (
+                    {item.url && (
                       <a
                         href={item.url}
                         target="_blank"
