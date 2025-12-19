@@ -1,16 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export for Cloudflare Pages
-  output: 'export',
+  // Enable server-side features for API routes and SSE
+  // Note: Cloudflare Pages supports this via @cloudflare/next-on-pages
 
-  // Disable image optimization for static export
   images: {
     unoptimized: true,
   },
-
-  // Trailing slash for better compatibility
-  trailingSlash: true,
 };
 
 export default nextConfig;

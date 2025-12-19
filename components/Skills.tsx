@@ -108,7 +108,7 @@ const Skills = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Skills & <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Technologies</span>
+            Skills & <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Technologies</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             A comprehensive overview of my technical skills and expertise across various domains.
@@ -124,9 +124,9 @@ const Skills = () => {
         >
           {skillCategories.map((category, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full hover:shadow-lg transition-shadow duration-300">
+              <Card className="h-full shadow-md hover:shadow-xl transition-all duration-300">
                 <CardHeader>
-                  <CardTitle className="text-xl bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                  <CardTitle className="text-xl bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">
                     {category.category}
                   </CardTitle>
                 </CardHeader>
@@ -157,7 +157,7 @@ const Skills = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <Card className="max-w-3xl mx-auto border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <Card className="max-w-3xl mx-auto border-accent-dynamic/20 bg-gradient-to-br from-accent-dynamic/5 to-transparent shadow-lg">
             <CardContent className="pt-6">
               <p className="text-muted-foreground">
                 I&apos;m constantly learning and exploring new technologies to stay up-to-date

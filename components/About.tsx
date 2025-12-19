@@ -60,7 +60,7 @@ const About = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            The <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Story</span>
+            The <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Story</span>
           </h2>
         </motion.div>
 
@@ -71,11 +71,11 @@ const About = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mb-12 text-center"
         >
-          <Card className="max-w-4xl mx-auto border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <Card className="max-w-4xl mx-auto border-accent-dynamic/20 bg-gradient-to-br from-accent-dynamic/5 to-transparent shadow-lg">
             <CardContent className="text-muted-foreground space-y-4 pt-6 text-lg">
               <p className="text-foreground">
-                I&apos;m the person who asks <span className="text-primary font-semibold">&apos;why&apos;</span> before{" "}
-                <span className="text-primary font-semibold">&apos;how&apos;</span>.
+                I&apos;m the person who asks <span className="text-accent-dynamic font-semibold">&apos;why&apos;</span> before{" "}
+                <span className="text-accent-dynamic font-semibold">&apos;how&apos;</span>.
               </p>
               <p className="text-foreground/80">
                 Currently in QA, but I&apos;ve been told more than once that I should be a Product Owner or Business Analyst.
@@ -93,7 +93,7 @@ const About = () => {
                 <span className="text-foreground font-medium">solve problems that matter</span>. I&apos;m transparent about my process:
                 I learn, I experiment, I build things that work.
               </p>
-              <div className="pt-6 border-t border-primary/20">
+              <div className="pt-6 border-t border-accent-dynamic/20">
                 <p className="text-foreground font-medium text-xl">
                   I see the complete picture: user needs, business goals, and technical constraints.
                 </p>
@@ -121,10 +121,10 @@ const About = () => {
               const Icon = feature.icon
               return (
                 <motion.div key={index} variants={itemVariants}>
-                  <Card className="h-full hover:shadow-lg transition-shadow duration-300 border-muted">
+                  <Card className="h-full shadow-md hover:shadow-xl transition-all duration-300 border-muted">
                     <CardHeader>
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                        <Icon className="h-6 w-6 text-primary" />
+                      <div className="w-12 h-12 bg-accent-dynamic/10 rounded-lg flex items-center justify-center mb-4">
+                        <Icon className="h-6 w-6 text-accent-dynamic" />
                       </div>
                       <CardTitle>{feature.title}</CardTitle>
                     </CardHeader>

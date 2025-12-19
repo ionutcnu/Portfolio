@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Menu, X, Github, Linkedin, Mail } from "lucide-react"
+import { Menu, X, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,11 +21,12 @@ const Navigation = () => {
   }, [])
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Skills", href: "#skills" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Skills", href: "/skills" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/contact" },
   ]
 
   return (
@@ -39,25 +43,35 @@ const Navigation = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"
+            className="text-2xl font-bold bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent"
           >
             Ionut.dev
           </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, index) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
-              >
-                {item.name}
-              </motion.a>
-            ))}
+            {navItems.map((item, index) => {
+              const isActive = pathname === item.href
+              return (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Link
+                    href={item.href}
+                    className={`transition-colors duration-200 font-medium ${
+                      isActive
+                        ? "text-accent-dynamic"
+                        : "text-foreground/80 hover:text-accent-dynamic"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </motion.div>
+              )
+            })}
             <motion.a
               href="https://github.com/ionutcnu"
               target="_blank"
@@ -94,21 +108,28 @@ const Navigation = () => {
           className="md:hidden bg-background/95 backdrop-blur-lg"
         >
           <div className="px-4 pt-2 pb-6 space-y-4">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="block text-foreground/80 hover:text-primary transition-colors duration-200 font-medium py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`block transition-colors duration-200 font-medium py-2 ${
+                    isActive
+                      ? "text-accent-dynamic"
+                      : "text-foreground/80 hover:text-accent-dynamic"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              )
+            })}
             <a
               href="https://github.com/ionutcnu"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors duration-200 font-medium py-2"
+              className="flex items-center gap-2 text-foreground/80 hover:text-accent-dynamic transition-colors duration-200 font-medium py-2"
             >
               <Github className="h-5 w-5" />
               GitHub
