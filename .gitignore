@@ -41,3 +41,4 @@ schema*.sql
 # .md
 *.md
 nul
+.open-next/

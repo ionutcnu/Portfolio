@@ -33,6 +33,7 @@ interface CommitData {
 function getHeaders() {
   const headers: HeadersInit = {
     'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'Portfolio-App',
   };
 
   if (GITHUB_TOKEN) {
@@ -44,6 +45,9 @@ function getHeaders() {
 
 export async function GET() {
   try {
+    console.log('[GitHub API] Token exists:', !!GITHUB_TOKEN);
+    console.log('[GitHub API] Token length:', GITHUB_TOKEN?.length || 0);
+
     // Fetch user's repositories
     const reposResponse = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10&type=owner`,
@@ -53,8 +57,12 @@ export async function GET() {
       }
     );
 
+    console.log('[GitHub API] Repos response status:', reposResponse.status);
+
     if (!reposResponse.ok) {
-      throw new Error('Failed to fetch repositories');
+      const errorText = await reposResponse.text();
+      console.error('[GitHub API] Error response:', errorText);
+      throw new Error(`Failed to fetch repositories: ${reposResponse.status}`);
     }
 
     const repos: GitHubRepo[] = await reposResponse.json();

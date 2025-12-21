@@ -1,6 +1,5 @@
 // Server-Sent Events endpoint for real-time click counter with Cloudflare D1
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
 
 import { createCounterService } from '@/lib/d1-counter';
 

@@ -1,6 +1,5 @@
 // POST endpoint for incrementing the click counter with Cloudflare D1
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
 
 import { createCounterService, getClientIP } from '@/lib/d1-counter';
 

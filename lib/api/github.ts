@@ -96,7 +96,7 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
       return FALLBACK_DATA;
     }
 
-    const events = await eventsResponse.json();
+    const events = await eventsResponse.json() as any[];
 
     // Filter push events and extract commits
     const commits: GitHubCommit[] = [];
@@ -139,7 +139,7 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
     );
 
     if (reposResponse.ok) {
-      const repos = await reposResponse.json();
+      const repos = await reposResponse.json() as any[];
 
       for (const repo of repos.slice(0, 5)) {
         const langResponse = await fetch(repo.languages_url, {
@@ -150,7 +150,7 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
         });
 
         if (langResponse.ok) {
-          const languages = await langResponse.json();
+          const languages = await langResponse.json() as any;
 
           for (const [lang, bytes] of Object.entries(languages)) {
             const existing = repoLanguages.get(lang);

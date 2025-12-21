@@ -19,7 +19,7 @@ export default function RecentCommitsWidget() {
           throw new Error('Failed to fetch commits');
         }
 
-        const repoData = await response.json();
+        const repoData = await response.json() as any[];
 
         // Transform to CommitData format
         const allCommits: any[] = [];

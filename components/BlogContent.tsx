@@ -27,7 +27,7 @@ export default function BlogContent() {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              I'm working on sharing insights about product thinking, QA methodologies,
+              I&apos;m working on sharing insights about product thinking, QA methodologies,
               and tech explorations. Stay tuned!
             </p>
           </motion.div>
@@ -52,7 +52,7 @@ export default function BlogContent() {
                     <div>
                       <p className="font-medium text-foreground">Product Thinking</p>
                       <p className="text-sm text-muted-foreground">
-                        How to ask 'why' before 'how' and build products users actually need
+                        How to ask &apos;why&apos; before &apos;how&apos; and build products users actually need
                       </p>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function BlogContent() {
 
                 <div className="pt-6 border-t border-accent-dynamic/20">
                   <p className="text-sm text-muted-foreground text-center">
-                    In the meantime, check out my projects and skills to see what I've been building.
+                    In the meantime, check out my projects and skills to see what I&apos;ve been building.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 mt-4 justify-center">
                     <Button asChild variant="outline">
