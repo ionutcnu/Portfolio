@@ -1,11 +1,15 @@
 // POST endpoint for incrementing the click counter with Cloudflare D1
 export const dynamic = 'force-dynamic';
 
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { createCounterService, getClientIP } from '@/lib/d1-counter';
+import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
 
 export async function POST(request: Request) {
-  // @ts-ignore - Cloudflare binding
-  const db = process.env.DB as D1Database | undefined;
+  const env = getCloudflareContext().env;
+  const db = env.DB as D1Database;
+  const analytics = env.ANALYTICS as AnalyticsEngineDataset;
+
   const counter = createCounterService(db);
 
   // Rate limiting
@@ -19,7 +23,23 @@ export async function POST(request: Request) {
     );
   }
 
-  // Increment counter
+  // Parse client data (optional - client can send metadata)
+  let clientData: ClickEventData = {};
+  try {
+    const body = await request.json();
+    clientData = body as ClickEventData;
+  } catch {
+    // No body or invalid JSON - that's fine, track without client data
+  }
+
+  // Track analytics (comprehensive data, doesn't pollute D1)
+  const cfContext = getCloudflareContext();
+  const analyticsService = createAnalyticsService(analytics, request, cfContext.cf);
+  if (analyticsService) {
+    await analyticsService.trackClick(clientData);
+  }
+
+  // Increment counter (only counter in D1, keeping it clean)
   const clicks = await counter.increment('global-clicks');
 
   return Response.json({
@@ -29,8 +49,7 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  // @ts-ignore - Cloudflare binding
-  const db = process.env.DB as D1Database | undefined;
+  const db = getCloudflareContext().env.DB as D1Database;
   const counter = createCounterService(db);
 
   const clicks = await counter.getCount('global-clicks');

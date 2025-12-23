@@ -42,3 +42,7 @@ schema*.sql
 *.md
 nul
 .open-next/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.wrangler/

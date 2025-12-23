@@ -1,11 +1,11 @@
 // Server-Sent Events endpoint for real-time click counter with Cloudflare D1
 export const dynamic = 'force-dynamic';
 
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { createCounterService } from '@/lib/d1-counter';
 
 export async function GET() {
-  // @ts-ignore - Cloudflare binding
-  const db = process.env.DB as D1Database | undefined;
+  const db = getCloudflareContext().env.DB as D1Database;
   const counter = createCounterService(db);
 
   const encoder = new TextEncoder();

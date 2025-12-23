@@ -88,32 +88,28 @@ class D1Counter implements CounterService {
       .bind(now - windowDuration)
       .run();
 
-    // Get current rate limit for this IP
-    const limit = await this.db
-      .prepare('SELECT requests FROM rate_limits WHERE ip = ? AND window_start >= ?')
-      .bind(ip, now - windowDuration)
-      .first<{ requests: number }>();
-
-    if (!limit) {
-      // First request in this window
-      await this.db
-        .prepare('INSERT OR REPLACE INTO rate_limits (ip, requests, window_start) VALUES (?, 1, ?)')
-        .bind(ip, now)
-        .run();
-      return true;
-    }
-
-    if (limit.requests >= maxRequests) {
-      return false;
-    }
-
-    // Increment request count
+    // Ensure a row exists for this IP in the current window (atomic initialization)
     await this.db
-      .prepare('UPDATE rate_limits SET requests = requests + 1 WHERE ip = ?')
-      .bind(ip)
+      .prepare('INSERT OR IGNORE INTO rate_limits (ip, requests, window_start) VALUES (?, 0, ?)')
+      .bind(ip, now)
       .run();
 
-    return true;
+    // Atomically increment if under limit (prevents race condition)
+    // This single UPDATE checks IP, window validity, and request limit in one atomic operation
+    const result = await this.db
+      .prepare(`
+        UPDATE rate_limits
+        SET requests = requests + 1
+        WHERE ip = ?
+          AND window_start >= ?
+          AND requests < ?
+      `)
+      .bind(ip, now - windowDuration, maxRequests)
+      .run();
+
+    // If the UPDATE affected a row, the request is allowed
+    // If 0 rows changed, either limit exceeded or window expired
+    return (result.meta?.changes ?? 0) > 0;
   }
 }
 
