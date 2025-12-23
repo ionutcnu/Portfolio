@@ -33,10 +33,16 @@ export async function POST(request: Request) {
   }
 
   // Track analytics (comprehensive data, doesn't pollute D1)
-  const cfContext = getCloudflareContext();
-  const analyticsService = createAnalyticsService(analytics, request, cfContext.cf);
-  if (analyticsService) {
-    await analyticsService.trackClick(clientData);
+  // Wrapped in try-catch to prevent blocking the primary click operation
+  try {
+    const cfContext = getCloudflareContext();
+    const analyticsService = createAnalyticsService(analytics, request, cfContext.cf);
+    if (analyticsService) {
+      await analyticsService.trackClick(clientData);
+    }
+  } catch (error) {
+    // Log but don't fail the request if analytics fail
+    console.error('Analytics tracking failed:', error);
   }
 
   // Increment counter (only counter in D1, keeping it clean)

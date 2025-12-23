@@ -10,15 +10,11 @@ export interface GitHubCommit {
   href: string;
   sha: string;
   date: string;
-  additions?: number;
-  deletions?: number;
 }
 
 export interface CommitData {
   commits: GitHubCommit[];
   languages: CommitLanguage[];
-  totalAdditions: number;
-  totalDeletions: number;
   totalCommits: number;
 }
 
@@ -30,36 +26,28 @@ const FALLBACK_DATA: CommitData = {
       message: 'feat: implement XXH3 hashing and incremental …',
       href: '#',
       sha: '1234567',
-      date: new Date().toISOString(),
-      additions: 702,
-      deletions: 99
+      date: new Date().toISOString()
     },
     {
       repo: 'Portfolio',
       message: 'feat: add macOS directories to ignore list and D…',
       href: '#',
       sha: '2345678',
-      date: new Date().toISOString(),
-      additions: 21,
-      deletions: 0
+      date: new Date().toISOString()
     },
     {
       repo: 'Portfolio',
       message: 'feat: update installation instructions in README…',
       href: '#',
       sha: '3456789',
-      date: new Date().toISOString(),
-      additions: 7,
-      deletions: 2
+      date: new Date().toISOString()
     },
     {
       repo: 'Portfolio',
       message: 'feat: enhance file hashing with incremental …',
       href: '#',
       sha: '4567890',
-      date: new Date().toISOString(),
-      additions: 101,
-      deletions: 109
+      date: new Date().toISOString()
     }
   ],
   languages: [
@@ -68,8 +56,6 @@ const FALLBACK_DATA: CommitData = {
     { size: 99269, name: 'CSS', color: '#563d7c' },
     { size: 49218, name: 'HTML', color: '#e34c26' }
   ],
-  totalAdditions: 831,
-  totalDeletions: 210,
   totalCommits: 4
 };
 
@@ -117,8 +103,6 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
             href: `https://github.com/${repo}/commit/${commit.sha}`,
             sha: commit.sha.substring(0, 7),
             date: event.created_at,
-            additions: payload.size || 0,
-            deletions: 0,
           });
         }
       }
@@ -174,14 +158,9 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
       .sort((a, b) => b.size - a.size)
       .slice(0, 8);
 
-    const totalAdditions = commits.reduce((sum, c) => sum + (c.additions || 0), 0);
-    const totalDeletions = commits.reduce((sum, c) => sum + (c.deletions || 0), 0);
-
     return {
       commits: commits.length > 0 ? commits : FALLBACK_DATA.commits,
       languages: languages.length > 0 ? languages : FALLBACK_DATA.languages,
-      totalAdditions,
-      totalDeletions,
       totalCommits: commits.length,
     };
   } catch (error) {
@@ -191,7 +170,7 @@ export async function fetchGitHubCommits(username: string): Promise<CommitData> 
 }
 
 // Language colors from GitHub
-function getLanguageColor(lang: string): string {
+export function getLanguageColor(lang: string): string {
   const colors: Record<string, string> = {
     'TypeScript': '#3178c6',
     'JavaScript': '#f1e05a',

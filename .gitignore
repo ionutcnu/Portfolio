@@ -38,8 +38,6 @@ next-env.d.ts
 # schema
 schema*.sql
 
-# .md
-*.md
 nul
 .open-next/
 *.sqlite

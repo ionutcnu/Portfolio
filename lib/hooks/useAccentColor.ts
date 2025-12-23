@@ -20,10 +20,15 @@ export function useAccentColor() {
   // Load accent color from localStorage on mount
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("accent-color") as AccentColor;
-    if (stored && accentColors[stored]) {
-      setAccentColorState(stored);
-      updateCSSVariable(accentColors[stored]);
+    try {
+      const stored = localStorage.getItem("accent-color") as AccentColor;
+      if (stored && accentColors[stored]) {
+        setAccentColorState(stored);
+        updateCSSVariable(accentColors[stored]);
+      }
+    } catch (error) {
+      // localStorage unavailable (private browsing, etc.) - use default color
+      console.warn('Failed to load accent color from localStorage:', error);
     }
   }, []);
 
@@ -35,7 +40,12 @@ export function useAccentColor() {
   // Set accent color and persist to localStorage
   const setAccentColor = (color: AccentColor) => {
     setAccentColorState(color);
-    localStorage.setItem("accent-color", color);
+    try {
+      localStorage.setItem("accent-color", color);
+    } catch (error) {
+      // localStorage unavailable (private browsing, etc.) - color still applies in memory
+      console.warn('Failed to save accent color to localStorage:', error);
+    }
     updateCSSVariable(accentColors[color]);
   };
 

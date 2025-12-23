@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Activity, ExternalLink } from "lucide-react";
 import { BentoBox } from "./BentoGrid";
-import { fetchGitHubCommits, type CommitData } from "@/lib/api/github";
+import { fetchGitHubCommits, getLanguageColor, type CommitData } from "@/lib/api/github";
 
 export default function RecentCommitsWidget() {
   const [commitData, setCommitData] = useState<CommitData | null>(null);
@@ -58,8 +58,6 @@ export default function RecentCommitsWidget() {
         const data: CommitData = {
           commits: allCommits.slice(0, 4),
           languages: languages.slice(0, 8),
-          totalAdditions: 0,
-          totalDeletions: 0,
           totalCommits: allCommits.length,
         };
 
@@ -75,19 +73,6 @@ export default function RecentCommitsWidget() {
     }
     loadCommits();
   }, []);
-
-  function getLanguageColor(lang: string): string {
-    const colors: Record<string, string> = {
-      'TypeScript': '#3178c6',
-      'JavaScript': '#f1e05a',
-      'Python': '#3572A5',
-      'HTML': '#e34c26',
-      'CSS': '#563d7c',
-      'Go': '#00ADD8',
-      'Rust': '#dea584',
-    };
-    return colors[lang] || '#858585';
-  }
 
   const langTotal = commitData?.languages.reduce((a, l) => a + l.size, 0) || 0;
 
@@ -166,6 +151,7 @@ export default function RecentCommitsWidget() {
         {langTotal > 0 && commitData?.languages && (
           <div
             className="ml-auto max-w-xs flex-1 sm:max-w-sm md:max-w-md"
+            role="img"
             aria-label="Language breakdown"
           >
             <div className="bg-muted h-2 w-full rounded-[3px]">
