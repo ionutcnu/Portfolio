@@ -23,7 +23,7 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
       center: position,
       zoom: 11,
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
       scrollWheelZoom: true,
       dragging: true,
       touchZoom: true,
@@ -35,7 +35,7 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
     // Add dark tile layer - using exact nyx format with {r} for retina
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
-      attribution: "",
+      attribution: "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, © <a href='https://carto.com/attributions'>CARTO</a>",
       subdomains: ['a', 'b', 'c', 'd'],
       keepBuffer: 4,
       updateWhenIdle: false,

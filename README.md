@@ -25,7 +25,7 @@ A modern, responsive portfolio website built with Next.js, Tailwind CSS, shadcn/
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- [Bun](https://bun.sh/) 1.0+
 
 ### Installation
 
@@ -37,22 +37,22 @@ cd Portfolio
 
 2. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 3. Run the development server:
 ```bash
-npm run dev
+bun run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Available Scripts
 
-- `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
-- `npm start` - Start the production server
-- `npm run lint` - Run ESLint
+- `bun run dev` - Start the development server
+- `bun run build` - Build the application for production
+- `bun run start` - Start the production server
+- `bun run lint` - Run ESLint
 
 ## Project Structure
 

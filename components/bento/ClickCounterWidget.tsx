@@ -1,15 +1,26 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { MousePointer2, Sparkles } from "lucide-react";
 import { BentoBox } from "./BentoGrid";
+
+// Generate or retrieve session ID
+function getSessionId(): string {
+  let sessionId = localStorage.getItem('analytics-session-id');
+  if (!sessionId) {
+    sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('analytics-session-id', sessionId);
+  }
+  return sessionId;
+}
 
 export default function ClickCounterWidget() {
   const [globalClicks, setGlobalClicks] = useState(750362);
   const [localClicks, setLocalClicks] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [showSparkle, setShowSparkle] = useState(false);
+  const pageLoadTime = useRef(Date.now());
 
   useEffect(() => {
     // Load local clicks from localStorage
@@ -40,7 +51,7 @@ export default function ClickCounterWidget() {
     };
   }, []);
 
-  const handleClick = async () => {
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     // Increment local counter
     const newLocalClicks = localClicks + 1;
     setLocalClicks(newLocalClicks);
@@ -50,9 +61,25 @@ export default function ClickCounterWidget() {
     setShowSparkle(true);
     setTimeout(() => setShowSparkle(false), 300);
 
-    // Increment global counter via API
+    // Collect comprehensive analytics data
+    const analyticsData = {
+      sessionId: getSessionId(),
+      screenWidth: window.screen.width,
+      screenHeight: window.screen.height,
+      clickX: event.clientX,
+      clickY: event.clientY,
+      timeOnPage: Math.floor((Date.now() - pageLoadTime.current) / 1000), // seconds
+    };
+
+    // Increment global counter via API with analytics
     try {
-      await fetch('/api/clicks/increment', { method: 'POST' });
+      await fetch('/api/clicks/increment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(analyticsData),
+      });
     } catch (error) {
       console.error('Failed to increment global counter:', error);
     }

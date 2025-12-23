@@ -15,7 +15,19 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.basemaps.cartocdn.com',
+        hostname: 'a.basemaps.cartocdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'b.basemaps.cartocdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'c.basemaps.cartocdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd.basemaps.cartocdn.com',
       },
       {
         protocol: 'https',

@@ -18,4 +18,8 @@ binding = "DB"
 database_name = "portfolio-counter"
 database_id = "10a10508-24ee-4010-aa16-9598e5920506"
 
+# Analytics Engine binding
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+
 # Note: GITHUB_TOKEN is set as a secret in Cloudflare Dashboard and will be available at runtime
