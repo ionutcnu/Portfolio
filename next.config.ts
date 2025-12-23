@@ -1,16 +1,36 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export for Cloudflare Pages
-  output: 'export',
-
-  // Disable image optimization for static export
+  // Enable server-side features for API routes and SSE
+  // Note: Cloudflare Pages supports this via @cloudflare/next-on-pages
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.basemaps.cartocdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cartodb-basemaps-*.global.ssl.fastly.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tile.openstreetmap.org',
+      },
+    ],
   },
-
-  // Trailing slash for better compatibility
-  trailingSlash: true,
+  // Disable image optimization for map tiles
+  experimental: {
+    optimizePackageImports: ['leaflet'],
+  },
 };
 
 export default nextConfig;

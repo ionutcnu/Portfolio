@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
+import "@fontsource/jetbrains-mono";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,9 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className="font-sans antialiased">
-        {children}
+    <html lang="en" className="scroll-smooth dark" suppressHydrationWarning>
+      <body className="font-mono antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange={false}
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

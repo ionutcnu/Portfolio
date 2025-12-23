@@ -88,7 +88,7 @@ const Projects = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Things I <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Built</span>
+            Things I <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Built</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Personal projects that solve real problems. Built with curiosity and AI tools. No fake credentials.
@@ -104,7 +104,7 @@ const Projects = () => {
         >
           {projects.map((project, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 border-muted group hover:border-primary/50">
+              <Card className="h-full flex flex-col shadow-md hover:shadow-xl transition-all duration-300 border-muted group hover:border-accent-dynamic/50">
                 <CardHeader>
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
@@ -119,26 +119,26 @@ const Projects = () => {
                       href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary transition-colors"
+                      className="text-muted-foreground hover:text-accent-dynamic transition-colors"
                     >
                       <Github className="h-5 w-5" />
                     </a>
                   </div>
-                  <CardTitle className="group-hover:text-primary transition-colors">
+                  <CardTitle className="group-hover:text-accent-dynamic transition-colors">
                     {project.name}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-3 text-sm">
                   <div>
-                    <p className="text-primary/80 font-semibold mb-1">Problem</p>
+                    <p className="text-accent-dynamic/80 font-semibold mb-1">Problem</p>
                     <CardDescription className="text-sm">{project.problem}</CardDescription>
                   </div>
                   <div>
-                    <p className="text-primary/80 font-semibold mb-1">Solution</p>
+                    <p className="text-accent-dynamic/80 font-semibold mb-1">Solution</p>
                     <CardDescription className="text-sm">{project.solution}</CardDescription>
                   </div>
                   <div>
-                    <p className="text-primary/80 font-semibold mb-1">Impact</p>
+                    <p className="text-accent-dynamic/80 font-semibold mb-1">Impact</p>
                     <CardDescription className="text-sm">{project.impact}</CardDescription>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2">

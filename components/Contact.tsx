@@ -61,7 +61,7 @@ const Contact = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Get In <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Touch</span>
+            Get In <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Touch</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
@@ -79,10 +79,10 @@ const Contact = () => {
             const Icon = method.icon
             return (
               <motion.div key={index} variants={itemVariants}>
-                <Card className="h-full hover:shadow-lg transition-all duration-300 group hover:border-primary/50">
+                <Card className="h-full shadow-md hover:shadow-xl transition-all duration-300 group hover:border-accent-dynamic/50">
                   <CardHeader className="text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Icon className="h-8 w-8 text-primary" />
+                    <div className="w-16 h-16 bg-accent-dynamic/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-accent-dynamic/20 transition-colors">
+                      <Icon className="h-8 w-8 text-accent-dynamic" />
                     </div>
                     <CardTitle>{method.title}</CardTitle>
                     <CardDescription>{method.description}</CardDescription>
@@ -93,7 +93,7 @@ const Contact = () => {
                         href={method.action}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline font-medium"
+                        className="text-accent-dynamic hover:underline font-medium"
                       >
                         {method.label}
                       </a>
@@ -114,7 +114,7 @@ const Contact = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="max-w-2xl mx-auto"
         >
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <Card className="border-accent-dynamic/20 bg-gradient-to-br from-accent-dynamic/5 to-transparent shadow-lg">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Let&apos;s Work Together</CardTitle>
               <CardDescription className="text-base">

@@ -1,122 +1,119 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Menu, X, Github, Linkedin, Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { Menu } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  const pathname = usePathname()
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Skills", href: "#skills" },
-    { name: "Contact", href: "#contact" },
+    { title: "About", href: "/about" },
+    { title: "Posts", href: "/blog" },
+    { title: "Projects", href: "/projects" },
+    { title: "Resume", href: "/contact" },
   ]
 
+  const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
+
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-lg shadow-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"
+    <div className="header sticky top-0 z-10 flex h-24 items-center justify-between p-5 pb-10 select-none">
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumbs">
+        <ul className="text-md flex items-center">
+          <li className="inline-flex items-center">
+            <Link href="/" className="animation-wiggle text-[#e5a54b] hover:text-[#e5a54b]/40">
+              ~/
+            </Link>
+          </li>
+          {breadcrumbs.map((text, i) => (
+            <li key={`bread-${i}`} className="inline-flex items-center">
+              <span className="mx-0.5">/</span>
+              {i === breadcrumbs.length - 1 ? (
+                <span aria-current="page">{text}</span>
+              ) : (
+                <Link
+                  href={'/' + breadcrumbs.slice(0, i + 1).join('/')}
+                  className="animation-wiggle hover:text-[#e5a54b]"
+                >
+                  {text}
+                </Link>
+              )}
+            </li>
+          ))}
+          <li className="mx-0.5 inline-flex items-center" aria-hidden="true">/</li>
+          <li className="ml-1 inline-flex items-center">
+            <span className="cursor-blink bg-[#e5a54b] h-4 w-2" aria-hidden="true"></span>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="text-foreground hover:text-[#e5a54b] rounded p-2 md:hidden"
+        aria-label="Open navigation menu"
+        aria-expanded={isOpen}
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Desktop Navigation */}
+      <nav className="hidden items-center space-x-4 md:flex">
+        {navItems.map((item) => (
+          <Link
+            key={item.title}
+            href={item.href}
+            className="text-foreground hover:text-[#e5a54b] rounded px-3 py-2 text-sm font-medium transition-colors duration-150"
           >
-            Ionut.dev
-          </motion.div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, index) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
-              >
-                {item.name}
-              </motion.a>
-            ))}
-            <motion.a
-              href="https://github.com/ionutcnu"
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <Button size="icon" variant="ghost">
-                <Github className="h-5 w-5" />
-              </Button>
-            </motion.a>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden bg-background/95 backdrop-blur-lg"
+            {item.title}
+          </Link>
+        ))}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-foreground hover:text-[#e5a54b] cursor-pointer rounded px-3 py-2 text-sm font-medium"
+          aria-label="Open more navigation items"
         >
-          <div className="px-4 pt-2 pb-6 space-y-4">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="block text-foreground/80 hover:text-primary transition-colors duration-200 font-medium py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </a>
-            ))}
-            <a
-              href="https://github.com/ionutcnu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors duration-200 font-medium py-2"
-            >
-              <Github className="h-5 w-5" />
-              GitHub
-            </a>
-          </div>
-        </motion.div>
-      )}
-    </motion.nav>
+          More...
+        </button>
+      </nav>
+
+      <style jsx>{`
+        .header {
+          mask: linear-gradient(black, black, transparent);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        @keyframes blink {
+          0%, 100% {
+            opacity: 1;
+          }
+          20% {
+            opacity: 0;
+          }
+        }
+
+        .cursor-blink {
+          animation: blink 3s cubic-bezier(0.2, 1, 0.8, 1) infinite;
+        }
+
+        @keyframes wiggle {
+          0%, 100% {
+            transform: rotate(-3deg);
+          }
+          50% {
+            transform: rotate(3deg);
+          }
+        }
+
+        .animation-wiggle:hover {
+          animation: wiggle 1s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
   )
 }
 
