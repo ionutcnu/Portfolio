@@ -1,13 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Menu } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const [displayedPath, setDisplayedPath] = useState("")
+  const [isTyping, setIsTyping] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editValue, setEditValue] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const navItems = [
     { title: "About", href: "/about" },
@@ -18,36 +24,91 @@ const Navigation = () => {
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
 
+  // Build the path text for typing animation (without ~/)
+  const pathAfterHome = breadcrumbs.length > 0
+    ? `${breadcrumbs.join(' / ')}/`
+    : ''
+
+  // Typing animation effect
+  useEffect(() => {
+    setIsTyping(true)
+    setDisplayedPath("")
+
+    let currentIndex = 0
+    const typingSpeed = 50 // ms per character
+
+    const typeNextChar = () => {
+      if (currentIndex < pathAfterHome.length) {
+        setDisplayedPath(pathAfterHome.slice(0, currentIndex + 1))
+        currentIndex++
+        setTimeout(typeNextChar, typingSpeed)
+      } else {
+        setIsTyping(false)
+      }
+    }
+
+    typeNextChar()
+  }, [pathname, pathAfterHome])
+
+  // Focus input when entering edit mode
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditing])
+
+  // Handle path click - enable editing
+  const handlePathClick = () => {
+    setIsEditing(true)
+    setEditValue(breadcrumbs.join('/'))
+  }
+
+  // Handle Enter key - navigate to typed path
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const path = editValue.startsWith('/') ? editValue : `/${editValue}`
+      router.push(path)
+      setIsEditing(false)
+    } else if (e.key === 'Escape') {
+      setIsEditing(false)
+      setEditValue('')
+    }
+  }
+
   return (
     <div className="header sticky top-0 z-10 flex h-24 items-center justify-between p-5 pb-10 select-none">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumbs">
-        <ul className="text-md flex items-center">
-          <li className="inline-flex items-center">
-            <Link href="/" className="animation-wiggle text-[#e5a54b] hover:text-[#e5a54b]/40">
-              ~/
-            </Link>
-          </li>
-          {breadcrumbs.map((text, i) => (
-            <li key={`bread-${i}`} className="inline-flex items-center">
-              <span className="mx-0.5">/</span>
-              {i === breadcrumbs.length - 1 ? (
-                <span aria-current="page">{text}</span>
-              ) : (
-                <Link
-                  href={'/' + breadcrumbs.slice(0, i + 1).join('/')}
-                  className="animation-wiggle hover:text-[#e5a54b]"
-                >
-                  {text}
-                </Link>
-              )}
-            </li>
-          ))}
-          <li className="mx-0.5 inline-flex items-center" aria-hidden="true">/</li>
-          <li className="ml-1 inline-flex items-center">
-            <span className="cursor-blink bg-[#e5a54b] h-4 w-2" aria-hidden="true"></span>
-          </li>
-        </ul>
+        <div className="text-md flex items-center">
+          <Link href="/" className="text-[#e5a54b] hover:text-[#e5a54b]/60 transition-colors">
+            ~/
+          </Link>
+          {isEditing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={() => setIsEditing(false)}
+              className="bg-transparent border-none outline-none text-[#e5a54b] font-mono text-md"
+              style={{ width: `${Math.max(editValue.length * 10 + 20, 100)}px` }}
+            />
+          ) : (
+            <span
+              className="text-[#e5a54b] cursor-text"
+              onClick={handlePathClick}
+              title="Click to edit path"
+            >
+              {displayedPath}
+            </span>
+          )}
+          {!isEditing && (
+            <span className={`bg-[#e5a54b] h-4 w-2 ml-1 ${isTyping ? 'cursor-typing' : 'cursor-blink'}`} aria-hidden="true"></span>
+          )}
+        </div>
       </nav>
 
       {/* Mobile menu button */}
@@ -96,8 +157,21 @@ const Navigation = () => {
           }
         }
 
+        @keyframes typing-blink {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+        }
+
         .cursor-blink {
           animation: blink 3s cubic-bezier(0.2, 1, 0.8, 1) infinite;
+        }
+
+        .cursor-typing {
+          animation: typing-blink 0.5s ease-in-out infinite;
         }
 
         @keyframes wiggle {

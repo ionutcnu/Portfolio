@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "remote": "node node_modules/@opennextjs/cloudflare/dist/cli/index.js build && wrangler dev --remote",
     "cloudflare:build": "npx @opennextjs/cloudflare build",
     "deploy": "npm run cloudflare:build && wrangler deploy",
     "preview": "npm run cloudflare:build && wrangler dev"
@@ -15,6 +16,7 @@
     "@catppuccin/tailwindcss": "^0.1.6",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

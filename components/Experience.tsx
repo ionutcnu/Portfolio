@@ -16,13 +16,25 @@ interface ExperienceItem {
 
 const experienceData: ExperienceItem[] = [
   {
-    company: "Current Company",
-    role: "QA Engineer",
-    logoUrl: "https://via.placeholder.com/100x40/6c7086/ffffff?text=QA",
-    logoAlt: "Company Logo",
-    startDate: "2022-01-01",
+    company: "Endava Romania",
+    role: "QA Tester",
+    url: "https://www.endava.com/",
+    logoUrl: "/logos/endava.png",
+    logoAlt: "Endava Logo",
+    startDate: "2022-06-01",
     details:
-      "Quality Assurance Engineer focused on testing, but naturally gravitating toward product thinking. Known for asking 'why' before 'how' and considering the broader business context.",
+      "QA Tester working on Naval Shipping and Payments domains. Conducting REST API testing, validating payment flows, writing SQL scripts, and became QA SME for the projects.",
+  },
+  {
+    company: "Vision",
+    role: "Junior Programmer",
+    url: "https://www.vision.ro/",
+    logoUrl: "/logos/vision.png",
+    logoAlt: "Vision Logo",
+    startDate: "2021-11-01",
+    endDate: "2022-05-01",
+    details:
+      "Coded and designed new functionalities based on business requirements. Created fully dynamic web pages with custom validations using an internal tool. Helped automate user experience for counter work processes.",
   },
 ];
 

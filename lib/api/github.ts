@@ -10,6 +10,8 @@ export interface GitHubCommit {
   href: string;
   sha: string;
   date: string;
+  additions?: number;
+  deletions?: number;
 }
 
 export interface CommitData {
