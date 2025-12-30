@@ -12,13 +12,14 @@ interface Company {
 
 const companies: Company[] = [
   {
-    name: "Current Company",
+    name: "Endava Romania",
     logo: "QA",
-    url: "#",
+    url: "https://www.endava.com/",
   },
   {
-    name: "Previous Company",
+    name: "Vision",
     logo: "DEV",
+    url: "https://www.vision.ro/",
     isPast: true,
   },
 ]
@@ -31,15 +32,16 @@ export default function PortfolioHero() {
       </h1>
 
       <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
-        I&apos;m currently working as a QA Engineer @{" "}
+        I&apos;m currently working as a QA Tester @{" "}
         <Link
-          href="#"
+          href="https://www.endava.com/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-[#e5a54b]/85 hover:bg-[#e5a54b] hover:text-[#1e293b] underline decoration-dashed underline-offset-4 transition-colors duration-200"
         >
-          Current Company
+          Endava Romania
         </Link>
-        . I&apos;m transitioning from QA to Product Owner/Business Analyst roles. What I care about is{" "}
-        <span className="text-white">the actual problem</span>. I love asking &apos;why&apos; before &apos;how&apos; and building solutions that help people.
+        . I&apos;m in QA, but people say I think like a Business Analyst. I test real business scenarios, not just functionality. I go beyond the happy path, look for edge cases, and question if we&apos;re building the right thing.
       </p>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
@@ -54,25 +56,13 @@ export default function PortfolioHero() {
         </Link>
         <span className="text-gray-700 text-xs">|</span>
         <Link
-          href="https://linkedin.com/in/yourprofile"
+          href="https://www.linkedin.com/in/cioncu/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-[#e5a54b] inline-flex items-center gap-1 text-sm transition-colors duration-200"
         >
           <Linkedin size={16} />
           <span>LinkedIn</span>
-        </Link>
-        <span className="text-gray-700 text-xs">|</span>
-        <Link
-          href="https://x.com/yourhandle"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-400 hover:text-[#e5a54b] inline-flex items-center gap-1 text-sm transition-colors duration-200"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-          <span>X</span>
         </Link>
         <span className="text-gray-700 text-xs">|</span>
         <Link

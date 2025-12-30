@@ -87,23 +87,6 @@ const Footer = () => {
 
   return (
     <div className="relative m-auto mx-5 mb-5">
-      {/* Raised webring section */}
-      <div className="relative">
-        <div className="absolute -top-10 right-5 md:right-8 z-10 flex items-center rounded-t-lg border-t border-r border-l border-[#313244]/20 bg-[#11111b] px-4 py-2 shadow-sm">
-          <div className="flex items-center gap-x-1 text-xs md:text-sm text-muted-foreground whitespace-nowrap">
-            <span className="text-foreground/60">Webrings:</span>
-            <span className="font-mono text-accent">dev</span>
-            <span className="text-xs leading-none opacity-75">
-              <span className="opacity-40">{'{'}</span>
-              <a href="#" className="text-accent hover:text-accent/80 px-0.5 align-top transition-colors">{'<'}</a>
-              <span className="text-accent opacity-40">|</span>
-              <a href="#" className="text-accent hover:text-accent/80 px-0.5 align-top transition-colors">{'>'}</a>
-              <span className="opacity-40">{'}'}</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Main footer */}
       <footer className="bg-[#11111b] text-[#a6adc8] border border-[#313244]/20 flex h-auto flex-col md:flex-row items-center justify-center md:justify-between gap-y-3 md:gap-y-0 rounded-lg p-5 text-sm">
         {/* Left Section */}
