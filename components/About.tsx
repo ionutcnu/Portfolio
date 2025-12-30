@@ -45,7 +45,7 @@ const About = () => {
             className="space-y-6 text-base leading-relaxed"
           >
             <p className="text-muted-foreground">
-              Hey! I'm <span className="text-foreground font-semibold">Ionut Cioncu</span> — a <span className="text-foreground font-semibold">QA Tester</span> with 4 years of multi-domain experience based in <span className="text-foreground font-semibold">Pitesti, Romania</span>. I test with <span className="text-accent-dynamic font-semibold underline decoration-accent-dynamic">context</span> — understanding why we're building something, not just checking if it works.
+              Hey! I&apos;m <span className="text-foreground font-semibold">Ionut Cioncu</span> — a <span className="text-foreground font-semibold">QA Tester</span> with 4 years of multi-domain experience based in <span className="text-foreground font-semibold">Pitesti, Romania</span>. I test with <span className="text-accent-dynamic font-semibold underline decoration-accent-dynamic">context</span> — understanding why we&apos;re building something, not just checking if it works.
             </p>
 
             <p className="text-muted-foreground">
@@ -53,7 +53,7 @@ const About = () => {
             </p>
 
             <p className="text-muted-foreground">
-              I've also built some <a href="/projects" className="text-accent-dynamic font-semibold underline decoration-accent-dynamic hover:text-accent-dynamic/80 transition-colors">personal projects</a>. Besides projects, I like to explore <span className="text-foreground font-medium">AI tools</span> (MCP, Claude/GPT), <span className="text-foreground font-medium">automation</span> (Selenium, Cypress), and continuous learning.
+              I&apos;ve also built some <a href="/projects" className="text-accent-dynamic font-semibold underline decoration-accent-dynamic hover:text-accent-dynamic/80 transition-colors">personal projects</a>. Besides projects, I like to explore <span className="text-foreground font-medium">AI tools</span> (MCP, Claude/GPT), <span className="text-foreground font-medium">automation</span> (Selenium, Cypress), and continuous learning.
             </p>
 
             {/* Social Links */}
