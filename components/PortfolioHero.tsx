@@ -19,6 +19,7 @@ const companies: Company[] = [
   {
     name: "Vision",
     logo: "DEV",
+    url: "https://www.vision.ro/",
     isPast: true,
   },
 ]

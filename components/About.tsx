@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import Image from "next/image"
 import { Github, Linkedin, Mail } from "lucide-react"
 
 const About = () => {
@@ -30,7 +29,7 @@ const About = () => {
             <div className="w-full max-w-[350px] h-[400px] bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-2xl flex items-center justify-center">
               <div className="text-center text-cyan-50">
                 <div className="w-32 h-32 mx-auto mb-4 bg-cyan-300/30 rounded-full flex items-center justify-center">
-                  <span className="text-4xl">👨‍💻</span>
+                  <span className="text-4xl" role="img" aria-label="Developer working on laptop">👨‍💻</span>
                 </div>
                 <p className="text-sm opacity-90">Professional Avatar</p>
               </div>
@@ -63,25 +62,28 @@ const About = () => {
                 href="https://github.com/ionutcnu"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit my GitHub profile"
                 className="flex items-center gap-2 text-muted-foreground hover:text-accent-dynamic transition-colors"
               >
-                <Github className="h-5 w-5" />
+                <Github className="h-5 w-5" aria-hidden="true" />
                 <span className="text-sm">GitHub</span>
               </a>
               <a
                 href="https://linkedin.com/in/cioncu"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Visit my LinkedIn profile"
                 className="flex items-center gap-2 text-muted-foreground hover:text-accent-dynamic transition-colors"
               >
-                <Linkedin className="h-5 w-5" />
+                <Linkedin className="h-5 w-5" aria-hidden="true" />
                 <span className="text-sm">LinkedIn</span>
               </a>
               <a
                 href="mailto:cioncu_ionut@yahoo.com"
+                aria-label="Send me an email"
                 className="flex items-center gap-2 text-muted-foreground hover:text-accent-dynamic transition-colors"
               >
-                <Mail className="h-5 w-5" />
+                <Mail className="h-5 w-5" aria-hidden="true" />
                 <span className="text-sm">cioncu_ionut@yahoo.com</span>
               </a>
             </div>

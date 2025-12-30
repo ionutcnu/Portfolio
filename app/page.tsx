@@ -1,5 +1,3 @@
-"use client"
-
 import PortfolioHero from "@/components/PortfolioHero";
 import PortfolioProjects from "@/components/PortfolioProjects";
 import BentoGrid from "@/components/bento/BentoGrid";

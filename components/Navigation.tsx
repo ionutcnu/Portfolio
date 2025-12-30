@@ -24,31 +24,39 @@ const Navigation = () => {
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
 
-  // Build the path text for typing animation (without ~/)
-  const pathAfterHome = breadcrumbs.length > 0
-    ? `${breadcrumbs.join(' / ')}/`
-    : ''
-
   // Typing animation effect
   useEffect(() => {
+    // Build the path text for typing animation (without ~/)
+    const pathAfterHome = breadcrumbs.length > 0
+      ? `${breadcrumbs.join(' / ')}/`
+      : ''
+
     setIsTyping(true)
     setDisplayedPath("")
 
     let currentIndex = 0
+    let timeoutId: NodeJS.Timeout | null = null
     const typingSpeed = 50 // ms per character
 
     const typeNextChar = () => {
       if (currentIndex < pathAfterHome.length) {
         setDisplayedPath(pathAfterHome.slice(0, currentIndex + 1))
         currentIndex++
-        setTimeout(typeNextChar, typingSpeed)
+        timeoutId = setTimeout(typeNextChar, typingSpeed)
       } else {
         setIsTyping(false)
       }
     }
 
     typeNextChar()
-  }, [pathname, pathAfterHome])
+
+    // Cleanup timeout on unmount or pathname change
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [pathname])
 
   // Focus input when entering edit mode
   useEffect(() => {
@@ -100,6 +108,13 @@ const Navigation = () => {
             <span
               className="text-[#e5a54b] cursor-text"
               onClick={handlePathClick}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handlePathClick()
+                }
+              }}
+              role="button"
+              tabIndex={0}
               title="Click to edit path"
             >
               {displayedPath}
