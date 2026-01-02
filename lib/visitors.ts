@@ -91,7 +91,7 @@ export function getSessionId(): string {
 
   let sessionId = localStorage.getItem('analytics-session-id');
   if (!sessionId) {
-    sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     localStorage.setItem('analytics-session-id', sessionId);
   }
   return sessionId;

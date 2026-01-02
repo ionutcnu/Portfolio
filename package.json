@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "remote": "node node_modules/@opennextjs/cloudflare/dist/cli/index.js build && wrangler dev --remote",
+    "remote": "npx @opennextjs/cloudflare build && wrangler dev --remote",
     "cloudflare:build": "npx @opennextjs/cloudflare build",
     "deploy": "npm run cloudflare:build && wrangler deploy",
     "preview": "npm run cloudflare:build && wrangler dev"

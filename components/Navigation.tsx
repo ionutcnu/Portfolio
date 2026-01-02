@@ -106,20 +106,14 @@ const Navigation = () => {
               style={{ width: `${Math.max(editValue.length * 10 + 20, 100)}px` }}
             />
           ) : (
-            <span
-              className="text-[#e5a54b] cursor-text"
+            <button
+              className="text-[#e5a54b] cursor-text bg-transparent border-none p-0 font-mono text-md"
               onClick={handlePathClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handlePathClick()
-                }
-              }}
-              role="button"
-              tabIndex={0}
+              type="button"
               title="Click to edit path"
             >
               {displayedPath}
-            </span>
+            </button>
           )}
           {!isEditing && (
             <span className={`bg-[#e5a54b] h-4 w-2 ml-1 ${isTyping ? 'cursor-typing' : 'cursor-blink'}`} aria-hidden="true"></span>

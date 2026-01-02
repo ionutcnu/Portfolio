@@ -88,6 +88,7 @@ export default function LocationMapWidget() {
       <div className="mt-1.5 flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs">
           <button
+            type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="text-muted-foreground hover:text-accent-dynamic cursor-pointer whitespace-nowrap transition-colors text-left"
           >

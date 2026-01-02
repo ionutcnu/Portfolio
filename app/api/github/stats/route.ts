@@ -4,6 +4,23 @@ export const dynamic = 'force-dynamic';
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
+// Rate limit tracking
+function logRateLimitStatus(headers: Headers, endpoint: string) {
+  const limit = headers.get('X-RateLimit-Limit');
+  const remaining = headers.get('X-RateLimit-Remaining');
+  const reset = headers.get('X-RateLimit-Reset');
+
+  if (limit && remaining) {
+    const resetTime = reset ? new Date(parseInt(reset) * 1000).toLocaleTimeString() : 'unknown';
+    console.log(`[GitHub API] ${endpoint} - Rate Limit: ${remaining}/${limit} (resets at ${resetTime})`);
+
+    const remainingNum = parseInt(remaining);
+    if (remainingNum < 10) {
+      console.warn(`[GitHub API] WARNING: Only ${remaining} requests remaining! Resets at ${resetTime}`);
+    }
+  }
+}
+
 interface GitHubRepo {
   name: string;
   language: string | null;
@@ -41,26 +58,47 @@ export async function GET() {
       }
     );
 
+    logRateLimitStatus(userResponse.headers, 'user');
+
     if (!userResponse.ok) {
       throw new Error(`Failed to fetch user data: ${userResponse.status}`);
     }
 
     const user: GitHubUser = await userResponse.json();
 
-    // Fetch all repositories (not just first 100)
-    const reposResponse = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&type=owner`,
-      {
-        headers: getHeaders(),
-        next: { revalidate: 3600 }
-      }
-    );
+    // Fetch repositories with pagination support
+    let allRepos: GitHubRepo[] = [];
+    let page = 1;
+    const perPage = 100;
 
-    if (!reposResponse.ok) {
-      throw new Error(`Failed to fetch repositories: ${reposResponse.status}`);
+    while (true) {
+      const reposResponse = await fetch(
+        `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=${perPage}&type=owner&page=${page}`,
+        {
+          headers: getHeaders(),
+          next: { revalidate: 3600 }
+        }
+      );
+
+      logRateLimitStatus(reposResponse.headers, `repos (page ${page})`);
+
+      if (!reposResponse.ok) {
+        throw new Error(`Failed to fetch repositories: ${reposResponse.status}`);
+      }
+
+      const repos: GitHubRepo[] = await reposResponse.json();
+
+      if (repos.length === 0) break;
+
+      allRepos = [...allRepos, ...repos];
+
+      // If we got fewer than perPage, we've reached the end
+      if (repos.length < perPage) break;
+
+      page++;
     }
 
-    const repos: GitHubRepo[] = await reposResponse.json();
+    const repos = allRepos;
 
     // Filter out forks and calculate stats
     const ownRepos = repos.filter(repo => !repo.fork);
@@ -72,23 +110,39 @@ export async function GET() {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const since = sevenDaysAgo.toISOString();
 
-    // Fetch commits from top 10 most recently updated repos
-    const commitPromises = ownRepos.slice(0, 10).map(async (repo) => {
+    // Fetch commits from all own repos with pagination
+    const commitPromises = ownRepos.map(async (repo) => {
       try {
-        const commitsResponse = await fetch(
-          `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?since=${since}&per_page=100`,
-          {
-            headers: getHeaders(),
-            next: { revalidate: 3600 }
-          }
-        );
+        let totalCommits = 0;
+        let page = 1;
 
-        if (!commitsResponse.ok) {
-          return 0;
+        while (true) {
+          const commitsResponse = await fetch(
+            `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?since=${since}&per_page=100&page=${page}`,
+            {
+              headers: getHeaders(),
+              next: { revalidate: 3600 }
+            }
+          );
+
+          logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}`);
+
+          if (!commitsResponse.ok) {
+            return totalCommits;
+          }
+
+          const commits = await commitsResponse.json();
+          const commitCount = Array.isArray(commits) ? commits.length : 0;
+
+          totalCommits += commitCount;
+
+          // If fewer than 100 commits, we've reached the end
+          if (commitCount < 100) break;
+
+          page++;
         }
 
-        const commits = await commitsResponse.json();
-        return Array.isArray(commits) ? commits.length : 0;
+        return totalCommits;
       } catch (error) {
         return 0;
       }
@@ -106,15 +160,13 @@ export async function GET() {
   } catch (error) {
     console.error('GitHub stats API error:', error);
 
-    // Return fallback data
+    // Return proper error status
     return Response.json(
       {
-        repositories: 12,
-        stars: 45,
-        commitsLast7Days: 15,
-        followers: 20,
+        error: 'Failed to fetch GitHub stats',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 200 } // Return 200 with fallback data instead of error
+      { status: 500 }
     );
   }
 }
