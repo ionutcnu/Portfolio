@@ -1,14 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { Github, Linkedin, Twitter, Instagram } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+
+interface VisitorStats {
+  total: number;
+  today: number;
+}
 
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState("");
   const [globalClicks, setGlobalClicks] = useState(0);
-  const [commitHash, setCommitHash] = useState("loading...");
   const [servicesStatus, setServicesStatus] = useState<"operational" | "degraded" | "down">("operational");
+  const [visitors, setVisitors] = useState<VisitorStats>({ total: 0, today: 0 });
 
   // Update clock every second
   useEffect(() => {
@@ -39,22 +44,40 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch latest commit hash
+  // Track visitor and fetch stats
   useEffect(() => {
-    const fetchCommit = async () => {
+    const trackAndFetch = async () => {
+      // Get or create session ID
+      let sessionId = localStorage.getItem('analytics-session-id');
+      if (!sessionId) {
+        sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('analytics-session-id', sessionId);
+      }
+
+      // Track this visitor
       try {
-        const response = await fetch('/api/github/commits');
-        const data = await response.json() as Array<{ commits?: Array<{ sha?: string }> }>;
-        if (data[0]?.commits?.[0]?.sha) {
-          setCommitHash(data[0].commits[0].sha);
-        }
+        await fetch('/api/visitors/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
       } catch (error) {
-        console.error('Failed to fetch commit:', error);
-        setCommitHash('unknown');
+        console.error('Failed to track visitor:', error);
+      }
+
+      // Fetch visitor stats
+      try {
+        const response = await fetch('/api/visitors/stats');
+        const data = await response.json() as VisitorStats;
+        setVisitors(data);
+      } catch (error) {
+        console.error('Failed to fetch visitor stats:', error);
       }
     };
 
-    fetchCommit();
+    trackAndFetch();
+    const interval = setInterval(trackAndFetch, 60000); // Update every minute
+    return () => clearInterval(interval);
   }, []);
 
   // Check service status
@@ -107,7 +130,7 @@ const Footer = () => {
         {/* Right Section */}
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 gap-y-2">
           {/* Clock */}
-          <div className="flex items-center gap-1.5" title="Time on site">
+          <div className="flex items-center gap-1.5" title="Current time">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
               <circle cx="12" cy="12" r="10"/>
               <path d="M12 6v6l4 2"/>
@@ -117,21 +140,17 @@ const Footer = () => {
 
           <span className="hidden sm:inline text-border">-</span>
 
-          {/* View Counter */}
-          <span className="hover:text-accent transition-colors cursor-pointer" title="View Analytics">
-            {globalClicks.toLocaleString()} views
+          {/* Visitor Counter */}
+          <span className="hover:text-accent transition-colors cursor-pointer text-xs" title={`${visitors?.today || 0} visitors today`}>
+            Visitor #{(visitors?.total || 0).toLocaleString()}
           </span>
 
           <span className="hidden sm:inline text-border">-</span>
 
-          {/* Commit Hash */}
-          <div className="flex items-center gap-x-1 hover:text-accent transition-colors" title={`Deployment commit (${commitHash})`}>
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M12 3v6m0 6v6M3 12h6m6 0h6"/>
-            </svg>
-            <span className="font-mono text-xs">{commitHash}</span>
-          </div>
+          {/* View Counter */}
+          <span className="hover:text-accent transition-colors cursor-pointer text-xs" title="Total clicks">
+            {globalClicks.toLocaleString()} views
+          </span>
 
           <span className="hidden sm:inline text-border">-</span>
 
@@ -147,31 +166,13 @@ const Footer = () => {
               <Github size={18} strokeWidth={1.5} />
             </Link>
             <Link
-              href="https://linkedin.com/in/ionut-cioncu"
+              href="https://linkedin.com/in/cioncu"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-accent transition-colors"
               aria-label="LinkedIn"
             >
               <Linkedin size={18} strokeWidth={1.5} />
-            </Link>
-            <Link
-              href="https://x.com/ionutcnu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent transition-colors"
-              aria-label="X/Twitter"
-            >
-              <Twitter size={18} strokeWidth={1.5} />
-            </Link>
-            <Link
-              href="https://instagram.com/ionut.cioncu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent transition-colors"
-              aria-label="Instagram"
-            >
-              <Instagram size={18} strokeWidth={1.5} />
             </Link>
           </div>
         </div>
