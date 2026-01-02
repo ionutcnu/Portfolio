@@ -119,13 +119,6 @@ export default function RecentCommitsWidget() {
                   {commit.repo.split('/').pop() || commit.repo}:
                 </span>
                 <span className="min-w-0 flex-1 truncate">{commit.message}</span>
-                {commit.additions !== undefined && commit.deletions !== undefined && (
-                  <span className="flex-shrink-0 text-xs whitespace-nowrap">
-                    <span className="text-green-500">+{commit.additions}</span>
-                    <span className="text-muted-foreground/50">/</span>
-                    <span className="text-red-500">-{commit.deletions}</span>
-                  </span>
-                )}
               </a>
             </li>
           ))}

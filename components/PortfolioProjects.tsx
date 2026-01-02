@@ -2,6 +2,7 @@
 
 import { Star, ArrowRight, Link as LinkIcon } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Project {
   slug: string
@@ -101,10 +102,12 @@ export default function PortfolioProjects() {
                 <div className="flex items-center justify-between mt-6">
                   <div className="flex items-center -space-x-2">
                     {project.contributorAvatars?.map((avatar, i) => (
-                      <img
+                      <Image
                         key={i}
                         src={avatar}
                         alt={`Contributor ${i + 1}`}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full border-2 border-[#1a202c]"
                       />
                     ))}

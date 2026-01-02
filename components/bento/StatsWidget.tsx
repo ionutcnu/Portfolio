@@ -20,7 +20,12 @@ export default function StatsWidget() {
     const fetchStats = async () => {
       try {
         const response = await fetch('/api/github/stats');
-        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json() as GitHubStats;
         setStats(data);
       } catch (error) {
         console.error('Failed to fetch GitHub stats:', error);

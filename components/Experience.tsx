@@ -2,6 +2,7 @@
 
 import * as Popover from "@radix-ui/react-popover";
 import { Calendar, ExternalLink, X } from "lucide-react";
+import Image from "next/image";
 
 interface ExperienceItem {
   company: string;
@@ -67,9 +68,11 @@ export default function Experience() {
                     }`}
                     aria-label={`View details for ${item.role} at ${item.company}`}
                   >
-                    <img
+                    <Image
                       src={item.logoUrl}
                       alt={item.logoAlt}
+                      width={32}
+                      height={32}
                       className="max-h-8 min-h-7 w-auto min-w-6 object-contain"
                     />
                     <span className="text-muted-foreground group-hover:text-foreground group-focus-visible:text-foreground">
@@ -94,9 +97,11 @@ export default function Experience() {
                   >
                     <div className="mb-3 flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <img
+                        <Image
                           src={item.logoUrl}
                           alt={item.logoAlt}
+                          width={64}
+                          height={40}
                           className="h-10 w-auto max-w-[4rem] flex-shrink-0 rounded-md object-contain p-1"
                         />
                         <div>
