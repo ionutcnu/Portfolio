@@ -19,16 +19,19 @@ const Navigation = () => {
     { title: "About", href: "/about" },
     { title: "Posts", href: "/blog" },
     { title: "Projects", href: "/projects" },
-    { title: "Resume", href: "/contact" },
+    { title: "Resume", href: "/CV-Cioncu-Ionut.pdf", external: true },
   ]
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
 
   // Typing animation effect
   useEffect(() => {
+    // Compute breadcrumbs inside effect to avoid dependency issues
+    const currentBreadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4);
+
     // Build the path text for typing animation (without ~/)
-    const pathAfterHome = breadcrumbs.length > 0
-      ? `${breadcrumbs.join(' / ')}/`
+    const pathAfterHome = currentBreadcrumbs.length > 0
+      ? `${currentBreadcrumbs.join(' / ')}/`
       : ''
 
     setIsTyping(true)
@@ -105,20 +108,14 @@ const Navigation = () => {
               style={{ width: `${Math.max(editValue.length * 10 + 20, 100)}px` }}
             />
           ) : (
-            <span
-              className="text-[#e5a54b] cursor-text"
+            <button
+              className="text-[#e5a54b] cursor-text bg-transparent border-none p-0 font-mono text-md"
               onClick={handlePathClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handlePathClick()
-                }
-              }}
-              role="button"
-              tabIndex={0}
+              type="button"
               title="Click to edit path"
             >
               {displayedPath}
-            </span>
+            </button>
           )}
           {!isEditing && (
             <span className={`bg-[#e5a54b] h-4 w-2 ml-1 ${isTyping ? 'cursor-typing' : 'cursor-blink'}`} aria-hidden="true"></span>
@@ -139,13 +136,25 @@ const Navigation = () => {
       {/* Desktop Navigation */}
       <nav className="hidden items-center space-x-4 md:flex">
         {navItems.map((item) => (
-          <Link
-            key={item.title}
-            href={item.href}
-            className="text-foreground hover:text-[#e5a54b] rounded px-3 py-2 text-sm font-medium transition-colors duration-150"
-          >
-            {item.title}
-          </Link>
+          item.external ? (
+            <a
+              key={item.title}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-[#e5a54b] rounded px-3 py-2 text-sm font-medium transition-colors duration-150"
+            >
+              {item.title}
+            </a>
+          ) : (
+            <Link
+              key={item.title}
+              href={item.href}
+              className="text-foreground hover:text-[#e5a54b] rounded px-3 py-2 text-sm font-medium transition-colors duration-150"
+            >
+              {item.title}
+            </Link>
+          )
         ))}
         <button
           onClick={() => setIsOpen(!isOpen)}

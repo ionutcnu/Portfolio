@@ -6,7 +6,7 @@ A modern, responsive portfolio website built with Next.js, Tailwind CSS, shadcn/
 
 - **Bento Grid Layout**: Interactive widget-based layout showcasing different aspects of the portfolio
 - **Customizable Theme**: Accent color picker with Catppuccin color scheme support
-- **Interactive Widgets**: 
+- **Interactive Widgets**:
   - Location map integration with Leaflet
   - Real-time GitHub commits display
   - Click counter widget
@@ -72,7 +72,7 @@ bun run dev
 
 ## Project Structure
 
-```
+```plaintext
 Portfolio/
 ├── app/                    # Next.js app directory
 │   ├── globals.css        # Global styles
