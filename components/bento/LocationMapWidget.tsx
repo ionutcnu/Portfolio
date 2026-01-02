@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { MapPin, Clock, Sun, Moon, Cloud } from "lucide-react";
+import { MapPin, Clock, Sun, Moon } from "lucide-react";
 import { BentoBox } from "./BentoGrid";
 import dynamic from "next/dynamic";
 
@@ -64,8 +64,22 @@ export default function LocationMapWidget() {
     const fetchWeather = async () => {
       try {
         const response = await fetch('/api/weather');
-        const data = await response.json() as WeatherData;
-        setWeather(data);
+
+        if (!response.ok) {
+          console.error('Weather API error:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+
+        // Validate data structure
+        if (data && typeof data === 'object' &&
+            'location' in data && 'temp' in data &&
+            'condition' in data && 'icon' in data) {
+          setWeather(data as WeatherData);
+        } else {
+          console.error('Invalid weather data structure:', data);
+        }
       } catch (error) {
         console.error('Failed to fetch weather:', error);
       }

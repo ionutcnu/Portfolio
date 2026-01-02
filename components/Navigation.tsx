@@ -19,16 +19,19 @@ const Navigation = () => {
     { title: "About", href: "/about" },
     { title: "Posts", href: "/blog" },
     { title: "Projects", href: "/projects" },
-    { title: "Resume", href: "/CV Cioncu Ionut.pdf", external: true },
+    { title: "Resume", href: "/CV-Cioncu-Ionut.pdf", external: true },
   ]
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
 
   // Typing animation effect
   useEffect(() => {
+    // Compute breadcrumbs inside effect to avoid dependency issues
+    const currentBreadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4);
+
     // Build the path text for typing animation (without ~/)
-    const pathAfterHome = breadcrumbs.length > 0
-      ? `${breadcrumbs.join(' / ')}/`
+    const pathAfterHome = currentBreadcrumbs.length > 0
+      ? `${currentBreadcrumbs.join(' / ')}/`
       : ''
 
     setIsTyping(true)
@@ -56,7 +59,6 @@ const Navigation = () => {
         clearTimeout(timeoutId)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
   // Focus input when entering edit mode

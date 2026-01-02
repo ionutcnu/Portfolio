@@ -5,7 +5,7 @@ const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 // Rate limit tracking
-function logRateLimitStatus(headers: Headers, endpoint: string) {
+function logRateLimitStatus(headers: Headers, endpoint: string): boolean {
   const limit = headers.get('X-RateLimit-Limit');
   const remaining = headers.get('X-RateLimit-Remaining');
   const reset = headers.get('X-RateLimit-Reset');
@@ -17,8 +17,10 @@ function logRateLimitStatus(headers: Headers, endpoint: string) {
     const remainingNum = parseInt(remaining);
     if (remainingNum < 10) {
       console.warn(`[GitHub API] WARNING: Only ${remaining} requests remaining! Resets at ${resetTime}`);
+      return false; // Signal to stop making requests
     }
   }
+  return true; // Safe to continue
 }
 
 interface GitHubRepo {
@@ -110,9 +112,14 @@ export async function GET() {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const since = sevenDaysAgo.toISOString();
 
-    // Fetch commits from all own repos with pagination
-    const commitPromises = ownRepos.map(async (repo) => {
+    // Fetch commits from top 20 recently-updated repos to avoid rate limit exhaustion
+    const recentRepos = ownRepos.slice(0, 20);
+    let shouldContinue = true;
+
+    const commitPromises = recentRepos.map(async (repo) => {
       try {
+        if (!shouldContinue) return 0; // Early termination if rate limit is low
+
         let totalCommits = 0;
         let page = 1;
 
@@ -125,9 +132,9 @@ export async function GET() {
             }
           );
 
-          logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}`);
+          shouldContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}`);
 
-          if (!commitsResponse.ok) {
+          if (!commitsResponse.ok || !shouldContinue) {
             return totalCommits;
           }
 
