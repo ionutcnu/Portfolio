@@ -6,6 +6,7 @@ import StatsWidget from "@/components/bento/StatsWidget";
 import ClickCounterWidget from "@/components/bento/ClickCounterWidget";
 import LocationMapWidget from "@/components/bento/LocationMapWidget";
 import RecentCommitsWidget from "@/components/bento/RecentCommitsWidget";
+import TestimonialsWidget from "@/components/bento/TestimonialsWidget";
 import Experience from "@/components/Experience";
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
             <LocationMapWidget />
             <ClickCounterWidget />
             <StatsWidget />
+            <TestimonialsWidget />
             <RecentCommitsWidget />
           </BentoGrid>
         </section>

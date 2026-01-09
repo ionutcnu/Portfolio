@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Star, GitFork, Link as LinkIcon, Folder } from "lucide-react"
-import Image from "next/image"
+import { Folder } from "lucide-react"
+import ProjectCard from "@/components/ProjectCard"
 
 interface Contributor {
   login: string
@@ -22,6 +22,7 @@ interface Repository {
   languages: string[]
   topics: string[]
   url: string
+  homepage: string | null
   createdAt: string
   updatedAt: string
   pushedAt: string
@@ -50,15 +51,6 @@ const Projects = () => {
         setLoading(false)
       })
   }, [])
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -130,103 +122,20 @@ const Projects = () => {
         >
           {repos.map((repo, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <a
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/30 shadow-lg transition-all duration-300 hover:border-accent-dynamic/50 hover:shadow-xl"
-              >
-                {/* Terminal Window - GitHub Repo Preview */}
-                <div className="bg-gray-300 rounded-t-xl overflow-hidden">
-                  <div className="bg-[#2d3748] px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-                      <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                      <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-                    </div>
-                    <div className="flex items-center gap-3 text-white">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{repo.stars}</span>
-                        <Star className="w-4 h-4 fill-white" />
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{repo.forks}</span>
-                        <GitFork className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#1a202c] p-6 min-h-[200px] flex flex-col">
-                    <h3 className="font-mono text-base mb-4">
-                      <span className="text-pink-400">{repo.owner}</span>
-                      <span className="text-gray-500"> / </span>
-                      <span className="text-green-400 font-semibold">{repo.name}</span>
-                    </h3>
-
-                    <p className="text-gray-300 text-sm mb-auto line-clamp-2">
-                      {repo.description}
-                    </p>
-
-                    <div className="flex items-center justify-between mt-6">
-                      <div className="flex items-center -space-x-2">
-                        {repo.contributors.slice(0, 5).map((contributor, i) => (
-                          <Image
-                            key={i}
-                            src={contributor.avatar_url}
-                            alt={contributor.login}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 rounded-full border-2 border-[#1a202c]"
-                          />
-                        ))}
-                      </div>
-                      {repo.contributorCount > 0 && (
-                        <span className="text-xs text-gray-500">
-                          {repo.contributorCount} Contributor{repo.contributorCount !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Project Info */}
-                <div className="space-y-3 p-5 bg-gray-900/50">
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-white text-xl font-semibold group-hover:text-accent-dynamic transition-colors">
-                      {repo.name}
-                    </h3>
-                    <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                      {formatDate(repo.pushedAt)}
-                    </span>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {repo.languages.length > 0 ? (
-                      repo.languages.map((lang) => (
-                        <span
-                          key={lang}
-                          className="px-2 py-1 text-xs bg-blue-900/30 border border-blue-700/50 rounded text-blue-300"
-                        >
-                          {lang}
-                        </span>
-                      ))
-                    ) : repo.language && (
-                      <span className="px-2 py-1 text-xs bg-blue-900/30 border border-blue-700/50 rounded text-blue-300">
-                        {repo.language}
-                      </span>
-                    )}
-                    {repo.topics.map((topic) => (
-                      <span
-                        key={topic}
-                        className="px-2 py-1 text-xs bg-gray-800/50 border border-gray-700/50 rounded text-gray-300"
-                      >
-                        {topic}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </a>
+              <ProjectCard
+                name={repo.name}
+                owner={repo.owner}
+                description={repo.description}
+                stars={repo.stars}
+                forks={repo.forks}
+                language={repo.language}
+                languages={repo.languages}
+                topics={repo.topics}
+                url={repo.url}
+                homepage={repo.homepage}
+                contributors={repo.contributors}
+                contributorCount={repo.contributorCount}
+              />
             </motion.div>
           ))}
         </motion.div>

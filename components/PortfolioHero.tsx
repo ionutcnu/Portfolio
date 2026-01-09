@@ -32,7 +32,7 @@ export default function PortfolioHero() {
       </h1>
 
       <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
-        I&apos;m currently working as a QA Tester @{" "}
+        QA Tester with 4 years of experience at{" "}
         <Link
           href="https://www.endava.com/"
           target="_blank"
@@ -41,7 +41,29 @@ export default function PortfolioHero() {
         >
           Endava Romania
         </Link>
-        . I&apos;m in QA, but people say I think like a Business Analyst. I test real business scenarios, not just functionality. I go beyond the happy path, look for edge cases, and question if we&apos;re building the right thing.
+        . I test with context — understanding why we&apos;re building something, not just checking if it works.
+      </p>
+
+      <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
+        I&apos;ve worked across Naval Shipping and Payments domains, became the QA SME and I bridge the gap between testing and business analysis. I go beyond the happy path, look for edge cases, and question if we&apos;re building the right thing.
+      </p>
+
+      {/* Skills Section */}
+      <div className="mt-8 max-w-prose">
+        <h2 className="text-xl font-semibold mb-4">Tools & Technologies</h2>
+        <div className="bg-[#1e1e2e]/50 border border-gray-800 rounded-lg p-4 font-mono text-sm text-gray-300 space-y-2">
+          <div><span className="text-[#e5a54b]">API Testing:</span> Postman, REST APIs</div>
+          <div><span className="text-[#e5a54b]">Databases:</span> PostgreSQL, SQL scripting</div>
+          <div><span className="text-[#e5a54b]">Cloud & DevOps:</span> AWS S3, Azure, Kubernetes, Kibana</div>
+          <div><span className="text-[#e5a54b]">Messaging:</span> Apache Kafka</div>
+          <div><span className="text-[#e5a54b]">Automation:</span> Cypress, Selenium</div>
+          <div><span className="text-[#e5a54b]">Other:</span> JSON, Microservices, Git</div>
+        </div>
+      </div>
+
+      {/* CTA Line */}
+      <p className="text-gray-400 max-w-prose text-base italic">
+        Currently open to interesting projects and conversations.
       </p>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">

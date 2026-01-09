@@ -9,6 +9,7 @@ interface GitHubRepo {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage: string | null;
   stargazers_count: number;
   forks_count: number;
   language: string | null;
@@ -36,6 +37,7 @@ interface EnrichedRepo {
   languages: string[];
   topics: string[];
   url: string;
+  homepage: string | null;
   createdAt: string;
   updatedAt: string;
   pushedAt: string;
@@ -137,6 +139,7 @@ export async function GET() {
             languages: languages,
             topics: repo.topics || [],
             url: repo.html_url,
+            homepage: repo.homepage,
             createdAt: repo.created_at,
             updatedAt: repo.updated_at,
             pushedAt: repo.pushed_at,
@@ -155,6 +158,7 @@ export async function GET() {
             languages: repo.language ? [repo.language] : [],
             topics: repo.topics || [],
             url: repo.html_url,
+            homepage: repo.homepage,
             createdAt: repo.created_at,
             updatedAt: repo.updated_at,
             pushedAt: repo.pushed_at,
