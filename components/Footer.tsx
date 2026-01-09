@@ -114,7 +114,17 @@ const Footer = () => {
       <footer className="bg-[#11111b] text-[#a6adc8] border border-[#313244]/20 flex h-auto flex-col md:flex-row items-center justify-center md:justify-between gap-y-3 md:gap-y-0 rounded-lg p-5 text-sm">
         {/* Left Section */}
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2">
-          <span className="whitespace-nowrap">© {new Date().getFullYear()} Ionut Cioncu</span>
+          <span className="whitespace-nowrap">
+            © {new Date().getFullYear()} Ionut Cioncu - Design mirrored from{" "}
+            <a
+              href="https://jasoncameron.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition-colors underline decoration-dotted underline-offset-2"
+            >
+              jasoncameron.dev
+            </a>
+          </span>
 
           <span className="hidden md:inline text-border">-</span>
 

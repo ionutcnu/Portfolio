@@ -1,50 +1,64 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Github } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Star, GitFork, Link as LinkIcon, Folder } from "lucide-react"
+import Image from "next/image"
+
+interface Contributor {
+  login: string
+  avatar_url: string
+  html_url: string
+  contributions: number
+}
+
+interface Repository {
+  name: string
+  owner: string
+  description: string
+  stars: number
+  forks: number
+  language: string | null
+  languages: string[]
+  topics: string[]
+  url: string
+  createdAt: string
+  updatedAt: string
+  pushedAt: string
+  contributors: Contributor[]
+  contributorCount: number
+}
 
 const Projects = () => {
-  const projects = [
-    {
-      name: "BATS",
-      problem: "Job hunting is exhausting. ATS systems reject good candidates for arbitrary reasons.",
-      solution: "Built a tool to understand how these systems work and optimize my applications. Because if the game has rules, I want to know them.",
-      impact: "Learned about parsing, keyword optimization, and what actually matters in a resume.",
-      language: "C#",
-      url: "https://github.com/ionutcnu/BATS",
-      topics: ["problem-solving", "automation", "career"],
-    },
-    {
-      name: "Watcher",
-      problem: "I play World of Tanks. Wanted to track clan performance and see patterns over time.",
-      solution: "Created an aggregator that pulls stats and shows trends. Started as curiosity, became useful for clan recruitment decisions.",
-      impact: "Turns out data visualization helps make better team decisions. Who knew?",
-      language: "TypeScript",
-      url: "https://github.com/ionutcnu/Watcher",
-      topics: ["data", "analytics", "user-needs"],
-    },
-    {
-      name: "browser-use",
-      problem: "AI agents are fascinating. But can they actually navigate websites like humans?",
-      solution: "Experimenting with AI-powered browser automation. Exploring what's possible when you combine AI reasoning with web interaction.",
-      impact: "Learning about AI capabilities, limitations, and practical applications.",
-      language: "Python",
-      url: "https://github.com/ionutcnu/browser-use",
-      topics: ["ai-exploration", "automation", "learning"],
-    },
-    {
-      name: "Portfolio",
-      problem: "Tired of pretending to be something I'm not. Needed a space that's actually me.",
-      solution: "You're looking at it. Built with AI tools (yes, I'm transparent about that) to show who I actually am: a curious problem-solver transitioning from QA to Product Owner roles.",
-      impact: "Authenticity over fake credentials. If this doesn't resonate with you, we probably wouldn't work well together anyway.",
-      language: "TypeScript",
-      url: "https://github.com/ionutcnu/Portfolio",
-      topics: ["authenticity", "personal-brand", "next.js"],
-    },
-  ]
+  const [repos, setRepos] = useState<Repository[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/github/repositories')
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          setError(data.error)
+        } else {
+          setRepos(data)
+        }
+        setLoading(false)
+      })
+      .catch(err => {
+        setError('Failed to load repositories')
+        setLoading(false)
+      })
+  }, [])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -67,14 +81,28 @@ const Projects = () => {
     },
   }
 
-  const getLanguageColor = (language: string) => {
-    const colors: { [key: string]: string } = {
-      TypeScript: "bg-blue-500",
-      Python: "bg-yellow-500",
-      "C#": "bg-purple-500",
-      JavaScript: "bg-yellow-300",
-    }
-    return colors[language] || "bg-gray-500"
+  if (loading) {
+    return (
+      <section id="projects" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section id="projects" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -85,14 +113,12 @@ const Projects = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Things I <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Built</span>
+          <h2 className="flex items-center gap-3 text-4xl md:text-5xl font-bold mb-4">
+            <Folder className="text-accent-dynamic" />
+            <span>Projects</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Personal projects that solve real problems. Built with curiosity and AI tools. No fake credentials.
-          </p>
         </motion.div>
 
         <motion.div
@@ -100,81 +126,109 @@ const Projects = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {projects.map((project, index) => (
+          {repos.map((repo, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full flex flex-col shadow-md hover:shadow-xl transition-all duration-300 border-muted group hover:border-accent-dynamic/50">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
+              <a
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/30 shadow-lg transition-all duration-300 hover:border-accent-dynamic/50 hover:shadow-xl"
+              >
+                {/* Terminal Window - GitHub Repo Preview */}
+                <div className="bg-gray-300 rounded-t-xl overflow-hidden">
+                  <div className="bg-[#2d3748] px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {project.language && (
-                        <div className="flex items-center gap-1">
-                          <div className={`w-3 h-3 rounded-full ${getLanguageColor(project.language)}`} />
-                          <span className="text-xs text-muted-foreground">{project.language}</span>
-                        </div>
+                      <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                      <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                      <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                    </div>
+                    <div className="flex items-center gap-3 text-white">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{repo.stars}</span>
+                        <Star className="w-4 h-4 fill-white" />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{repo.forks}</span>
+                        <GitFork className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1a202c] p-6 min-h-[200px] flex flex-col">
+                    <h3 className="font-mono text-base mb-4">
+                      <span className="text-pink-400">{repo.owner}</span>
+                      <span className="text-gray-500"> / </span>
+                      <span className="text-green-400 font-semibold">{repo.name}</span>
+                    </h3>
+
+                    <p className="text-gray-300 text-sm mb-auto line-clamp-2">
+                      {repo.description}
+                    </p>
+
+                    <div className="flex items-center justify-between mt-6">
+                      <div className="flex items-center -space-x-2">
+                        {repo.contributors.slice(0, 5).map((contributor, i) => (
+                          <Image
+                            key={i}
+                            src={contributor.avatar_url}
+                            alt={contributor.login}
+                            width={32}
+                            height={32}
+                            className="w-8 h-8 rounded-full border-2 border-[#1a202c]"
+                          />
+                        ))}
+                      </div>
+                      {repo.contributorCount > 0 && (
+                        <span className="text-xs text-gray-500">
+                          {repo.contributorCount} Contributor{repo.contributorCount !== 1 ? 's' : ''}
+                        </span>
                       )}
                     </div>
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-accent-dynamic transition-colors"
-                    >
-                      <Github className="h-5 w-5" />
-                    </a>
                   </div>
-                  <CardTitle className="group-hover:text-accent-dynamic transition-colors">
-                    {project.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-3 text-sm">
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Problem</p>
-                    <CardDescription className="text-sm">{project.problem}</CardDescription>
+                </div>
+
+                {/* Project Info */}
+                <div className="space-y-3 p-5 bg-gray-900/50">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-white text-xl font-semibold group-hover:text-accent-dynamic transition-colors">
+                      {repo.name}
+                    </h3>
+                    <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
+                      {formatDate(repo.pushedAt)}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Solution</p>
-                    <CardDescription className="text-sm">{project.solution}</CardDescription>
-                  </div>
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Impact</p>
-                    <CardDescription className="text-sm">{project.impact}</CardDescription>
-                  </div>
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.topics.map((topic, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs">
+
+                  {/* Tags */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {repo.languages.length > 0 ? (
+                      repo.languages.map((lang) => (
+                        <span
+                          key={lang}
+                          className="px-2 py-1 text-xs bg-blue-900/30 border border-blue-700/50 rounded text-blue-300"
+                        >
+                          {lang}
+                        </span>
+                      ))
+                    ) : repo.language && (
+                      <span className="px-2 py-1 text-xs bg-blue-900/30 border border-blue-700/50 rounded text-blue-300">
+                        {repo.language}
+                      </span>
+                    )}
+                    {repo.topics.map((topic) => (
+                      <span
+                        key={topic}
+                        className="px-2 py-1 text-xs bg-gray-800/50 border border-gray-700/50 rounded text-gray-300"
+                      >
                         {topic}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button asChild variant="ghost" size="sm">
-                    <a href={project.url} target="_blank" rel="noopener noreferrer">
-                      <Github className="mr-2 h-4 w-4" />
-                      View Project
-                    </a>
-                  </Button>
-                </CardFooter>
-              </Card>
+                </div>
+              </a>
             </motion.div>
           ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-12"
-        >
-          <Button asChild size="lg" variant="outline">
-            <a href="https://github.com/ionutcnu?tab=repositories" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" />
-              View All Projects
-            </a>
-          </Button>
         </motion.div>
       </div>
     </section>
