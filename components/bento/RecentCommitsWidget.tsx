@@ -95,10 +95,10 @@ export default function RecentCommitsWidget() {
             <span>Recent Commits</span>
           </h3>
           <a
-            href="https://github.com"
+            href="https://github.com/ionutcnu?tab=repositories"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="See commit details"
+            aria-label="View all repositories"
             className="text-accent-dynamic/80 hover:text-accent-dynamic text-xs font-medium transition-colors"
           >
             [info]

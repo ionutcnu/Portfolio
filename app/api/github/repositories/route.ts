@@ -102,15 +102,20 @@ export async function GET() {
           let contributorCount = 0;
 
           if (contributorsResponse.ok) {
-            contributors = await contributorsResponse.json();
+            const contributorsData = await contributorsResponse.json();
 
-            // Get total contributor count from Link header if available
-            const linkHeader = contributorsResponse.headers.get('Link');
-            if (linkHeader) {
-              const match = linkHeader.match(/page=(\d+)>; rel="last"/);
-              contributorCount = match ? parseInt(match[1], 10) * 5 : contributors.length;
-            } else {
-              contributorCount = contributors.length;
+            // Validate response is an array
+            if (Array.isArray(contributorsData)) {
+              contributors = contributorsData;
+
+              // Get total contributor count from Link header if available
+              const linkHeader = contributorsResponse.headers.get('Link');
+              if (linkHeader) {
+                const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+                contributorCount = match ? parseInt(match[1], 10) * 5 : contributors.length;
+              } else {
+                contributorCount = contributors.length;
+              }
             }
           }
 

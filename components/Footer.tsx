@@ -27,20 +27,24 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch global clicks
+  // Fetch global clicks and check service status
   useEffect(() => {
-    const fetchClicks = async () => {
+    const fetchClicksAndStatus = async () => {
       try {
         const response = await fetch('/api/clicks');
-        const data = await response.json() as { clicks?: number };
-        setGlobalClicks(data.clicks || 0);
+        setServicesStatus(response.ok ? 'operational' : 'degraded');
+        if (response.ok) {
+          const data = await response.json() as { clicks?: number };
+          setGlobalClicks(data.clicks || 0);
+        }
       } catch (error) {
         console.error('Failed to fetch clicks:', error);
+        setServicesStatus('down');
       }
     };
 
-    fetchClicks();
-    const interval = setInterval(fetchClicks, 10000); // Update every 10s
+    fetchClicksAndStatus();
+    const interval = setInterval(fetchClicksAndStatus, 10000); // Update every 10s
     return () => clearInterval(interval);
   }, []);
 
@@ -80,21 +84,6 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Check service status
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const response = await fetch('/api/clicks');
-        setServicesStatus(response.ok ? 'operational' : 'degraded');
-      } catch (error) {
-        setServicesStatus('down');
-      }
-    };
-
-    checkStatus();
-    const interval = setInterval(checkStatus, 30000); // Check every 30s
-    return () => clearInterval(interval);
-  }, []);
 
   const statusColors = {
     operational: 'bg-green-500',

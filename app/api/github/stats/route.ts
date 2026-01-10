@@ -1,6 +1,5 @@
 // GitHub stats API endpoint
 export const dynamic = 'force-dynamic';
-export const revalidate = 0; // Disable all caching
 
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;

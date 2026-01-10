@@ -4,31 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Folder } from "lucide-react"
 import ProjectCard from "@/components/ProjectCard"
-
-interface Contributor {
-  login: string
-  avatar_url: string
-  html_url: string
-  contributions: number
-}
-
-interface Repository {
-  name: string
-  owner: string
-  description: string
-  stars: number
-  forks: number
-  language: string | null
-  languages: string[]
-  topics: string[]
-  url: string
-  homepage: string | null
-  createdAt: string
-  updatedAt: string
-  pushedAt: string
-  contributors: Contributor[]
-  contributorCount: number
-}
+import type { Repository } from "@/types/github"
 
 const Projects = () => {
   const [repos, setRepos] = useState<Repository[]>([])
@@ -41,10 +17,10 @@ const Projects = () => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`)
         }
-        return res.json()
+        return res.json() as Promise<Repository[] | { error: string }>
       })
-      .then((data: any) => {
-        if (data.error) {
+      .then((data) => {
+        if ('error' in data) {
           setError(data.error)
         } else if (Array.isArray(data)) {
           setRepos(data)
@@ -53,8 +29,9 @@ const Projects = () => {
         }
         setLoading(false)
       })
-      .catch(err => {
-        setError('Failed to load repositories')
+      .catch((err: Error) => {
+        console.error('Failed to load repositories:', err)
+        setError(err.message || 'Failed to load repositories')
         setLoading(false)
       })
   }, [])

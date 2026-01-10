@@ -3,13 +3,7 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-
-interface Contributor {
-  login: string
-  avatar_url: string
-  html_url: string
-  contributions: number
-}
+import type { Contributor } from "@/types/github"
 
 interface ProjectCardProps {
   name: string

@@ -33,13 +33,12 @@ export default function TestimonialsWidget() {
           const isExpanded = expandedIndex === index
 
           return (
-            <div
+            <button
               key={index}
-              role="button"
-              tabIndex={0}
+              type="button"
               onClick={() => toggleExpand(index)}
               onKeyDown={(e) => handleKeyPress(e, index)}
-              className="cursor-pointer rounded-lg border border-gray-700/30 bg-gray-800/20 p-3 transition-all hover:border-accent-dynamic/50 hover:bg-gray-800/30"
+              className="w-full cursor-pointer rounded-lg border border-gray-700/30 bg-gray-800/20 p-3 text-left transition-all hover:border-accent-dynamic/50 hover:bg-gray-800/30"
             >
               {/* Quote */}
               <p className={`text-sm text-gray-200 italic leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
@@ -70,7 +69,7 @@ export default function TestimonialsWidget() {
                   {isExpanded ? '▲' : '▼'}
                 </div>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>

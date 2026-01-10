@@ -7,6 +7,14 @@ import { usePathname } from "next/navigation"
 export default function NotFound() {
   const pathname = usePathname()
 
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      window.history.back()
+    } else {
+      window.location.href = '/'
+    }
+  }
+
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">
       <div className="w-full max-w-2xl space-y-8 text-center">
@@ -44,7 +52,7 @@ export default function NotFound() {
             </Link>
             <button
               type="button"
-              onClick={() => window.history.back()}
+              onClick={handleGoBack}
               className="inline-flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-6 py-3 font-medium text-white transition-all hover:bg-gray-800 hover:scale-105"
             >
               <ArrowLeft size={20} />

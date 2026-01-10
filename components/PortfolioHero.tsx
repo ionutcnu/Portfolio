@@ -1,5 +1,6 @@
 import { Github, Linkedin, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { skills } from "@/lib/skills-data"
 
 export default function PortfolioHero() {
   return (
@@ -29,12 +30,11 @@ export default function PortfolioHero() {
       <div className="mt-8 max-w-prose">
         <h2 className="text-xl font-semibold mb-4">Tools & Technologies</h2>
         <div className="bg-[#1e1e2e]/50 border border-gray-800 rounded-lg p-4 font-mono text-sm text-gray-300 space-y-2">
-          <div><span className="text-[#e5a54b]">API Testing:</span> Postman, REST APIs</div>
-          <div><span className="text-[#e5a54b]">Databases:</span> PostgreSQL, SQL scripting</div>
-          <div><span className="text-[#e5a54b]">Cloud & DevOps:</span> AWS S3, Azure, Kubernetes, Kibana</div>
-          <div><span className="text-[#e5a54b]">Messaging:</span> Apache Kafka</div>
-          <div><span className="text-[#e5a54b]">Automation:</span> Cypress, Selenium</div>
-          <div><span className="text-[#e5a54b]">Other:</span> JSON, Microservices, Git</div>
+          {skills.map((skill) => (
+            <div key={skill.category}>
+              <span className="text-[#e5a54b]">{skill.category}:</span> {skill.skills}
+            </div>
+          ))}
         </div>
       </div>
 

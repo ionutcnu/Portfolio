@@ -15,9 +15,9 @@ export default function Testimonials() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {testimonials.map((testimonial, index) => (
+        {testimonials.map((testimonial) => (
           <Card
-            key={index}
+            key={`${testimonial.author}-${testimonial.company}`}
             className="group relative overflow-hidden border-gray-700/50 bg-gray-900/30 hover:border-[#e5a54b]/50 transition-all duration-300"
           >
             <CardContent className="p-6 space-y-4">
