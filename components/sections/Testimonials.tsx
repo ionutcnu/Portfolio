@@ -2,7 +2,7 @@
 
 import { Quote } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { testimonials } from "@/lib/testimonials-data"
+import { testimonials } from "@/lib/data/testimonials"
 
 export default function Testimonials() {
   return (

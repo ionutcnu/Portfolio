@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Menu } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { navItems } from "@/lib/constants/navigation"
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,12 +15,6 @@ const Navigation = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const navItems = [
-    { title: "About", href: "/about" },
-    { title: "Projects", href: "/projects" },
-    { title: "Resume", href: "/CV-Cioncu-Ionut.pdf", external: true },
-  ]
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
 

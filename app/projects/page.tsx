@@ -1,4 +1,4 @@
-import Projects from "@/components/Projects";
+import Projects from "@/components/sections/Projects";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

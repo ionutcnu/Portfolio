@@ -1,4 +1,4 @@
-import Skills from "@/components/Skills";
+import Skills from "@/components/sections/Skills";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
-import PortfolioHero from "@/components/PortfolioHero";
-import PortfolioProjects from "@/components/PortfolioProjects";
+import PortfolioHero from "@/components/sections/PortfolioHero";
+import PortfolioProjects from "@/components/sections/PortfolioProjects";
 import BentoGrid from "@/components/bento/BentoGrid";
 import ContactWidget from "@/components/bento/ContactWidget";
 import StatsWidget from "@/components/bento/StatsWidget";
@@ -7,7 +7,7 @@ import ClickCounterWidget from "@/components/bento/ClickCounterWidget";
 import LocationMapWidget from "@/components/bento/LocationMapWidget";
 import RecentCommitsWidget from "@/components/bento/RecentCommitsWidget";
 import TestimonialsWidget from "@/components/bento/TestimonialsWidget";
-import Experience from "@/components/Experience";
+import Experience from "@/components/sections/Experience";
 
 export default function Home() {
 

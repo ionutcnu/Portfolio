@@ -3,8 +3,8 @@ import { ThemeProvider } from "next-themes";
 import "@fontsource/jetbrains-mono";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import Navigation from "@/components/layout/Navigation";
+import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "Ionut - Full Stack Developer Portfolio",
