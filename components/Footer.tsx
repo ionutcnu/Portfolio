@@ -27,20 +27,24 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch global clicks
+  // Fetch global clicks and check service status
   useEffect(() => {
-    const fetchClicks = async () => {
+    const fetchClicksAndStatus = async () => {
       try {
-        const response = await fetch('/api/clicks/increment');
-        const data = await response.json() as { clicks?: number };
-        setGlobalClicks(data.clicks || 0);
+        const response = await fetch('/api/clicks');
+        setServicesStatus(response.ok ? 'operational' : 'degraded');
+        if (response.ok) {
+          const data = await response.json() as { clicks?: number };
+          setGlobalClicks(data.clicks || 0);
+        }
       } catch (error) {
         console.error('Failed to fetch clicks:', error);
+        setServicesStatus('down');
       }
     };
 
-    fetchClicks();
-    const interval = setInterval(fetchClicks, 10000); // Update every 10s
+    fetchClicksAndStatus();
+    const interval = setInterval(fetchClicksAndStatus, 10000); // Update every 10s
     return () => clearInterval(interval);
   }, []);
 
@@ -50,7 +54,7 @@ const Footer = () => {
       // Get or create session ID
       let sessionId = localStorage.getItem('analytics-session-id');
       if (!sessionId) {
-        sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         localStorage.setItem('analytics-session-id', sessionId);
       }
 
@@ -80,21 +84,6 @@ const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Check service status
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const response = await fetch('/api/clicks/increment');
-        setServicesStatus(response.ok ? 'operational' : 'degraded');
-      } catch (error) {
-        setServicesStatus('down');
-      }
-    };
-
-    checkStatus();
-    const interval = setInterval(checkStatus, 30000); // Check every 30s
-    return () => clearInterval(interval);
-  }, []);
 
   const statusColors = {
     operational: 'bg-green-500',
@@ -109,12 +98,14 @@ const Footer = () => {
   };
 
   return (
-    <div className="relative m-auto mx-5 mb-5">
+    <div className="relative m-auto mx-3 md:mx-5 mb-5">
       {/* Main footer */}
-      <footer className="bg-[#11111b] text-[#a6adc8] border border-[#313244]/20 flex h-auto flex-col md:flex-row items-center justify-center md:justify-between gap-y-3 md:gap-y-0 rounded-lg p-5 text-sm">
+      <footer className="bg-[#11111b] text-[#a6adc8] border border-[#313244]/20 flex h-auto flex-col md:flex-row items-center justify-center md:justify-between gap-y-3 md:gap-y-0 rounded-lg p-3 md:p-5 text-xs md:text-sm">
         {/* Left Section */}
-        <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2">
-          <span className="whitespace-nowrap">© {new Date().getFullYear()} Ionut Cioncu</span>
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2 text-center md:text-left">
+          <span className="max-w-full">
+            © {new Date().getFullYear()} Ionut Cioncu 
+          </span>
 
           <span className="hidden md:inline text-border">-</span>
 
@@ -123,39 +114,40 @@ const Footer = () => {
               <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${statusColors[servicesStatus]}/75`}></span>
               <span className={`relative inline-flex h-3 w-3 rounded-full ${statusColors[servicesStatus]}`}></span>
             </span>
-            <span className="text-sm font-medium">{statusTexts[servicesStatus]}</span>
+            <span className="text-xs md:text-sm font-medium">{statusTexts[servicesStatus]}</span>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 gap-y-2">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-2 md:gap-x-3 gap-y-2 text-xs">
           {/* Clock */}
           <div className="flex items-center gap-1.5" title="Current time">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+            <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" role="img" aria-label="Current time">
+              <title>Clock</title>
               <circle cx="12" cy="12" r="10"/>
               <path d="M12 6v6l4 2"/>
             </svg>
-            <span className="font-mono text-xs text-accent">{currentTime}</span>
+            <span className="font-mono text-accent">{currentTime}</span>
           </div>
 
           <span className="hidden sm:inline text-border">-</span>
 
           {/* Visitor Counter */}
-          <span className="hover:text-accent transition-colors cursor-pointer text-xs" title={`${visitors?.today || 0} visitors today`}>
+          <span className="hover:text-accent transition-colors cursor-pointer" title={`${visitors?.today || 0} visitors today`}>
             Visitor #{(visitors?.total || 0).toLocaleString()}
           </span>
 
           <span className="hidden sm:inline text-border">-</span>
 
           {/* View Counter */}
-          <span className="hover:text-accent transition-colors cursor-pointer text-xs" title="Total clicks">
+          <span className="hover:text-accent transition-colors cursor-pointer" title="Total clicks">
             {globalClicks.toLocaleString()} views
           </span>
 
           <span className="hidden sm:inline text-border">-</span>
 
           {/* Social Links */}
-          <div className="flex items-center gap-x-3">
+          <div className="flex items-center gap-x-2 md:gap-x-3">
             <Link
               href="https://github.com/ionutcnu"
               target="_blank"
@@ -163,7 +155,7 @@ const Footer = () => {
               className="hover:text-accent transition-colors"
               aria-label="GitHub"
             >
-              <Github size={18} strokeWidth={1.5} />
+              <Github size={16} className="md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
             </Link>
             <Link
               href="https://linkedin.com/in/cioncu"
@@ -172,7 +164,7 @@ const Footer = () => {
               className="hover:text-accent transition-colors"
               aria-label="LinkedIn"
             >
-              <Linkedin size={18} strokeWidth={1.5} />
+              <Linkedin size={16} className="md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
             </Link>
           </div>
         </div>

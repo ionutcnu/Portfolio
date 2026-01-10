@@ -17,7 +17,6 @@ const Navigation = () => {
 
   const navItems = [
     { title: "About", href: "/about" },
-    { title: "Posts", href: "/blog" },
     { title: "Projects", href: "/projects" },
     { title: "Resume", href: "/CV-Cioncu-Ionut.pdf", external: true },
   ]
@@ -156,13 +155,6 @@ const Navigation = () => {
             </Link>
           )
         ))}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-foreground hover:text-[#e5a54b] cursor-pointer rounded px-3 py-2 text-sm font-medium"
-          aria-label="Open more navigation items"
-        >
-          More...
-        </button>
       </nav>
 
       <style jsx>{`

@@ -28,6 +28,8 @@ interface GitHubRepo {
   language: string | null;
   stargazers_count: number;
   fork: boolean;
+  updated_at: string;
+  pushed_at: string;
 }
 
 interface GitHubUser {
@@ -51,12 +53,16 @@ function getHeaders() {
 
 export async function GET() {
   try {
+    console.log('[GitHub API] Starting stats fetch...');
+    console.log('[GitHub API] Username:', GITHUB_USERNAME);
+    console.log('[GitHub API] Has token:', !!GITHUB_TOKEN);
+
     // Fetch user info
     const userResponse = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}`,
       {
         headers: getHeaders(),
-        next: { revalidate: 3600 } // Cache for 1 hour
+        cache: 'no-store'
       }
     );
 
@@ -75,10 +81,10 @@ export async function GET() {
 
     while (true) {
       const reposResponse = await fetch(
-        `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=${perPage}&type=owner&page=${page}`,
+        `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=${perPage}&type=owner&page=${page}`,
         {
           headers: getHeaders(),
-          next: { revalidate: 3600 }
+          cache: 'no-store'
         }
       );
 
@@ -100,10 +106,11 @@ export async function GET() {
       page++;
     }
 
-    const repos = allRepos;
+    console.log('[GitHub API] Total repos fetched:', allRepos.length);
 
     // Filter out forks and calculate stats
-    const ownRepos = repos.filter(repo => !repo.fork);
+    const ownRepos = allRepos.filter(repo => !repo.fork);
+    console.log('[GitHub API] Own repos (non-forks):', ownRepos.length);
 
     const totalStars = ownRepos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
 
@@ -112,41 +119,66 @@ export async function GET() {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const since = sevenDaysAgo.toISOString();
 
-    // Fetch commits from top 20 recently-updated repos to avoid rate limit exhaustion
-    const recentRepos = ownRepos.slice(0, 20);
+    console.log('[GitHub API] Fetching commits since:', since);
+    console.log('[GitHub API] Checking repos owned by:', GITHUB_USERNAME);
+
+    // Limit repos based on token availability to avoid rate limit issues
+    const maxRepos = GITHUB_TOKEN ? 20 : 5; // Fewer repos without token
+    const recentRepos = ownRepos.slice(0, maxRepos);
+    console.log('[GitHub API] Checking these repos for commits:', recentRepos.map(r => r.name));
     let shouldContinue = true;
 
     const commitPromises = recentRepos.map(async (repo) => {
       try {
-        if (!shouldContinue) return 0; // Early termination if rate limit is low
+        if (!shouldContinue) return 0;
+
+        // Fetch branches for this repo (limit to 5 most recently updated)
+        const branchesResponse = await fetch(
+          `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/branches?per_page=5`,
+          {
+            headers: getHeaders(),
+            cache: 'no-store'
+          }
+        );
+
+        if (!branchesResponse.ok) {
+          console.log(`[GitHub API] Failed to fetch branches for ${repo.name}`);
+          return 0;
+        }
+
+        const branches = await branchesResponse.json();
+        const branchNames = Array.isArray(branches) ? branches.map((b: any) => b.name) : [];
+
+        console.log(`[GitHub API] ${repo.name} branches:`, branchNames);
 
         let totalCommits = 0;
-        let page = 1;
 
-        while (true) {
-          const commitsResponse = await fetch(
-            `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?since=${since}&per_page=100&page=${page}`,
-            {
+        // Check commits from all branches (max 5 branches to avoid too many requests)
+        for (const branchName of branchNames.slice(0, 5)) {
+          try {
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?sha=${branchName}&since=${since}&per_page=100`;
+
+            const commitsResponse = await fetch(url, {
               headers: getHeaders(),
-              next: { revalidate: 3600 }
+              cache: 'no-store'
+            });
+
+            shouldContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}/${branchName}`);
+
+            if (!commitsResponse.ok || !shouldContinue) {
+              continue;
             }
-          );
 
-          shouldContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}`);
+            const commits = await commitsResponse.json();
+            const commitCount = Array.isArray(commits) ? commits.length : 0;
 
-          if (!commitsResponse.ok || !shouldContinue) {
-            return totalCommits;
+            if (commitCount > 0) {
+              console.log(`[GitHub API] ${repo.name}/${branchName}: ${commitCount} commits`);
+              totalCommits += commitCount;
+            }
+          } catch (error) {
+            console.log(`[GitHub API] Error fetching commits from ${repo.name}/${branchName}:`, error);
           }
-
-          const commits = await commitsResponse.json();
-          const commitCount = Array.isArray(commits) ? commits.length : 0;
-
-          totalCommits += commitCount;
-
-          // If fewer than 100 commits, we've reached the end
-          if (commitCount < 100) break;
-
-          page++;
         }
 
         return totalCommits;
@@ -158,6 +190,9 @@ export async function GET() {
     const commitCounts = await Promise.all(commitPromises);
     const totalCommitsLast7Days = commitCounts.reduce((sum, count) => sum + count, 0);
 
+    console.log('[GitHub API] Total commits in last 7 days:', totalCommitsLast7Days);
+    console.log('[GitHub API] Per-repo breakdown:', commitCounts);
+
     return Response.json({
       repositories: ownRepos.length,
       stars: totalStars,
@@ -166,12 +201,16 @@ export async function GET() {
     });
   } catch (error) {
     console.error('GitHub stats API error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
 
-    // Return proper error status
+    // Return proper error status (stack trace only in development)
     return Response.json(
       {
         error: 'Failed to fetch GitHub stats',
         message: error instanceof Error ? error.message : 'Unknown error',
+        ...(process.env.NODE_ENV === 'development' && {
+          stack: error instanceof Error ? error.stack : undefined
+        })
       },
       { status: 500 }
     );

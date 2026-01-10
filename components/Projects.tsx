@@ -1,50 +1,40 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Github } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Folder } from "lucide-react"
+import ProjectCard from "@/components/ProjectCard"
+import type { Repository } from "@/types/github"
 
 const Projects = () => {
-  const projects = [
-    {
-      name: "BATS",
-      problem: "Job hunting is exhausting. ATS systems reject good candidates for arbitrary reasons.",
-      solution: "Built a tool to understand how these systems work and optimize my applications. Because if the game has rules, I want to know them.",
-      impact: "Learned about parsing, keyword optimization, and what actually matters in a resume.",
-      language: "C#",
-      url: "https://github.com/ionutcnu/BATS",
-      topics: ["problem-solving", "automation", "career"],
-    },
-    {
-      name: "Watcher",
-      problem: "I play World of Tanks. Wanted to track clan performance and see patterns over time.",
-      solution: "Created an aggregator that pulls stats and shows trends. Started as curiosity, became useful for clan recruitment decisions.",
-      impact: "Turns out data visualization helps make better team decisions. Who knew?",
-      language: "TypeScript",
-      url: "https://github.com/ionutcnu/Watcher",
-      topics: ["data", "analytics", "user-needs"],
-    },
-    {
-      name: "browser-use",
-      problem: "AI agents are fascinating. But can they actually navigate websites like humans?",
-      solution: "Experimenting with AI-powered browser automation. Exploring what's possible when you combine AI reasoning with web interaction.",
-      impact: "Learning about AI capabilities, limitations, and practical applications.",
-      language: "Python",
-      url: "https://github.com/ionutcnu/browser-use",
-      topics: ["ai-exploration", "automation", "learning"],
-    },
-    {
-      name: "Portfolio",
-      problem: "Tired of pretending to be something I'm not. Needed a space that's actually me.",
-      solution: "You're looking at it. Built with AI tools (yes, I'm transparent about that) to show who I actually am: a curious problem-solver transitioning from QA to Product Owner roles.",
-      impact: "Authenticity over fake credentials. If this doesn't resonate with you, we probably wouldn't work well together anyway.",
-      language: "TypeScript",
-      url: "https://github.com/ionutcnu/Portfolio",
-      topics: ["authenticity", "personal-brand", "next.js"],
-    },
-  ]
+  const [repos, setRepos] = useState<Repository[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/github/repositories')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        return res.json() as Promise<Repository[] | { error: string }>
+      })
+      .then((data) => {
+        if ('error' in data) {
+          setError(data.error)
+        } else if (Array.isArray(data)) {
+          setRepos(data)
+        } else {
+          setError('Invalid response format')
+        }
+        setLoading(false)
+      })
+      .catch((err: Error) => {
+        console.error('Failed to load repositories:', err)
+        setError(err.message || 'Failed to load repositories')
+        setLoading(false)
+      })
+  }, [])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -67,14 +57,28 @@ const Projects = () => {
     },
   }
 
-  const getLanguageColor = (language: string) => {
-    const colors: { [key: string]: string } = {
-      TypeScript: "bg-blue-500",
-      Python: "bg-yellow-500",
-      "C#": "bg-purple-500",
-      JavaScript: "bg-yellow-300",
-    }
-    return colors[language] || "bg-gray-500"
+  if (loading) {
+    return (
+      <section id="projects" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section id="projects" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -85,14 +89,12 @@ const Projects = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Things I <span className="bg-gradient-to-r from-accent-dynamic to-blue-600 bg-clip-text text-transparent">Built</span>
+          <h2 className="flex items-center gap-3 text-4xl md:text-5xl font-bold mb-4">
+            <Folder className="text-accent-dynamic" />
+            <span>Projects</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Personal projects that solve real problems. Built with curiosity and AI tools. No fake credentials.
-          </p>
         </motion.div>
 
         <motion.div
@@ -100,81 +102,26 @@ const Projects = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {projects.map((project, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full flex flex-col shadow-md hover:shadow-xl transition-all duration-300 border-muted group hover:border-accent-dynamic/50">
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      {project.language && (
-                        <div className="flex items-center gap-1">
-                          <div className={`w-3 h-3 rounded-full ${getLanguageColor(project.language)}`} />
-                          <span className="text-xs text-muted-foreground">{project.language}</span>
-                        </div>
-                      )}
-                    </div>
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-accent-dynamic transition-colors"
-                    >
-                      <Github className="h-5 w-5" />
-                    </a>
-                  </div>
-                  <CardTitle className="group-hover:text-accent-dynamic transition-colors">
-                    {project.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-3 text-sm">
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Problem</p>
-                    <CardDescription className="text-sm">{project.problem}</CardDescription>
-                  </div>
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Solution</p>
-                    <CardDescription className="text-sm">{project.solution}</CardDescription>
-                  </div>
-                  <div>
-                    <p className="text-accent-dynamic/80 font-semibold mb-1">Impact</p>
-                    <CardDescription className="text-sm">{project.impact}</CardDescription>
-                  </div>
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.topics.map((topic, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs">
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button asChild variant="ghost" size="sm">
-                    <a href={project.url} target="_blank" rel="noopener noreferrer">
-                      <Github className="mr-2 h-4 w-4" />
-                      View Project
-                    </a>
-                  </Button>
-                </CardFooter>
-              </Card>
+          {repos.map((repo) => (
+            <motion.div key={`${repo.owner}/${repo.name}`} variants={itemVariants}>
+              <ProjectCard
+                name={repo.name}
+                owner={repo.owner}
+                description={repo.description}
+                stars={repo.stars}
+                forks={repo.forks}
+                language={repo.language}
+                languages={repo.languages}
+                topics={repo.topics}
+                url={repo.url}
+                homepage={repo.homepage}
+                contributors={repo.contributors}
+                contributorCount={repo.contributorCount}
+              />
             </motion.div>
           ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-12"
-        >
-          <Button asChild size="lg" variant="outline">
-            <a href="https://github.com/ionutcnu?tab=repositories" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" />
-              View All Projects
-            </a>
-          </Button>
         </motion.div>
       </div>
     </section>
