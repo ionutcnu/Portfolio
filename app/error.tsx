@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { RefreshCw, Home } from "lucide-react"
 import Link from "next/link"
 
-export default function Error({
+export default function AppError({
   error,
   reset,
 }: {
@@ -61,6 +61,7 @@ export default function Error({
           {/* Action buttons */}
           <div className="flex flex-col gap-3 border-t border-gray-800 pt-6 sm:flex-row">
             <button
+              type="button"
               onClick={() => reset()}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#e5a54b] px-6 py-3 font-medium text-gray-900 transition-all hover:bg-[#e5a54b]/80 hover:scale-105"
             >
@@ -99,10 +100,10 @@ export default function Error({
           </div>
 
           {/* Technical details (collapsed by default) */}
-          {error.message && (
+          {process.env.NODE_ENV === "development" && error.message && (
             <details className="mt-6 rounded-lg border border-gray-800 bg-gray-950/50 p-4">
               <summary className="cursor-pointer text-sm font-semibold text-gray-400 hover:text-gray-300">
-                Technical Details
+                Technical Details (Development Only)
               </summary>
               <div className="mt-3 rounded bg-black/50 p-3 font-mono text-xs text-red-400">
                 <div className="mb-1 text-gray-500">Error Message:</div>

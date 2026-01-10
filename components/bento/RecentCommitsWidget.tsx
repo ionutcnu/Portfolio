@@ -56,7 +56,7 @@ export default function RecentCommitsWidget() {
         }));
 
         const data: CommitData = {
-          commits: allCommits.slice(0, 4),
+          commits: allCommits.slice(0, 8),
           languages: languages.slice(0, 8),
           totalCommits: allCommits.length,
         };
@@ -88,46 +88,47 @@ export default function RecentCommitsWidget() {
 
   return (
     <BentoBox span={2}>
-      <div className="mb-3 flex items-center justify-between gap-2 text-sm">
-        <h3 className="flex items-center gap-2 font-semibold">
-          <Activity size={16} className="text-accent-dynamic" />
-          <span>Recent Commits</span>
-        </h3>
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="See commit details"
-          className="text-accent-dynamic/80 hover:text-accent-dynamic text-xs font-medium transition-colors"
-        >
-          [info]
-        </a>
-      </div>
+      <div className="flex h-full flex-col">
+        <div className="mb-3 flex items-center justify-between gap-2 text-sm">
+          <h3 className="flex items-center gap-2 font-semibold">
+            <Activity size={16} className="text-accent-dynamic" />
+            <span>Recent Commits</span>
+          </h3>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="See commit details"
+            className="text-accent-dynamic/80 hover:text-accent-dynamic text-xs font-medium transition-colors"
+          >
+            [info]
+          </a>
+        </div>
 
-      {commitData?.commits && commitData.commits.length > 0 ? (
-        <ul className="space-y-1.5 text-sm">
-          {commitData.commits.slice(0, 4).map((commit) => (
-            <li key={commit.sha}>
-              <a
-                href={commit.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-accent-dynamic flex min-w-0 items-center gap-2 transition-colors"
-                title={`${commit.repo}: ${commit.message}`}
-              >
-                <span className="text-foreground flex-shrink-0 font-medium">
-                  {commit.repo.split('/').pop() || commit.repo}:
-                </span>
-                <span className="min-w-0 flex-1 truncate">{commit.message}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-muted-foreground text-sm italic">No recent public commits.</p>
-      )}
+        {commitData?.commits && commitData.commits.length > 0 ? (
+          <ul className="space-y-1.5 text-sm mb-4">
+            {commitData.commits.slice(0, 8).map((commit) => (
+              <li key={commit.sha}>
+                <a
+                  href={commit.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-accent-dynamic flex min-w-0 items-center gap-2 transition-colors"
+                  title={`${commit.repo}: ${commit.message}`}
+                >
+                  <span className="text-foreground flex-shrink-0 font-medium">
+                    {commit.repo.split('/').pop() || commit.repo}:
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{commit.message}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted-foreground text-sm italic">No recent public commits.</p>
+        )}
 
-      <div className="mt-3 flex items-center gap-3">
+        <div className="mt-auto pt-3 flex items-center gap-3">
         <a
           href="https://github.com/ionutcnu"
           target="_blank"
@@ -179,6 +180,7 @@ export default function RecentCommitsWidget() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </BentoBox>
   );

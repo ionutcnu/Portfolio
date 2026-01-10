@@ -31,7 +31,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchClicks = async () => {
       try {
-        const response = await fetch('/api/clicks/increment');
+        const response = await fetch('/api/clicks');
         const data = await response.json() as { clicks?: number };
         setGlobalClicks(data.clicks || 0);
       } catch (error) {
@@ -50,7 +50,7 @@ const Footer = () => {
       // Get or create session ID
       let sessionId = localStorage.getItem('analytics-session-id');
       if (!sessionId) {
-        sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         localStorage.setItem('analytics-session-id', sessionId);
       }
 
@@ -84,7 +84,7 @@ const Footer = () => {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const response = await fetch('/api/clicks/increment');
+        const response = await fetch('/api/clicks');
         setServicesStatus(response.ok ? 'operational' : 'degraded');
       } catch (error) {
         setServicesStatus('down');
@@ -133,7 +133,8 @@ const Footer = () => {
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-2 md:gap-x-3 gap-y-2 text-xs">
           {/* Clock */}
           <div className="flex items-center gap-1.5" title="Current time">
-            <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+            <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" role="img" aria-label="Current time">
+              <title>Clock</title>
               <circle cx="12" cy="12" r="10"/>
               <path d="M12 6v6l4 2"/>
             </svg>

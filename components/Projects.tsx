@@ -37,12 +37,19 @@ const Projects = () => {
 
   useEffect(() => {
     fetch('/api/github/repositories')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        return res.json()
+      })
       .then((data: any) => {
         if (data.error) {
           setError(data.error)
-        } else {
+        } else if (Array.isArray(data)) {
           setRepos(data)
+        } else {
+          setError('Invalid response format')
         }
         setLoading(false)
       })
@@ -120,8 +127,8 @@ const Projects = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {repos.map((repo, index) => (
-            <motion.div key={index} variants={itemVariants}>
+          {repos.map((repo) => (
+            <motion.div key={`${repo.owner}/${repo.name}`} variants={itemVariants}>
               <ProjectCard
                 name={repo.name}
                 owner={repo.owner}

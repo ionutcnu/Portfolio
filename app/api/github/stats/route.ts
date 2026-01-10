@@ -204,12 +204,14 @@ export async function GET() {
     console.error('GitHub stats API error:', error);
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
 
-    // Return proper error status
+    // Return proper error status (stack trace only in development)
     return Response.json(
       {
         error: 'Failed to fetch GitHub stats',
         message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
+        ...(process.env.NODE_ENV === 'development' && {
+          stack: error instanceof Error ? error.stack : undefined
+        })
       },
       { status: 500 }
     );

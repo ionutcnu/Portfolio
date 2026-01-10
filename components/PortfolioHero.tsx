@@ -1,28 +1,5 @@
-"use client"
-
 import { Github, Linkedin, ArrowRight } from "lucide-react"
 import Link from "next/link"
-
-interface Company {
-  name: string
-  logo: string
-  url?: string
-  isPast?: boolean
-}
-
-const companies: Company[] = [
-  {
-    name: "Endava Romania",
-    logo: "QA",
-    url: "https://www.endava.com/",
-  },
-  {
-    name: "Vision",
-    logo: "DEV",
-    url: "https://www.vision.ro/",
-    isPast: true,
-  },
-]
 
 export default function PortfolioHero() {
   return (
@@ -45,7 +22,7 @@ export default function PortfolioHero() {
       </p>
 
       <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
-        I&apos;ve worked across Naval Shipping and Payments domains, became the QA SME and I bridge the gap between testing and business analysis. I go beyond the happy path, look for edge cases, and question if we&apos;re building the right thing.
+        I&apos;ve worked across Naval Shipping and Payments domains, becoming the QA SME. I bridge the gap between testing and business analysis, going beyond the happy path to look for edge cases and question if we&apos;re building the right thing.
       </p>
 
       {/* Skills Section */}

@@ -1,6 +1,4 @@
 // GitHub API route to fetch all public repositories with metadata
-export const dynamic = 'force-dynamic';
-
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
@@ -67,6 +65,7 @@ export async function GET() {
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&type=owner`,
       {
         headers: getHeaders(),
+        signal: AbortSignal.timeout(10000),
         next: { revalidate: 3600 } // Cache for 1 hour
       }
     );
@@ -94,6 +93,7 @@ export async function GET() {
             `https://api.github.com/repos/${repo.full_name}/contributors?per_page=5`,
             {
               headers: getHeaders(),
+              signal: AbortSignal.timeout(10000),
               next: { revalidate: 3600 }
             }
           );
@@ -108,7 +108,7 @@ export async function GET() {
             const linkHeader = contributorsResponse.headers.get('Link');
             if (linkHeader) {
               const match = linkHeader.match(/page=(\d+)>; rel="last"/);
-              contributorCount = match ? parseInt(match[1]) * 30 : contributors.length;
+              contributorCount = match ? parseInt(match[1], 10) * 5 : contributors.length;
             } else {
               contributorCount = contributors.length;
             }
@@ -119,6 +119,7 @@ export async function GET() {
             `https://api.github.com/repos/${repo.full_name}/languages`,
             {
               headers: getHeaders(),
+              signal: AbortSignal.timeout(10000),
               next: { revalidate: 3600 }
             }
           );

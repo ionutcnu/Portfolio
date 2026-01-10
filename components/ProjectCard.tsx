@@ -28,6 +28,16 @@ interface ProjectCardProps {
   longDescription?: string
 }
 
+function isValidUrl(urlString: string | null): boolean {
+  if (!urlString) return false
+  try {
+    const url = new URL(urlString)
+    return url.protocol === "http:" || url.protocol === "https:"
+  } catch {
+    return false
+  }
+}
+
 export default function ProjectCard({
   name,
   owner,
@@ -44,6 +54,8 @@ export default function ProjectCard({
   title,
   longDescription,
 }: ProjectCardProps) {
+  const validUrl = isValidUrl(url) ? url : "#"
+  const validHomepage = isValidUrl(homepage) ? homepage : null
   return (
     <Card className="group flex flex-col h-full overflow-hidden border-gray-700/50 bg-gray-900/30 hover:border-[#e5a54b]/50 hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-3">
@@ -68,9 +80,9 @@ export default function ProjectCard({
           </Badge>
           {contributors.length > 0 && (
             <div className="flex items-center -space-x-2 ml-auto">
-              {contributors.slice(0, 3).map((contributor, i) => (
+              {contributors.slice(0, 3).map((contributor) => (
                 <Image
-                  key={i}
+                  key={contributor.login}
                   src={contributor.avatar_url}
                   alt={contributor.login}
                   width={32}
@@ -109,17 +121,17 @@ export default function ProjectCard({
           className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800"
           asChild
         >
-          <a href={url} target="_blank" rel="noopener noreferrer">
+          <a href={validUrl} target="_blank" rel="noopener noreferrer">
             <Github className="w-4 h-4 mr-2" />
             View Code
           </a>
         </Button>
-        {homepage && (
+        {validHomepage && (
           <Button
             className="flex-1 bg-[#e5a54b] hover:bg-[#e5a54b]/90 text-[#1e293b]"
             asChild
           >
-            <a href={homepage} target="_blank" rel="noopener noreferrer">
+            <a href={validHomepage} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4 mr-2" />
               Visit Site
             </a>
