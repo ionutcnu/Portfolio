@@ -54,7 +54,7 @@ export default function TestimonialsWidget() {
             >
               {/* Quote */}
               <p className={`text-sm text-gray-200 italic leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
-                "{testimonial.quote}"
+                &quot;{testimonial.quote}&quot;
               </p>
 
               {/* Author - always visible */}

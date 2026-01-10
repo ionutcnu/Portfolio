@@ -56,8 +56,8 @@ export default function PortfolioProjects() {
   useEffect(() => {
     fetch('/api/github/repositories')
       .then(res => res.json())
-      .then(data => {
-        if (!data.error) {
+      .then((data: unknown) => {
+        if (Array.isArray(data) && !('error' in data ? data.error : false)) {
           // Filter for featured projects only
           const featured = data.filter((repo: Repository) =>
             featuredProjects.some(p => p.name.toLowerCase() === repo.name.toLowerCase())

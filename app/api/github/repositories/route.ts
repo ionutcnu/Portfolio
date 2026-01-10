@@ -125,7 +125,7 @@ export async function GET() {
 
           let languages: string[] = [];
           if (languagesResponse.ok) {
-            const languagesData = await languagesResponse.json();
+            const languagesData = await languagesResponse.json() as Record<string, number>;
             languages = Object.keys(languagesData);
           }
 

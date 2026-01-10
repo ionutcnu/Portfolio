@@ -38,7 +38,7 @@ const Projects = () => {
   useEffect(() => {
     fetch('/api/github/repositories')
       .then(res => res.json())
-      .then(data => {
+      .then((data: any) => {
         if (data.error) {
           setError(data.error)
         } else {
