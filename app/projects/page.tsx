@@ -2,11 +2,12 @@ import Projects from "@/components/sections/Projects";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Projects - Ionut | Real Problem Solvers",
-  description: "Personal projects built with curiosity and AI tools. BATS, Watcher, browser-use, and more. No fake credentials, just authentic problem-solving.",
+  title: "Projects - Ionut Cioncu | GitHub Projects",
+  description: "Personal projects by Ionut Cioncu. Explore my GitHub repositories built with TypeScript, Next.js, and React.",
+  keywords: ["Ionut Cioncu", "Projects", "GitHub", "TypeScript", "Next.js", "React", "Web Development"],
   openGraph: {
-    title: "Projects by Ionut",
-    description: "Real projects that solve real problems. Built with TypeScript, Python, C#, and AI tools.",
+    title: "Projects - Ionut Cioncu",
+    description: "GitHub projects built with TypeScript, Next.js, and React.",
     url: "https://ionut.dev/projects",
   },
 };
