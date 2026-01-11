@@ -5,8 +5,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { createCounterService, getClientIP } from '@/lib/d1-counter';
 import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
 
-const KV_UPDATE_KEY = 'clicks:last-update';
-
 export async function POST(request: Request) {
   const env = getCloudflareContext().env;
   const db = env.DB as D1Database;
@@ -50,20 +48,34 @@ export async function POST(request: Request) {
   // Increment counter (only counter in D1, keeping it clean)
   const clicks = await counter.increment('global-clicks');
 
-  // Write to KV to notify SSE clients (fire-and-forget for performance)
-  const kv = env.KV as KVNamespace;
-  if (kv) {
-    kv.put(
-      KV_UPDATE_KEY,
-      JSON.stringify({
-        count: clicks,
+  // Broadcast to all WebSocket clients via Durable Object
+  try {
+    const id = env.COUNTER_DO.idFromName('global-counter');
+    const stub = env.COUNTER_DO.get(id);
+
+    // Create a proper request for the Durable Object
+    const broadcastRequest = new Request('http://do/broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clicks,
         timestamp: Date.now(),
       }),
-      { expirationTtl: 86400 } // 24 hour TTL
-    ).catch((error) => {
-      console.error('[Clicks] Failed to update KV:', error);
-      // Don't fail the request if KV write fails
     });
+
+    // AWAIT the broadcast to ensure it completes
+    const broadcastResponse = await stub.fetch(broadcastRequest);
+
+    if (!broadcastResponse.ok) {
+      const errorText = await broadcastResponse.text();
+      console.error('[Clicks] Broadcast failed:', broadcastResponse.status, errorText);
+    } else {
+      const result = await broadcastResponse.json();
+      console.log('[Clicks] Broadcast success:', result);
+    }
+  } catch (error) {
+    console.error('[Clicks] Failed to broadcast to DO:', error);
+    // Don't fail the user request if broadcast fails
   }
 
   return Response.json({

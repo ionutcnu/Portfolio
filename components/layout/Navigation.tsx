@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation"
 import { navItems } from "@/lib/constants/navigation"
 
 const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const [displayedPath, setDisplayedPath] = useState("")
@@ -116,16 +115,6 @@ const Navigation = () => {
           )}
         </div>
       </nav>
-
-      {/* Mobile menu button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="text-foreground hover:text-[#e5a54b] rounded p-2 md:hidden"
-        aria-label="Open navigation menu"
-        aria-expanded={isOpen}
-      >
-        <Menu size={24} />
-      </button>
 
       {/* Desktop Navigation */}
       <nav className="hidden items-center space-x-4 md:flex">

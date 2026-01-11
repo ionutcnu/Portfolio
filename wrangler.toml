@@ -1,5 +1,5 @@
 name = "portfolio"
-main = ".open-next/worker.js"
+main = "worker.js"
 compatibility_date = "2025-11-14"
 compatibility_flags = ["nodejs_compat"]
 
@@ -26,6 +26,16 @@ binding = "ANALYTICS"
 [[kv_namespaces]]
 binding = "KV"
 id = "a4f458cca56447288d7902164fc1ee60"
+
+# Durable Objects for WebSocket counter
+[[durable_objects.bindings]]
+name = "COUNTER_DO"
+class_name = "CounterDO"
+script_name = "portfolio"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CounterDO"]
 
 [observability]
 enabled = false

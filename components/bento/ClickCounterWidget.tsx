@@ -36,25 +36,78 @@ export default function ClickCounterWidget() {
       setLocalClicks(parseInt(savedClicks, 10));
     }
 
-    // Connect to SSE endpoint
-    const eventSource = new EventSource('/api/clicks');
-
-    eventSource.onopen = () => {
-      setIsConnected(true);
+    // Fetch initial count immediately (before WebSocket connects)
+    const fetchInitialCount = async () => {
+      try {
+        const response = await fetch('/api/clicks');
+        if (response.ok) {
+          const data = await response.json() as { clicks: number };
+          setGlobalClicks(data.clicks);
+        }
+      } catch (error) {
+        console.error('[Counter] Failed to fetch initial count:', error);
+        // Keep fallback value if fetch fails
+      }
     };
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setGlobalClicks(data.clicks);
+    fetchInitialCount();
+
+    // WebSocket connection with auto-reconnect
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout;
+    let isIntentionallyClosed = false;
+
+    const connect = () => {
+      if (isIntentionallyClosed) return;
+
+      // Use wss:// for production, ws:// for local
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/clicks/ws`;
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('[Counter] WebSocket connected');
+        setIsConnected(true);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setGlobalClicks(data.clicks);
+        } catch (error) {
+          console.error('[Counter] Failed to parse message:', error);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('[Counter] WebSocket error:', error);
+        setIsConnected(false);
+      };
+
+      ws.onclose = () => {
+        console.log('[Counter] WebSocket closed');
+        setIsConnected(false);
+
+        // Auto-reconnect after 3 seconds (unless intentionally closed)
+        if (!isIntentionallyClosed) {
+          reconnectTimeout = setTimeout(() => {
+            console.log('[Counter] Reconnecting...');
+            connect();
+          }, 3000);
+        }
+      };
     };
 
-    eventSource.onerror = () => {
-      setIsConnected(false);
-      eventSource.close();
-    };
+    // Initial connection
+    connect();
 
     return () => {
-      eventSource.close();
+      isIntentionallyClosed = true;
+      clearTimeout(reconnectTimeout);
+      if (ws) {
+        ws.close();
+      }
     };
   }, []);
 
@@ -93,15 +146,24 @@ export default function ClickCounterWidget() {
 
     // Increment global counter via API with analytics
     try {
-      await fetch('/api/clicks/increment', {
+      const response = await fetch('/api/clicks/increment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(analyticsData),
       });
+
+      // Use server response for instant update
+      if (response.ok) {
+        const data = await response.json() as { success: boolean; clicks: number };
+        if (data.clicks) {
+          setGlobalClicks(data.clicks);
+        }
+      }
     } catch (error) {
       console.error('Failed to increment global counter:', error);
+      // SSE will sync eventually
     }
   };
 
