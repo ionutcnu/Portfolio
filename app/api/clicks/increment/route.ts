@@ -5,6 +5,8 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { createCounterService, getClientIP } from '@/lib/d1-counter';
 import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
 
+const KV_UPDATE_KEY = 'clicks:last-update';
+
 export async function POST(request: Request) {
   const env = getCloudflareContext().env;
   const db = env.DB as D1Database;
@@ -47,6 +49,22 @@ export async function POST(request: Request) {
 
   // Increment counter (only counter in D1, keeping it clean)
   const clicks = await counter.increment('global-clicks');
+
+  // Write to KV to notify SSE clients (fire-and-forget for performance)
+  const kv = env.KV as KVNamespace;
+  if (kv) {
+    kv.put(
+      KV_UPDATE_KEY,
+      JSON.stringify({
+        count: clicks,
+        timestamp: Date.now(),
+      }),
+      { expirationTtl: 86400 } // 24 hour TTL
+    ).catch((error) => {
+      console.error('[Clicks] Failed to update KV:', error);
+      // Don't fail the request if KV write fails
+    });
+  }
 
   return Response.json({
     success: true,

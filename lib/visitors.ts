@@ -1,10 +1,16 @@
 // Visitor Tracking Service with D1
 // Tracks unique visitors by session ID
 
+export interface VisitorStats {
+  total: number;
+  today: number;
+}
+
 interface VisitorService {
   trackVisitor(sessionId: string): Promise<void>;
   getTotalVisitors(): Promise<number>;
   getTodayVisitors(): Promise<number>;
+  getBatchedStats(): Promise<VisitorStats>;
 }
 
 // In-memory fallback for development
@@ -32,6 +38,13 @@ class InMemoryVisitors implements VisitorService {
 
   async getTodayVisitors(): Promise<number> {
     return this.todayVisitors.size;
+  }
+
+  async getBatchedStats(): Promise<VisitorStats> {
+    return {
+      total: this.visitors.size,
+      today: this.todayVisitors.size,
+    };
   }
 }
 
@@ -73,6 +86,26 @@ class D1Visitors implements VisitorService {
       .first<{ count: number }>();
 
     return result?.count || 0;
+  }
+
+  async getBatchedStats(): Promise<VisitorStats> {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Single query to get both counts - much more efficient
+    const result = await this.db
+      .prepare(`
+        SELECT
+          COUNT(DISTINCT session_id) as total,
+          COUNT(DISTINCT CASE WHEN visit_date = ? THEN session_id END) as today
+        FROM visitors
+      `)
+      .bind(today)
+      .first<{ total: number; today: number }>();
+
+    return {
+      total: result?.total || 0,
+      today: result?.today || 0,
+    };
   }
 }
 

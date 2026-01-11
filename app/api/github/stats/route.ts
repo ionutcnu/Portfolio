@@ -1,5 +1,7 @@
 // GitHub stats API endpoint
-export const dynamic = 'force-dynamic';
+import { getCached } from '@/lib/cache';
+
+export const revalidate = 3600; // ISR: 1 hour cache
 
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -51,18 +53,18 @@ function getHeaders() {
   return headers;
 }
 
-export async function GET() {
-  try {
-    console.log('[GitHub API] Starting stats fetch...');
-    console.log('[GitHub API] Username:', GITHUB_USERNAME);
-    console.log('[GitHub API] Has token:', !!GITHUB_TOKEN);
+// Extract stats fetching logic for caching
+async function fetchGitHubStats() {
+  console.log('[GitHub API] Starting stats fetch...');
+  console.log('[GitHub API] Username:', GITHUB_USERNAME);
+  console.log('[GitHub API] Has token:', !!GITHUB_TOKEN);
 
-    // Fetch user info
+  // Fetch user info
     const userResponse = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}`,
       {
         headers: getHeaders(),
-        cache: 'no-store'
+        cache: 'force-cache'
       }
     );
 
@@ -84,7 +86,7 @@ export async function GET() {
         `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=${perPage}&type=owner&page=${page}`,
         {
           headers: getHeaders(),
-          cache: 'no-store'
+          cache: 'force-cache'
         }
       );
 
@@ -137,7 +139,7 @@ export async function GET() {
           `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/branches?per_page=5`,
           {
             headers: getHeaders(),
-            cache: 'no-store'
+            cache: 'force-cache'
           }
         );
 
@@ -160,7 +162,7 @@ export async function GET() {
 
             const commitsResponse = await fetch(url, {
               headers: getHeaders(),
-              cache: 'no-store'
+              cache: 'force-cache'
             });
 
             shouldContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}/${branchName}`);
@@ -193,15 +195,50 @@ export async function GET() {
     console.log('[GitHub API] Total commits in last 7 days:', totalCommitsLast7Days);
     console.log('[GitHub API] Per-repo breakdown:', commitCounts);
 
-    return Response.json({
+    return {
       repositories: ownRepos.length,
       stars: totalStars,
       commitsLast7Days: totalCommitsLast7Days,
       followers: user.followers,
+    };
+}
+
+export async function GET() {
+  try {
+    // Use KV cache with 1-hour TTL and 2-hour stale-while-revalidate
+    const stats = await getCached(
+      {
+        key: 'github:stats:v1',
+        ttl: 3600, // 1 hour
+        staleWhileRevalidate: 7200, // Serve stale for up to 2 hours total
+      },
+      fetchGitHubStats
+    );
+
+    return Response.json(stats, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      },
     });
   } catch (error) {
     console.error('GitHub stats API error:', error);
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+
+    // Try to serve stale data from cache on error
+    try {
+      const { getCache } = await import('@/lib/cache');
+      const staleData = await getCache<any>('github:stats:v1');
+      if (staleData) {
+        console.log('[GitHub API] Serving stale data due to error');
+        return Response.json(staleData, {
+          headers: {
+            'X-Cache': 'STALE',
+          },
+        });
+      }
+    } catch {
+      // Ignore cache errors
+    }
 
     // Return proper error status (stack trace only in development)
     return Response.json(

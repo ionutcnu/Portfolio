@@ -22,6 +22,11 @@ database_id = "10a10508-24ee-4010-aa16-9598e5920506"
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
 
+# KV Namespace for caching
+[[kv_namespaces]]
+binding = "KV"
+id = "a4f458cca56447288d7902164fc1ee60"
+
 [observability]
 enabled = false
 head_sampling_rate = 1
