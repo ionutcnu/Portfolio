@@ -7,14 +7,15 @@ import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Ionut - Full Stack Developer Portfolio",
-  description: "Portfolio of Ionut - Full Stack Developer from Romania. Specializing in TypeScript, React, Next.js, Python, and AI automation.",
-  keywords: ["Ionut", "Full Stack Developer", "TypeScript", "React", "Next.js", "Python", "AI", "Portfolio"],
-  authors: [{ name: "Ionut" }],
+  title: "Ionut Cioncu - QA Tester",
+  description: "Portfolio of Ionut Cioncu - QA Tester with 4 years of experience in Naval Shipping and Payments domains at Endava PLC. Based in Pitesti, Romania.",
+  keywords: ["Ionut Cioncu", "QA Tester", "Endava", "REST API Testing", "Postman", "PostgreSQL", "Kubernetes", "Azure", "Selenium", "Cypress", "Romania"],
+  authors: [{ name: "Ionut Cioncu" }],
   openGraph: {
-    title: "Ionut - Full Stack Developer Portfolio",
-    description: "Portfolio showcasing projects in web development, AI automation, and more.",
+    title: "Ionut Cioncu - QA Tester",
+    description: "Product-minded QA professional with 4 years of multi-domain experience in Naval Shipping and Payments domains.",
     type: "website",
+    url: "https://ionut.dev",
   },
 };
 
