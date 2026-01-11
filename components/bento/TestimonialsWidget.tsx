@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Quote } from "lucide-react"
 import { BentoBox } from "./BentoGrid"
-import { testimonials } from "@/lib/testimonials-data"
+import { testimonials } from "@/lib/data/testimonials"
 
 export default function TestimonialsWidget() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)

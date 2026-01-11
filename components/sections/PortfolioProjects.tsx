@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Star, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import ProjectCard from "@/components/ProjectCard"
+import ProjectCard from "@/components/shared/ProjectCard"
 
 interface Contributor {
   login: string

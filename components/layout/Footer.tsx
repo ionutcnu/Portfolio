@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+import { statusColors, statusTexts, type ServiceStatus } from "@/lib/constants/status";
 
 interface VisitorStats {
   total: number;
@@ -12,7 +13,7 @@ interface VisitorStats {
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState("");
   const [globalClicks, setGlobalClicks] = useState(0);
-  const [servicesStatus, setServicesStatus] = useState<"operational" | "degraded" | "down">("operational");
+  const [servicesStatus, setServicesStatus] = useState<ServiceStatus>("operational");
   const [visitors, setVisitors] = useState<VisitorStats>({ total: 0, today: 0 });
 
   // Update clock every second
@@ -83,19 +84,6 @@ const Footer = () => {
     const interval = setInterval(trackAndFetch, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
-
-
-  const statusColors = {
-    operational: 'bg-green-500',
-    degraded: 'bg-yellow-500',
-    down: 'bg-red-500',
-  };
-
-  const statusTexts = {
-    operational: 'All Services Nominal',
-    degraded: 'Degraded Performance',
-    down: 'Service Outage',
-  };
 
   return (
     <div className="relative m-auto mx-3 md:mx-5 mb-5">

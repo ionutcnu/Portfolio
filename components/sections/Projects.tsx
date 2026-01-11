@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Folder } from "lucide-react"
-import ProjectCard from "@/components/ProjectCard"
+import ProjectCard from "@/components/shared/ProjectCard"
 import type { Repository } from "@/types/github"
 
 const Projects = () => {

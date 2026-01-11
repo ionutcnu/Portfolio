@@ -1,6 +1,6 @@
 import { Github, Linkedin, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { skills } from "@/lib/skills-data"
+import { skills } from "@/lib/data/skills"
 
 export default function PortfolioHero() {
   return (
