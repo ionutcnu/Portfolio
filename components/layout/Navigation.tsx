@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Menu } from "lucide-react"
+import { createPortal } from "react-dom"
+import { Menu, X, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { navItems } from "@/lib/constants/navigation"
@@ -13,9 +14,16 @@ const Navigation = () => {
   const [isTyping, setIsTyping] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState("")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const breadcrumbs = pathname.split('/').filter(Boolean).slice(0, 4)
+
+  // Mount detection for portal
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Typing animation effect
   useEffect(() => {
@@ -61,6 +69,28 @@ const Navigation = () => {
       inputRef.current.select()
     }
   }, [isEditing])
+
+  // Close mobile menu on ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('keydown', handleEsc)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc)
+    }
+  }, [isMobileMenuOpen])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [pathname])
 
   // Handle path click - enable editing
   const handlePathClick = () => {
@@ -141,6 +171,90 @@ const Navigation = () => {
         ))}
       </nav>
 
+      {/* Mobile Hamburger Button */}
+      <button
+        className="md:hidden text-foreground hover:text-[#e5a54b] transition-colors p-2"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle mobile menu"
+        aria-expanded={isMobileMenuOpen}
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Mobile Menu Panel - Rendered via Portal */}
+      {isMounted && isMobileMenuOpen && createPortal(
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-md md:hidden mobile-backdrop"
+            style={{ zIndex: 9998 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Menu Panel */}
+          <div
+            className="fixed top-0 right-0 h-screen w-72 bg-gradient-to-b from-background via-background to-background/95 border-l border-[#e5a54b]/30 shadow-2xl md:hidden mobile-menu-slide"
+            style={{ zIndex: 9999 }}
+          >
+            {/* Close Button */}
+            <div className="flex justify-end p-6">
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-[#e5a54b]/10 transition-colors duration-200"
+                aria-label="Close menu"
+              >
+                <X size={24} className="text-[#e5a54b]" />
+              </button>
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="flex flex-col px-6 space-y-2 mt-8">
+              {navItems.map((item, index) => (
+                <div key={item.title}>
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center justify-between px-5 py-4 text-lg font-medium text-foreground/80 hover:text-[#e5a54b] rounded-xl hover:bg-[#e5a54b]/10 transition-all duration-200 border border-transparent hover:border-[#e5a54b]/20"
+                    >
+                      <span className="transform transition-transform duration-200 group-hover:translate-x-1">
+                        {item.title}
+                      </span>
+                      <ExternalLink size={16} className="opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`group flex items-center justify-between px-5 py-4 text-lg font-medium rounded-xl transition-all duration-200 border ${
+                        pathname === item.href
+                          ? 'text-[#e5a54b] bg-[#e5a54b]/10 border-[#e5a54b]/30'
+                          : 'text-foreground/80 hover:text-[#e5a54b] hover:bg-[#e5a54b]/10 border-transparent hover:border-[#e5a54b]/20'
+                      }`}
+                    >
+                      <span className="transform transition-transform duration-200 group-hover:translate-x-1">
+                        {item.title}
+                      </span>
+                      {pathname === item.href && (
+                        <span className="w-2 h-2 bg-[#e5a54b] rounded-full animate-pulse" />
+                      )}
+                    </Link>
+                  )}
+                  {index < navItems.length - 1 && (
+                    <div className="my-2 mx-5 border-t border-[#e5a54b]/10" />
+                  )}
+                </div>
+              ))}
+            </nav>
+
+            {/* Footer Accent */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#e5a54b]/50 to-transparent" />
+          </div>
+        </>,
+        document.body
+      )}
+
       <style jsx>{`
         .header {
           mask: linear-gradient(black, black, transparent);
@@ -166,12 +280,40 @@ const Navigation = () => {
           }
         }
 
+        @keyframes slide-in {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         .cursor-blink {
           animation: blink 3s cubic-bezier(0.2, 1, 0.8, 1) infinite;
         }
 
         .cursor-typing {
           animation: typing-blink 0.5s ease-in-out infinite;
+        }
+
+        .mobile-menu-slide {
+          animation: slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-backdrop {
+          animation: fade-in 0.25s ease-out;
         }
 
         @keyframes wiggle {
