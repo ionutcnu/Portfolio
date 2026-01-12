@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-
     "cloudflare:build": "opennextjs-cloudflare build",
     "deploy": "bun run cloudflare:build && wrangler deploy",
     "preview": "bun run cloudflare:build && wrangler dev",
@@ -39,6 +38,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "esbuild": "^0.27.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.9",
     "postcss": "^8.4.49",

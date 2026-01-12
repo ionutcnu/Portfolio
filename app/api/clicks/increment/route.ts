@@ -6,7 +6,7 @@ import { createCounterService, getClientIP } from '@/lib/d1-counter';
 import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
 
 export async function POST(request: Request) {
-  const env = getCloudflareContext().env;
+  const { env } = await getCloudflareContext();
   const db = env.DB as D1Database;
   const analytics = env.ANALYTICS as AnalyticsEngineDataset;
 
@@ -48,6 +48,39 @@ export async function POST(request: Request) {
   // Increment counter (only counter in D1, keeping it clean)
   const clicks = await counter.increment('global-clicks');
 
+  // Broadcast to all WebSocket clients via Durable Object
+  try {
+    const id = env.COUNTER_DO.idFromName('global-counter');
+    const stub = env.COUNTER_DO.get(id);
+
+    // Create a proper request for the Durable Object
+    const broadcastRequest = new Request('http://do/broadcast', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Counter-Secret': env.COUNTER_BROADCAST_SECRET || 'internal-only',
+      },
+      body: JSON.stringify({
+        clicks,
+        timestamp: Date.now(),
+      }),
+    });
+
+    // AWAIT the broadcast to ensure it completes
+    const broadcastResponse = await stub.fetch(broadcastRequest);
+
+    if (!broadcastResponse.ok) {
+      const errorText = await broadcastResponse.text();
+      console.error('[Clicks] Broadcast failed:', broadcastResponse.status, errorText);
+    } else {
+      const result = await broadcastResponse.json();
+      console.log('[Clicks] Broadcast success:', result);
+    }
+  } catch (error) {
+    console.error('[Clicks] Failed to broadcast to DO:', error);
+    // Don't fail the user request if broadcast fails
+  }
+
   return Response.json({
     success: true,
     clicks,
@@ -55,7 +88,8 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const db = getCloudflareContext().env.DB as D1Database;
+  const { env } = await getCloudflareContext();
+  const db = env.DB as D1Database;
   const counter = createCounterService(db);
 
   const clicks = await counter.getCount('global-clicks');

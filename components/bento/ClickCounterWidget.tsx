@@ -7,12 +7,18 @@ import { BentoBox } from "./BentoGrid";
 
 // Generate or retrieve session ID
 function getSessionId(): string {
-  let sessionId = localStorage.getItem('analytics-session-id');
-  if (!sessionId) {
-    sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('analytics-session-id', sessionId);
+  try {
+    let sessionId = localStorage.getItem('analytics-session-id');
+    if (!sessionId) {
+      sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+      localStorage.setItem('analytics-session-id', sessionId);
+    }
+    return sessionId;
+  } catch (error) {
+    // localStorage not available (private browsing, etc.)
+    // Generate temporary session ID
+    return `temp-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
-  return sessionId;
 }
 
 interface PlusOne {
@@ -31,30 +37,108 @@ export default function ClickCounterWidget() {
 
   useEffect(() => {
     // Load local clicks from localStorage
-    const savedClicks = localStorage.getItem('local-clicks');
-    if (savedClicks) {
-      setLocalClicks(parseInt(savedClicks, 10));
+    try {
+      const savedClicks = localStorage.getItem('local-clicks');
+      if (savedClicks) {
+        setLocalClicks(parseInt(savedClicks, 10));
+      }
+    } catch (error) {
+      // localStorage not available, start at 0
+      console.warn('[Counter] localStorage not available:', error);
     }
 
-    // Connect to SSE endpoint
-    const eventSource = new EventSource('/api/clicks');
-
-    eventSource.onopen = () => {
-      setIsConnected(true);
+    // Fetch initial count immediately (before WebSocket connects)
+    const fetchInitialCount = async () => {
+      try {
+        const response = await fetch('/api/clicks');
+        if (response.ok) {
+          const data = await response.json() as { clicks: number };
+          setGlobalClicks(data.clicks);
+        }
+      } catch (error) {
+        console.error('[Counter] Failed to fetch initial count:', error);
+        // Keep fallback value if fetch fails
+      }
     };
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setGlobalClicks(data.clicks);
+    fetchInitialCount();
+
+    // WebSocket connection with auto-reconnect and exponential backoff
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout;
+    let isIntentionallyClosed = false;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 10;
+    const BASE_RECONNECT_DELAY = 1000; // 1 second
+    const MAX_RECONNECT_DELAY = 30000; // 30 seconds
+
+    const connect = () => {
+      if (isIntentionallyClosed || reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+        if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+          console.error('[Counter] Max reconnect attempts reached');
+        }
+        return;
+      }
+
+      // Use wss:// for production, ws:// for local
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/clicks/ws`;
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('[Counter] WebSocket connected');
+        setIsConnected(true);
+        reconnectAttempts = 0; // Reset on successful connection
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          // Validate data type before using
+          if (typeof data.clicks === 'number') {
+            setGlobalClicks(data.clicks);
+          } else {
+            console.error('[Counter] Invalid data type for clicks:', typeof data.clicks);
+          }
+        } catch (error) {
+          console.error('[Counter] Failed to parse message:', error);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('[Counter] WebSocket error:', error);
+        setIsConnected(false);
+      };
+
+      ws.onclose = () => {
+        console.log('[Counter] WebSocket closed');
+        setIsConnected(false);
+
+        // Auto-reconnect with exponential backoff (unless intentionally closed)
+        if (!isIntentionallyClosed && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          reconnectAttempts++;
+          // Exponential backoff: delay = min(base * 2^attempts, max)
+          const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1), MAX_RECONNECT_DELAY);
+          console.log(`[Counter] Reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+
+          reconnectTimeout = setTimeout(() => {
+            console.log('[Counter] Reconnecting...');
+            connect();
+          }, delay);
+        }
+      };
     };
 
-    eventSource.onerror = () => {
-      setIsConnected(false);
-      eventSource.close();
-    };
+    // Initial connection
+    connect();
 
     return () => {
-      eventSource.close();
+      isIntentionallyClosed = true;
+      clearTimeout(reconnectTimeout);
+      if (ws) {
+        ws.close();
+      }
     };
   }, []);
 
@@ -62,7 +146,13 @@ export default function ClickCounterWidget() {
     // Increment local counter
     const newLocalClicks = localClicks + 1;
     setLocalClicks(newLocalClicks);
-    localStorage.setItem('local-clicks', newLocalClicks.toString());
+
+    try {
+      localStorage.setItem('local-clicks', newLocalClicks.toString());
+    } catch (error) {
+      // localStorage not available, continue without persisting
+      console.warn('[Counter] Could not save local clicks:', error);
+    }
 
     // Show sparkle animation
     setShowSparkle(true);
@@ -93,15 +183,24 @@ export default function ClickCounterWidget() {
 
     // Increment global counter via API with analytics
     try {
-      await fetch('/api/clicks/increment', {
+      const response = await fetch('/api/clicks/increment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(analyticsData),
       });
+
+      // Use server response for instant update
+      if (response.ok) {
+        const data = await response.json() as { success: boolean; clicks: number };
+        if (data.clicks) {
+          setGlobalClicks(data.clicks);
+        }
+      }
     } catch (error) {
       console.error('Failed to increment global counter:', error);
+      // WebSocket will sync eventually
     }
   };
 
