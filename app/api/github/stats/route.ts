@@ -64,7 +64,7 @@ async function fetchGitHubStats() {
       `https://api.github.com/users/${GITHUB_USERNAME}`,
       {
         headers: getHeaders(),
-        cache: 'force-cache'
+        next: { revalidate: 3600 } // Align with 1-hour KV TTL
       }
     );
 
@@ -86,7 +86,7 @@ async function fetchGitHubStats() {
         `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=${perPage}&type=owner&page=${page}`,
         {
           headers: getHeaders(),
-          cache: 'force-cache'
+          next: { revalidate: 3600 } // Align with 1-hour KV TTL
         }
       );
 
@@ -128,18 +128,19 @@ async function fetchGitHubStats() {
     const maxRepos = GITHUB_TOKEN ? 20 : 5; // Fewer repos without token
     const recentRepos = ownRepos.slice(0, maxRepos);
     console.log('[GitHub API] Checking these repos for commits:', recentRepos.map(r => r.name));
-    let shouldContinue = true;
+    const abortController = new AbortController();
 
     const commitPromises = recentRepos.map(async (repo) => {
       try {
-        if (!shouldContinue) return 0;
+        if (abortController.signal.aborted) return 0;
 
         // Fetch branches for this repo (limit to 5 most recently updated)
         const branchesResponse = await fetch(
           `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/branches?per_page=5`,
           {
             headers: getHeaders(),
-            cache: 'force-cache'
+            next: { revalidate: 3600 }, // Align with 1-hour KV TTL
+            signal: abortController.signal
           }
         );
 
@@ -158,16 +159,24 @@ async function fetchGitHubStats() {
         // Check commits from all branches (max 5 branches to avoid too many requests)
         for (const branchName of branchNames.slice(0, 5)) {
           try {
+            if (abortController.signal.aborted) break;
+
             const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?sha=${branchName}&since=${since}&per_page=100`;
 
             const commitsResponse = await fetch(url, {
               headers: getHeaders(),
-              cache: 'force-cache'
+              next: { revalidate: 3600 }, // Align with 1-hour KV TTL
+              signal: abortController.signal
             });
 
-            shouldContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}/${branchName}`);
+            const canContinue = logRateLimitStatus(commitsResponse.headers, `commits:${repo.name}/${branchName}`);
 
-            if (!commitsResponse.ok || !shouldContinue) {
+            if (!canContinue) {
+              abortController.abort(); // Abort all pending requests
+              break;
+            }
+
+            if (!commitsResponse.ok) {
               continue;
             }
 

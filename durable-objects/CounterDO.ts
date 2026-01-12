@@ -5,12 +5,18 @@
  * Each connected client receives instant updates when the counter changes.
  */
 
+interface CloudflareEnv {
+  DB: D1Database;
+  COUNTER_BROADCAST_SECRET?: string;
+}
+
 export class CounterDO implements DurableObject {
   private state: DurableObjectState;
   private env: CloudflareEnv;
   private sessions: Set<WebSocket>;
   private lastCount: number = 0;
   private lastTimestamp: number = 0;
+  private initialized: boolean = false;
 
   constructor(state: DurableObjectState, env: CloudflareEnv) {
     this.state = state;
@@ -25,7 +31,7 @@ export class CounterDO implements DurableObject {
     const url = new URL(request.url);
 
     // Handle WebSocket upgrade requests
-    if (request.headers.get('Upgrade') === 'websocket') {
+    if (request.headers.get('Upgrade')?.toLowerCase().trim() === 'websocket') {
       return this.handleWebSocketUpgrade(request);
     }
 
@@ -66,7 +72,7 @@ export class CounterDO implements DurableObject {
       let currentTimestamp = this.lastTimestamp;
 
       // If we don't have cached data, fetch from D1
-      if (currentCount === 0) {
+      if (!this.initialized) {
         const db = this.env.DB as D1Database;
         const result = await db.prepare('SELECT value FROM counters WHERE id = ?')
           .bind('global-clicks')
@@ -78,6 +84,7 @@ export class CounterDO implements DurableObject {
         // Cache for future connections
         this.lastCount = currentCount;
         this.lastTimestamp = currentTimestamp;
+        this.initialized = true;
       }
 
       // Send initial state to new client
@@ -98,8 +105,8 @@ export class CounterDO implements DurableObject {
       console.log(`[CounterDO] Client disconnected. Active: ${this.sessions.size}`);
     });
 
-    server.addEventListener('error', (error) => {
-      console.error('[CounterDO] WebSocket error:', error);
+    server.addEventListener('error', () => {
+      console.error('[CounterDO] WebSocket error occurred');
       this.sessions.delete(server);
     });
 
@@ -116,6 +123,20 @@ export class CounterDO implements DurableObject {
    */
   private async handleBroadcast(request: Request): Promise<Response> {
     try {
+      // Validate authentication header (internal API calls only)
+      const authHeader = request.headers.get('X-Counter-Secret');
+      const expectedSecret = this.env.COUNTER_BROADCAST_SECRET || 'internal-only';
+
+      if (authHeader !== expectedSecret) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Unauthorized'
+        }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
       const { clicks, timestamp } = await request.json() as { clicks: number; timestamp: number };
 
       // Update cached count

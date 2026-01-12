@@ -173,6 +173,7 @@ const Navigation = () => {
 
       {/* Mobile Hamburger Button */}
       <button
+        type="button"
         className="md:hidden text-foreground hover:text-[#e5a54b] transition-colors p-2"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle mobile menu"
@@ -200,6 +201,7 @@ const Navigation = () => {
             {/* Close Button */}
             <div className="flex justify-end p-6">
               <button
+                type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 rounded-lg hover:bg-[#e5a54b]/10 transition-colors duration-200"
                 aria-label="Close menu"

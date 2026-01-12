@@ -46,6 +46,9 @@ export async function getCached<T>(
       // Data is stale but within revalidate window
       if (staleWhileRevalidate > 0 && age < staleUntil) {
         // Return stale data immediately, revalidate in background
+        // NOTE: Thundering herd risk exists - multiple concurrent requests to stale data
+        // will trigger parallel revalidations. This is accepted as a tradeoff for simplicity.
+        // In practice, the short revalidation window and fire-and-forget pattern minimize impact.
         fetcher()
           .then((fresh) => {
             env.KV.put(
@@ -105,7 +108,16 @@ export async function invalidateCache(key: string): Promise<void> {
 }
 
 /**
- * Set a value in KV cache
+ * Set a value in KV cache with a simple TTL
+ *
+ * NOTE: This function uses raw TTL without stale-while-revalidate padding,
+ * unlike getCached(). This is intentional - setCache is for direct manual
+ * caching where you control the exact expiration time. Use getCached() for
+ * automatic stale-while-revalidate behavior.
+ *
+ * @param key - Cache key
+ * @param data - Data to cache
+ * @param ttl - Time-to-live in seconds (exact expiration, no padding)
  */
 export async function setCache<T>(
   key: string,
@@ -130,7 +142,16 @@ export async function setCache<T>(
 }
 
 /**
- * Get a value from KV cache
+ * Get a value from KV cache without TTL/age validation
+ *
+ * This function intentionally ignores timestamp and age checks.
+ * Use this for error-fallback scenarios where you want to serve
+ * stale data regardless of expiration (e.g., when API is down).
+ *
+ * For normal caching with TTL/stale-while-revalidate, use getCached() instead.
+ *
+ * @param key - Cache key
+ * @returns Cached data or null if not found
  */
 export async function getCache<T>(key: string): Promise<T | null> {
   try {

@@ -6,7 +6,7 @@ import { createCounterService, getClientIP } from '@/lib/d1-counter';
 import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
 
 export async function POST(request: Request) {
-  const env = getCloudflareContext().env;
+  const { env } = await getCloudflareContext();
   const db = env.DB as D1Database;
   const analytics = env.ANALYTICS as AnalyticsEngineDataset;
 
@@ -56,7 +56,10 @@ export async function POST(request: Request) {
     // Create a proper request for the Durable Object
     const broadcastRequest = new Request('http://do/broadcast', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Counter-Secret': env.COUNTER_BROADCAST_SECRET || 'internal-only',
+      },
       body: JSON.stringify({
         clicks,
         timestamp: Date.now(),
@@ -85,7 +88,8 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const db = getCloudflareContext().env.DB as D1Database;
+  const { env } = await getCloudflareContext();
+  const db = env.DB as D1Database;
   const counter = createCounterService(db);
 
   const clicks = await counter.getCount('global-clicks');
