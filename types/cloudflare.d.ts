@@ -6,6 +6,7 @@ declare global {
     ANALYTICS: AnalyticsEngineDataset;
     COUNTER_DO: DurableObjectNamespace;
     WEATHER_API_KEY: string;
+    COUNTER_BROADCAST_SECRET?: string;
   }
 }
 
