@@ -9,8 +9,8 @@ export default function ContactWidget() {
     {
       icon: Mail,
       label: "Email",
-      href: "mailto:contact@ionut.dev",
-      display: "contact@ionut.dev",
+      href: "mailto:contact@lonut.dev",
+      display: "contact@lonut.dev",
     },
     {
       icon: Github,
