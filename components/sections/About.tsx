@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Github, Linkedin, Mail } from "lucide-react"
+import Image from "next/image"
 
 const About = () => {
   return (
@@ -26,13 +27,15 @@ const About = () => {
             transition={{ duration: 0.5 }}
             className="flex justify-center lg:justify-start"
           >
-            <div className="w-full max-w-[350px] h-[400px] bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-2xl flex items-center justify-center">
-              <div className="text-center text-cyan-50">
-                <div className="w-32 h-32 mx-auto mb-4 bg-cyan-300/30 rounded-full flex items-center justify-center">
-                  <span className="text-4xl" role="img" aria-label="Developer working on laptop">👨‍💻</span>
-                </div>
-                <p className="text-sm opacity-90">Professional Avatar</p>
-              </div>
+            <div className="w-full max-w-[350px] h-[400px] rounded-2xl overflow-hidden">
+              <Image
+                src="/avatar.png"
+                alt="Ionut Cioncu - Professional Avatar"
+                width={350}
+                height={400}
+                className="w-full h-full object-cover"
+                priority
+              />
             </div>
           </motion.div>
 
@@ -79,12 +82,12 @@ const About = () => {
                 <span className="text-sm">LinkedIn</span>
               </a>
               <a
-                href="mailto:cioncu_ionut@yahoo.com"
+                href="mailto:contact@lonut.dev"
                 aria-label="Send me an email"
                 className="flex items-center gap-2 text-muted-foreground hover:text-accent-dynamic transition-colors"
               >
                 <Mail className="h-5 w-5" aria-hidden="true" />
-                <span className="text-sm">cioncu_ionut@yahoo.com</span>
+                <span className="text-sm">Email</span>
               </a>
             </div>
           </motion.div>

@@ -9,5 +9,6 @@ export const skills: SkillCategory[] = [
   { category: "Cloud & DevOps", skills: "AWS S3, Azure, Kubernetes, Kibana" },
   { category: "Messaging", skills: "Apache Kafka" },
   { category: "Automation", skills: "Cypress, Selenium" },
+  { category: "AI & Integration", skills: "Prompt Engineering, Claude API, MCP Servers" },
   { category: "Other", skills: "JSON, Microservices, Git" }
 ]
