@@ -72,25 +72,15 @@
   }
 }
 
+/* Hide scrollbar but keep functionality */
 html {
   scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/50 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary;
+html::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
 }
 
 /* Leaflet map styling */
