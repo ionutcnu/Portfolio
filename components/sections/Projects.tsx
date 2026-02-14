@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Folder } from "lucide-react"
 import ProjectCard from "@/components/shared/ProjectCard"
+import ProjectCardSkeleton from "@/components/shared/ProjectCardSkeleton"
 import type { Repository } from "@/types/github"
 
 const Projects = () => {
@@ -61,8 +62,13 @@ const Projects = () => {
     return (
       <section id="projects" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-muted-foreground">Loading projects...</p>
+          <div className="mb-12">
+            <div className="h-10 w-48 bg-muted rounded animate-pulse" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </section>
