@@ -12,6 +12,7 @@ const FEATURED_COUNT = 2
 export default function PortfolioProjects() {
   const [repos, setRepos] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/github/repositories')
@@ -28,8 +29,14 @@ export default function PortfolioProjects() {
         }
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch((err: Error) => {
+        console.error('Failed to load featured projects:', err)
+        setError(err.message || 'Failed to load featured projects')
+        setLoading(false)
+      })
   }, [])
+  if (!loading && error && repos.length === 0) return null
+
   return (
     <section className="px-4 py-8 md:px-0">
       <div className="mb-8 flex items-center justify-between">
