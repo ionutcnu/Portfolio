@@ -4,74 +4,39 @@ import { useState, useEffect } from "react"
 import { Star, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import ProjectCard from "@/components/shared/ProjectCard"
+import ProjectCardSkeleton from "@/components/shared/ProjectCardSkeleton"
+import type { Repository } from "@/types/github"
 
-interface Contributor {
-  login: string
-  avatar_url: string
-  html_url: string
-  contributions: number
-}
-
-interface Repository {
-  name: string
-  owner: string
-  description: string
-  stars: number
-  forks: number
-  language: string | null
-  languages: string[]
-  topics: string[]
-  url: string
-  homepage: string | null
-  contributors: Contributor[]
-  contributorCount: number
-}
-
-interface Project {
-  name: string
-  title: string
-  repoDescription: string
-  longDescription: string
-}
-
-const featuredProjects: Project[] = [
-  {
-    name: "BATS",
-    title: "BATS",
-    repoDescription: "Built a tool to understand how ATS systems work and optimize job applications",
-    longDescription: "BATS is a tool designed to analyze and optimize job applications for Applicant Tracking Systems (ATS).",
-  },
-  {
-    name: "Watcher",
-    title: "Watcher",
-    repoDescription: "Data aggregator for World of Tanks clan statistics and performance tracking",
-    longDescription: "Watcher aggregates and analyzes World of Tanks clan data, providing insights into player performance and clan statistics.",
-  },
-]
+const FEATURED_COUNT = 2
 
 export default function PortfolioProjects() {
   const [repos, setRepos] = useState<Repository[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/github/repositories')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
+        return res.json()
+      })
       .then((data: unknown) => {
-        if (Array.isArray(data) && !('error' in data ? data.error : false)) {
-          // Filter for featured projects only
-          const featured = data.filter((repo: Repository) =>
-            featuredProjects.some(p => p.name.toLowerCase() === repo.name.toLowerCase())
-          )
-          setRepos(featured)
+        if (Array.isArray(data) && !('error' in data)) {
+          const sorted = [...(data as Repository[])]
+            .sort((a, b) => b.stars - a.stars)
+            .slice(0, FEATURED_COUNT)
+          setRepos(sorted)
         }
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch((err: Error) => {
+        console.error('Failed to load featured projects:', err)
+        setError(err.message || 'Failed to load featured projects')
+        setLoading(false)
+      })
   }, [])
+  if (!loading && error && repos.length === 0) return null
 
-  const getProjectInfo = (repoName: string) => {
-    return featuredProjects.find(p => p.name.toLowerCase() === repoName.toLowerCase())
-  }
   return (
     <section className="px-4 py-8 md:px-0">
       <div className="mb-8 flex items-center justify-between">
@@ -91,15 +56,12 @@ export default function PortfolioProjects() {
         </Link>
       </div>
 
-      {loading ? (
-        <div className="text-center py-12">
-          <p className="text-gray-400">Loading projects...</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {repos.map((repo) => {
-            const projectInfo = getProjectInfo(repo.name)
-            return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {loading
+          ? Array.from({ length: FEATURED_COUNT }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))
+          : repos.map((repo) => (
               <ProjectCard
                 key={repo.name}
                 name={repo.name}
@@ -114,13 +76,10 @@ export default function PortfolioProjects() {
                 homepage={repo.homepage}
                 contributors={repo.contributors}
                 contributorCount={repo.contributorCount}
-                title={projectInfo?.title}
-                longDescription={projectInfo?.longDescription}
               />
-            )
-          })}
-        </div>
-      )}
+            ))
+        }
+      </div>
 
       {/* Link for smaller screens */}
       <div className="mt-6 text-center sm:hidden">
