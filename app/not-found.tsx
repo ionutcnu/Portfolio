@@ -74,7 +74,7 @@ export default function NotFound() {
             </Link>
             <span className="text-gray-700">•</span>
             <a
-              href="/CV-Cioncu-Ionut.pdf"
+              href="/Ionut_Cioncu_QA_Engineer.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#e5a54b] transition-colors"
