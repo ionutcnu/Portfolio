@@ -61,7 +61,7 @@ const FALLBACK_DATA: CommitData = {
 
 export async function fetchGitHubCommits(username: string): Promise<CommitData> {
   try {
-    const token = process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+    const token = process.env.GITHUB_TOKEN;
 
     // Fetch recent events to get commits
     const eventsResponse = await fetch(

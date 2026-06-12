@@ -45,9 +45,6 @@ function getHeaders() {
 
 export async function GET() {
   try {
-    console.log('[GitHub API] Token exists:', !!GITHUB_TOKEN);
-    console.log('[GitHub API] Token length:', GITHUB_TOKEN?.length || 0);
-
     // Fetch user's repositories
     const reposResponse = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10&type=owner`,

@@ -57,7 +57,6 @@ function getHeaders() {
 async function fetchGitHubStats() {
   console.log('[GitHub API] Starting stats fetch...');
   console.log('[GitHub API] Username:', GITHUB_USERNAME);
-  console.log('[GitHub API] Has token:', !!GITHUB_TOKEN);
 
   // Fetch user info
     const userResponse = await fetch(
