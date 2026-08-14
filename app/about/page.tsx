@@ -2,12 +2,12 @@ import About from "@/components/sections/About";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About - Ionut Cioncu | QA Tester at Endava",
-  description: "Ionut Cioncu - QA Tester with 4 years of multi-domain experience at Endava PLC. Specializing in REST API testing, PostgreSQL, Kubernetes, and microservices across Naval Shipping and Payments domains. Based in Pitesti, Romania.",
-  keywords: ["Ionut Cioncu", "QA Tester", "Endava", "REST API Testing", "Postman", "PostgreSQL", "Kubernetes", "Azure", "Kafka", "Naval Shipping", "Payments", "Pitesti", "Romania"],
+  title: "About - Ionut Cioncu | QA Engineer at Endava",
+  description: "Ionut Cioncu is a QA Engineer with 4+ years of experience across Maritime Logistics and Payments at Endava. Experienced with REST APIs, PostgreSQL, microservices, Playwright, Selenium, Cypress, and AI-assisted engineering.",
+  keywords: ["Ionut Cioncu", "QA Engineer", "Endava", "Maritime Logistics", "Payments", "REST APIs", "PostgreSQL", "Microservices", "Kafka", "Cosmos DB", "Azure", "Kubernetes", "Playwright", "Selenium", "Cypress", "LLM Testing", "MCP", "Romania"],
   openGraph: {
-    title: "About Ionut Cioncu - QA Tester at Endava",
-    description: "QA Tester with 4 years of experience across Naval Shipping and Payments domains. Testing with context - understanding why we build, not just if it works.",
+    title: "About Ionut Cioncu - QA Engineer at Endava",
+    description: "QA Engineer with 4+ years of experience across Maritime Logistics and Payments, working with APIs, distributed systems, test automation, and AI-assisted engineering.",
     url: "https://ionut.dev/about",
   },
 };
