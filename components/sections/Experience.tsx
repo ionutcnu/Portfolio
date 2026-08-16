@@ -18,13 +18,13 @@ interface ExperienceItem {
 const experienceData: ExperienceItem[] = [
   {
     company: "Endava Romania",
-    role: "QA Tester",
+    role: "QA Engineer",
     url: "https://www.endava.com/",
     logoUrl: "/logos/endava.png",
     logoAlt: "Endava Logo",
     startDate: "2022-06-01",
     details:
-      "QA Tester working on Naval Shipping and Payments domains. Conducting REST API testing, validating payment flows, writing SQL scripts, and became QA SME for the projects.",
+      "QA Engineer working on Maritime Logistics and Payments domains. Conducting REST API testing, validating payment flows, writing SQL scripts, and serving as QA SME for the projects.",
   },
   {
     company: "Vision",

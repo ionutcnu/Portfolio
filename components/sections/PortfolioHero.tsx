@@ -10,7 +10,7 @@ export default function PortfolioHero() {
       </h1>
 
       <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
-        QA Tester with 4 years of experience at{" "}
+        QA Engineer with 4+ years of experience at{" "}
         <Link
           href="https://www.endava.com/"
           target="_blank"
@@ -23,7 +23,7 @@ export default function PortfolioHero() {
       </p>
 
       <p className="text-gray-400 max-w-prose text-lg leading-relaxed">
-        I&apos;ve worked across Naval Shipping and Payments domains, becoming the QA SME. I bridge the gap between testing and business analysis, going beyond the happy path to look for edge cases and question if we&apos;re building the right thing.
+        I&apos;ve worked across Maritime Logistics and Payments domains, becoming the QA SME. I bridge the gap between testing and business analysis, going beyond the happy path to look for edge cases and question if we&apos;re building the right thing.
       </p>
 
       {/* Skills Section */}

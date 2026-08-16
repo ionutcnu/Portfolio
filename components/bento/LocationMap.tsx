@@ -15,8 +15,8 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
     // Only initialize if we haven't already and container exists
     if (mapRef.current || !containerRef.current) return;
 
-    // Pitești, Romania coordinates
-    const position: [number, number] = [44.8565, 24.8692];
+    // Bucharest, Romania coordinates
+    const position: [number, number] = [44.4268, 26.1025];
 
     // Create map instance
     const map = L.map(containerRef.current, {

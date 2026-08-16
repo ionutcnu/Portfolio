@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "About Ionut Cioncu - QA Engineer at Endava",
     description: "QA Engineer with 4+ years of experience across Maritime Logistics and Payments, working with APIs, distributed systems, test automation, and AI-assisted engineering.",
-    url: "https://ionut.dev/about",
+    url: "https://lonut.dev/about",
   },
 };
 
