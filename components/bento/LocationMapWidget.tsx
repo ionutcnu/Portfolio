@@ -27,7 +27,7 @@ export default function LocationMapWidget() {
   const [isDaytime, setIsDaytime] = useState(true);
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const timezone = 'Europe/Bucharest';
-  const location = 'Pitești, Romania';
+  const location = 'Bucharest, Romania';
   const utcOffset = 'UTC+2';
 
   useEffect(() => {

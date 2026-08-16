@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Projects - Ionut Cioncu",
     description: "GitHub projects built with TypeScript, Next.js, and React.",
-    url: "https://ionut.dev/projects",
+    url: "https://lonut.dev/projects",
   },
 };
 

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
-const LOCATION = 'Pitesti';
+const LOCATION = 'Bucharest';
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 let cachedWeather: {
@@ -69,7 +69,7 @@ export async function GET() {
     console.error('Failed to fetch weather:', error);
     return Response.json(
       {
-        location: 'Pitesti',
+        location: 'Bucharest',
         temp: '--',
         condition: 'Unavailable',
         icon: '🌡️',

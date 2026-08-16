@@ -1,6 +1,6 @@
 # 💼 Portfolio - Ionut Cioncu
 
-Professional portfolio website showcasing QA testing expertise, technical projects, and professional experience. Built with modern web technologies and deployed on Cloudflare's edge network.
+Professional portfolio website showcasing QA engineering expertise, technical projects, and professional experience. Built with modern web technologies and deployed on Cloudflare's edge network.
 
 [![Live Demo](https://img.shields.io/badge/LIVE_DEMO-lonut.dev-blue?style=for-the-badge)](https://lonut.dev)
 [![Cloudflare](https://img.shields.io/badge/CLOUDFLARE-Workers-orange?style=for-the-badge&logo=cloudflare)](https://workers.cloudflare.com/)
@@ -22,7 +22,7 @@ Professional portfolio website showcasing QA testing expertise, technical projec
 
 ### 👤 Professional Showcase
 - **Interactive Hero** - Skills taxonomy with domain expertise
-- **Experience Timeline** - 4 years across Naval Shipping & Payments
+- **Experience Timeline** - 4+ years across Maritime Logistics & Payments
 - **Project Gallery** - Live demos with GitHub integration
 - **Professional Avatar** - Custom branding and visual identity
 - **SEO Optimized** - Open Graph metadata for social shares
@@ -68,7 +68,7 @@ Professional portfolio website showcasing QA testing expertise, technical projec
 
 ### Professional Showcase
 - Interactive hero section with skills taxonomy
-- Experience timeline with domain expertise (Naval Shipping, Payments)
+- Experience timeline with domain expertise (Maritime Logistics, Payments)
 - Project gallery with live demos and GitHub integration
 - Professional avatar and branding
 
@@ -388,13 +388,15 @@ wrangler secret put GITHUB_TOKEN
 
 ## Skills Taxonomy
 
-**API Testing**: Postman, REST APIs
-**Databases**: PostgreSQL, SQL scripting
-**Cloud & DevOps**: AWS S3, Azure, Kubernetes, Kibana
-**Messaging**: Apache Kafka
-**Automation**: Cypress, Selenium
-**AI & Integration**: Prompt Engineering, Claude API, MCP Servers
-**Other**: JSON, Microservices, Git
+**Test Automation**: Playwright, Selenium, Cypress, POM, Data-Driven Testing
+**Programming**: C#, TypeScript, OOP
+**API Testing**: REST APIs, Postman, Insomnia
+**Data & Messaging**: SQL, PostgreSQL, Cosmos DB, Apache Kafka
+**CI/CD**: GitHub Actions, TeamCity
+**Version Control**: Git, Bitbucket Cloud
+**Cloud & Tooling**: AWS, Azure, Kubernetes, Cloudflare, Kibana
+**Methodologies & Concepts**: Agile/Scrum, Waterfall, BDD, Shift-Left, E2E Testing, Integration Testing
+**AI Engineering**: Prompt/Context Engineering, Prompt Injection, LLM Testing, Agent Evaluation, MCP
 
 ## Deployment
 
@@ -425,7 +427,7 @@ MIT License - Free to use as template
 - **Website**: [lonut.dev](https://lonut.dev)
 - **GitHub**: [@ionutcnu](https://github.com/ionutcnu)
 - **LinkedIn**: [cioncu](https://linkedin.com/in/cioncu)
-- **Location**: Pitesti, Romania
+- **Location**: Romania
 
 ---
 
