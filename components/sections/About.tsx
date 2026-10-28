@@ -3,7 +3,9 @@
 import { motion } from "framer-motion"
 import { Github, Linkedin, Mail } from "lucide-react"
 import Image from "next/image"
+import ContactDialog from "@/components/contact/ContactDialog"
 
+/** Present the biography and social links with a shared contact dialog entry point. */
 const About = () => {
   return (
     <section id="about" className="py-16 mb-20">
@@ -60,7 +62,7 @@ const About = () => {
             </p>
 
             {/* Social Links */}
-            <div className="flex items-center gap-6 pt-6">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-6">
               <a
                 href="https://github.com/ionutcnu"
                 target="_blank"
@@ -81,14 +83,10 @@ const About = () => {
                 <Linkedin className="h-5 w-5" aria-hidden="true" />
                 <span className="text-sm">LinkedIn</span>
               </a>
-              <a
-                href="mailto:contact@lonut.dev"
-                aria-label="Send me an email"
-                className="flex items-center gap-2 text-muted-foreground hover:text-accent-dynamic transition-colors"
-              >
+              <ContactDialog className="flex min-h-11 items-center gap-2 text-muted-foreground hover:text-accent-dynamic focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-dynamic">
                 <Mail className="h-5 w-5" aria-hidden="true" />
-                <span className="text-sm">Email</span>
-              </a>
+                <span className="text-sm">Let&apos;s Connect</span>
+              </ContactDialog>
             </div>
           </motion.div>
         </div>
