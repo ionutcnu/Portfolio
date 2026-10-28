@@ -5,6 +5,7 @@ import { Github, Linkedin, Mail } from "lucide-react"
 import Image from "next/image"
 import ContactDialog from "@/components/contact/ContactDialog"
 
+/** Present the biography and social links with a shared contact dialog entry point. */
 const About = () => {
   return (
     <section id="about" className="py-16 mb-20">

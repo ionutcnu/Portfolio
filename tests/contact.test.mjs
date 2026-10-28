@@ -59,8 +59,14 @@ await test('contact endpoint', async t => {
       ['blank message', { ...valid, message: '  ' }], ['oversized field', { ...valid, message: 'a'.repeat(5001) }],
       ['header injection', { ...valid, email: 'a@example.com\r\nBcc: b@example.com' }],
       ['control characters', { ...valid, name: 'a\u0000b' }], ['missing token', { ...valid, token: '' }],
-      ['oversized body without Content-Length', 'x'.repeat(32769)],
+      ['oversized body without Content-Length', { ...valid, padding: 'x'.repeat(32769) }],
     ]) await t.test(name, async () => { setup(); const result = await POST(request(body)); assert.equal(result.status, 400); assert.equal(calls.length, 0); });
+    await t.test('oversized Content-Length rejected before external requests', async () => {
+      setup();
+      const result = await POST(request(valid, { 'Content-Length': '32769' }));
+      assert.equal(result.status, 413);
+      assert.equal(calls.length, 0);
+    });
     await t.test('foreign origin rejected', async () => { setup(); assert.equal((await POST(request(valid, { Origin: 'https://attacker.example' }))).status, 403); assert.equal(calls.length, 0); });
     await t.test('non-JSON rejected', async () => { setup(); assert.equal((await POST(request(valid, { 'Content-Type': 'text/plain' }))).status, 415); });
     await t.test('rate limited before external requests', async () => { setup({ limited: true }); const result = await POST(request()); assert.equal(result.status, 429); assert.equal(result.headers.get('retry-after'), '60'); assert.equal(calls.length, 0); });

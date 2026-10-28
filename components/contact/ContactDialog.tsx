@@ -19,6 +19,7 @@ declare global { interface Window { turnstile?: Turnstile } }
 
 const fieldClass = "w-full rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-base text-foreground placeholder:text-foreground/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-dynamic";
 
+/** Render a contact trigger and modal with runtime configuration and Turnstile verification. */
 export default function ContactDialog({ children, className }: { children: ReactNode; className?: string }) {
   const id = useId();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -64,6 +65,7 @@ export default function ContactDialog({ children, className }: { children: React
     const controller = new AbortController();
     let active = true;
     const timeout = window.setTimeout(() => controller.abort(), 10_000);
+    /** Load the public widget key, ignoring results after the dialog closes. */
     async function loadConfig() {
       try {
         const response = await fetch("/api/contact", { cache: "no-store", signal: controller.signal });
@@ -99,6 +101,7 @@ export default function ContactDialog({ children, className }: { children: React
     };
   }, [open, ready, compact, siteKey]);
 
+  /** Send one verified submission at a time and reset the single-use challenge afterward. */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (inFlight.current || !token) return;

@@ -5,6 +5,7 @@ import { Mail, Github, MapPin } from "lucide-react";
 import ContactDialog from "@/components/contact/ContactDialog";
 import { BentoBox } from "./BentoGrid";
 
+/** Show the contact dialog trigger alongside public profile and location links. */
 export default function ContactWidget() {
   const contacts = [
     {

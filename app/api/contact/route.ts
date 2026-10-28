@@ -5,13 +5,14 @@ const MAX_BODY_BYTES = 32_768;
 const emailPattern = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const controls = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
+/** Return an uncached result without exposing provider details or private configuration. */
 function reply(status: number) {
   return Response.json(status === 200 ? { success: true } : { success: false, error: "Unable to send message. Please try again later." }, {
     status, headers: { "Cache-Control": "no-store", ...(status === 429 ? { "Retry-After": "60" } : {}) },
   });
 }
 
-// Bound the actual stream, including requests without a Content-Length header.
+/** Parse UTF-8 JSON while enforcing the byte limit even without Content-Length. */
 async function readBody(request: Request): Promise<unknown> {
   if (!request.body) throw new Error("Missing body");
   const reader = request.body.getReader();
@@ -30,7 +31,7 @@ async function readBody(request: Request): Promise<unknown> {
   } finally { reader.releaseLock(); }
 }
 
-// Explicit allowlist: this endpoint exposes only the public widget key.
+/** Expose only the public Turnstile key, or a generic failure if unavailable. */
 export async function GET() {
   try {
     const { env } = await getCloudflareContext({ async: true });
@@ -42,6 +43,7 @@ export async function GET() {
   }
 }
 
+/** Validate and rate-limit a submission, verify Turnstile, then send plain-text email. */
 export async function POST(request: Request) {
   try {
     const { env } = await getCloudflareContext({ async: true });
