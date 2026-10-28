@@ -25,7 +25,7 @@ export default function ContactDialog({ children, className }: { children: React
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const challenge = useRef<HTMLDivElement>(null);
-  const widget = useRef<string>();
+  const widget = useRef<string | undefined>(undefined);
   const inFlight = useRef(false);
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
