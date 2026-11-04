@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { MousePointer2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { BentoBox } from "./BentoGrid";
 
 // Generate or retrieve session ID
 function getSessionId(): string {
   try {
-    let sessionId = localStorage.getItem('analytics-session-id');
+    let sessionId = localStorage.getItem("analytics-session-id");
     if (!sessionId) {
       sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-      localStorage.setItem('analytics-session-id', sessionId);
+      localStorage.setItem("analytics-session-id", sessionId);
     }
     return sessionId;
   } catch (error) {
@@ -27,36 +27,41 @@ interface PlusOne {
   y: number;
 }
 
-export default function ClickCounterWidget() {
+export default function ClickCounterWidget({ active = true }: { active?: boolean }) {
   const [globalClicks, setGlobalClicks] = useState(750362);
   const [localClicks, setLocalClicks] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [showSparkle, setShowSparkle] = useState(false);
   const [plusOnes, setPlusOnes] = useState<PlusOne[]>([]);
-  const pageLoadTime = useRef(Date.now());
+  const pageLoadTime = useRef(0);
 
   useEffect(() => {
+    pageLoadTime.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    if (!active) return;
     // Load local clicks from localStorage
     try {
-      const savedClicks = localStorage.getItem('local-clicks');
+      const savedClicks = localStorage.getItem("local-clicks");
       if (savedClicks) {
         setLocalClicks(parseInt(savedClicks, 10));
       }
     } catch (error) {
       // localStorage not available, start at 0
-      console.warn('[Counter] localStorage not available:', error);
+      console.warn("[Counter] localStorage not available:", error);
     }
 
     // Fetch initial count immediately (before WebSocket connects)
     const fetchInitialCount = async () => {
       try {
-        const response = await fetch('/api/clicks');
+        const response = await fetch("/api/clicks");
         if (response.ok) {
-          const data = await response.json() as { clicks: number };
+          const data = (await response.json()) as { clicks: number };
           setGlobalClicks(data.clicks);
         }
       } catch (error) {
-        console.error('[Counter] Failed to fetch initial count:', error);
+        console.error("[Counter] Failed to fetch initial count:", error);
         // Keep fallback value if fetch fails
       }
     };
@@ -75,19 +80,19 @@ export default function ClickCounterWidget() {
     const connect = () => {
       if (isIntentionallyClosed || reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
         if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-          console.error('[Counter] Max reconnect attempts reached');
+          console.error("[Counter] Max reconnect attempts reached");
         }
         return;
       }
 
       // Use wss:// for production, ws:// for local
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/api/clicks/ws`;
 
       ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('[Counter] WebSocket connected');
+        console.log("[Counter] WebSocket connected");
         setIsConnected(true);
         reconnectAttempts = 0; // Reset on successful connection
       };
@@ -96,34 +101,39 @@ export default function ClickCounterWidget() {
         try {
           const data = JSON.parse(event.data);
           // Validate data type before using
-          if (typeof data.clicks === 'number') {
+          if (typeof data.clicks === "number") {
             setGlobalClicks(data.clicks);
           } else {
-            console.error('[Counter] Invalid data type for clicks:', typeof data.clicks);
+            console.error("[Counter] Invalid data type for clicks:", typeof data.clicks);
           }
         } catch (error) {
-          console.error('[Counter] Failed to parse message:', error);
+          console.error("[Counter] Failed to parse message:", error);
         }
       };
 
       ws.onerror = (error) => {
-        console.error('[Counter] WebSocket error:', error);
+        console.error("[Counter] WebSocket error:", error);
         setIsConnected(false);
       };
 
       ws.onclose = () => {
-        console.log('[Counter] WebSocket closed');
+        console.log("[Counter] WebSocket closed");
         setIsConnected(false);
 
         // Auto-reconnect with exponential backoff (unless intentionally closed)
         if (!isIntentionallyClosed && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttempts++;
           // Exponential backoff: delay = min(base * 2^attempts, max)
-          const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1), MAX_RECONNECT_DELAY);
-          console.log(`[Counter] Reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+          const delay = Math.min(
+            BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1),
+            MAX_RECONNECT_DELAY,
+          );
+          console.log(
+            `[Counter] Reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`,
+          );
 
           reconnectTimeout = setTimeout(() => {
-            console.log('[Counter] Reconnecting...');
+            console.log("[Counter] Reconnecting...");
             connect();
           }, delay);
         }
@@ -140,7 +150,7 @@ export default function ClickCounterWidget() {
         ws.close();
       }
     };
-  }, []);
+  }, [active]);
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     // Increment local counter
@@ -148,10 +158,10 @@ export default function ClickCounterWidget() {
     setLocalClicks(newLocalClicks);
 
     try {
-      localStorage.setItem('local-clicks', newLocalClicks.toString());
+      localStorage.setItem("local-clicks", newLocalClicks.toString());
     } catch (error) {
       // localStorage not available, continue without persisting
-      console.warn('[Counter] Could not save local clicks:', error);
+      console.warn("[Counter] Could not save local clicks:", error);
     }
 
     // Show sparkle animation
@@ -164,11 +174,11 @@ export default function ClickCounterWidget() {
       x: Math.random() * 60 + 20, // Random position between 20-80%
       y: Math.random() * 40 + 30, // Random position between 30-70%
     };
-    setPlusOnes(prev => [...prev, newPlusOne]);
+    setPlusOnes((prev) => [...prev, newPlusOne]);
 
     // Remove after animation completes
     setTimeout(() => {
-      setPlusOnes(prev => prev.filter(p => p.id !== newPlusOne.id));
+      setPlusOnes((prev) => prev.filter((p) => p.id !== newPlusOne.id));
     }, 1000);
 
     // Collect comprehensive analytics data
@@ -183,23 +193,23 @@ export default function ClickCounterWidget() {
 
     // Increment global counter via API with analytics
     try {
-      const response = await fetch('/api/clicks/increment', {
-        method: 'POST',
+      const response = await fetch("/api/clicks/increment", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(analyticsData),
       });
 
       // Use server response for instant update
       if (response.ok) {
-        const data = await response.json() as { success: boolean; clicks: number };
+        const data = (await response.json()) as { success: boolean; clicks: number };
         if (data.clicks) {
           setGlobalClicks(data.clicks);
         }
       }
     } catch (error) {
-      console.error('Failed to increment global counter:', error);
+      console.error("Failed to increment global counter:", error);
       // WebSocket will sync eventually
     }
   };
@@ -212,9 +222,11 @@ export default function ClickCounterWidget() {
           Time Waster
         </h3>
         <div className="flex items-center gap-1">
-          <div className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full transition-colors ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+          <div
+            className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full transition-colors ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+          />
           <span className="text-[10px] sm:text-xs text-muted-foreground">
-            {isConnected ? 'Live' : 'Offline'}
+            {isConnected ? "Live" : "Offline"}
           </span>
         </div>
       </div>
@@ -258,16 +270,16 @@ export default function ClickCounterWidget() {
         >
           {globalClicks.toLocaleString()}
         </motion.div>
-        <div className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground">Global Clicks</div>
+        <div className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground">
+          Global Clicks
+        </div>
       </motion.button>
 
       <div className="mt-3 sm:mt-4 flex items-center justify-between text-[10px] sm:text-xs">
         <span className="text-muted-foreground">
           You: <span className="font-semibold text-foreground">{localClicks.toLocaleString()}</span>
         </span>
-        <span className="text-muted-foreground">
-          Click to waste time →
-        </span>
+        <span className="text-muted-foreground">Click to waste time →</span>
       </div>
     </BentoBox>
   );

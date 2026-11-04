@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { motion } from "framer-motion";
-import { Mail, Github, MapPin } from "lucide-react";
+import { Github, Mail, MapPin } from "lucide-react";
 import ContactDialog from "@/components/contact/ContactDialog";
 import { BentoBox } from "./BentoGrid";
 
@@ -23,16 +23,18 @@ export default function ContactWidget() {
   ];
 
   return (
-    <BentoBox span={1}>
+    <BentoBox span={1} className="contact-card">
       <h3 className="mb-1.5 flex items-center gap-2 text-sm font-semibold">
         <Mail size={14} className="text-accent-dynamic" />
         Get in touch
       </h3>
-      <p className="mb-2 text-xs text-muted-foreground">
+      <p className="contact-description mb-2 text-xs text-muted-foreground">
         Always open to interesting projects and conversations.
       </p>
-      <ContactDialog className="mb-3 inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent-dynamic px-3 py-2 text-xs font-semibold text-[#1e1e2e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-dynamic">Let&apos;s Connect ↗</ContactDialog>
-      <div className="space-y-1">
+      <ContactDialog className="mb-3 inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent-dynamic px-3 py-2 text-xs font-semibold text-[#1e1e2e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-dynamic">
+        Let&apos;s Connect ↗
+      </ContactDialog>
+      <div className="contact-links space-y-1">
         {contacts.map((contact, index) => {
           const Icon = contact.icon;
           return (

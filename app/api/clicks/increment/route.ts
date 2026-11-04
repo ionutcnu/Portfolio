@@ -1,9 +1,9 @@
 // POST endpoint for incrementing the click counter with Cloudflare D1
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { createCounterService, getClientIP } from '@/lib/d1-counter';
-import { createAnalyticsService, type ClickEventData } from '@/lib/analytics';
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { type ClickEventData, createAnalyticsService } from "@/lib/analytics";
+import { createCounterService, getClientIP } from "@/lib/d1-counter";
 
 export async function POST(request: Request) {
   const { env } = await getCloudflareContext();
@@ -18,8 +18,8 @@ export async function POST(request: Request) {
 
   if (!allowed) {
     return Response.json(
-      { error: 'Rate limit exceeded. Max 30 requests per 10 seconds.' },
-      { status: 429 }
+      { error: "Rate limit exceeded. Max 30 requests per 10 seconds." },
+      { status: 429 },
     );
   }
 
@@ -42,23 +42,23 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     // Log but don't fail the request if analytics fail
-    console.error('Analytics tracking failed:', error);
+    console.error("Analytics tracking failed:", error);
   }
 
   // Increment counter (only counter in D1, keeping it clean)
-  const clicks = await counter.increment('global-clicks');
+  const clicks = await counter.increment("global-clicks");
 
   // Broadcast to all WebSocket clients via Durable Object
   try {
-    const id = env.COUNTER_DO.idFromName('global-counter');
+    const id = env.COUNTER_DO.idFromName("global-counter");
     const stub = env.COUNTER_DO.get(id);
 
     // Create a proper request for the Durable Object
-    const broadcastRequest = new Request('http://do/broadcast', {
-      method: 'POST',
+    const broadcastRequest = new Request("http://do/broadcast", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Counter-Secret': env.COUNTER_BROADCAST_SECRET || 'internal-only',
+        "Content-Type": "application/json",
+        "X-Counter-Secret": env.COUNTER_BROADCAST_SECRET || "internal-only",
       },
       body: JSON.stringify({
         clicks,
@@ -71,13 +71,13 @@ export async function POST(request: Request) {
 
     if (!broadcastResponse.ok) {
       const errorText = await broadcastResponse.text();
-      console.error('[Clicks] Broadcast failed:', broadcastResponse.status, errorText);
+      console.error("[Clicks] Broadcast failed:", broadcastResponse.status, errorText);
     } else {
       const result = await broadcastResponse.json();
-      console.log('[Clicks] Broadcast success:', result);
+      console.log("[Clicks] Broadcast success:", result);
     }
   } catch (error) {
-    console.error('[Clicks] Failed to broadcast to DO:', error);
+    console.error("[Clicks] Failed to broadcast to DO:", error);
     // Don't fail the user request if broadcast fails
   }
 
@@ -92,6 +92,6 @@ export async function GET() {
   const db = env.DB as D1Database;
   const counter = createCounterService(db);
 
-  const clicks = await counter.getCount('global-clicks');
+  const clicks = await counter.getCount("global-clicks");
   return Response.json({ clicks });
 }

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react";
-import { MapPin, Clock, Sun, Moon } from "lucide-react";
-import { BentoBox } from "./BentoGrid";
+import { Clock, MapPin, Moon, Sun } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { BentoBox } from "./BentoGrid";
 
 interface WeatherData {
   location: string;
@@ -22,23 +22,24 @@ const LocationMap = dynamic(() => import("./LocationMap"), {
   ),
 });
 
-export default function LocationMapWidget() {
-  const [time, setTime] = useState('');
+export default function LocationMapWidget({ active = true }: { active?: boolean }) {
+  const [time, setTime] = useState("");
   const [isDaytime, setIsDaytime] = useState(true);
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const timezone = 'Europe/Bucharest';
-  const location = 'Bucharest, Romania';
-  const utcOffset = 'UTC+2';
+  const timezone = "Europe/Bucharest";
+  const location = "Bucharest, Romania";
+  const utcOffset = "UTC+2";
 
   useEffect(() => {
+    if (!active) return;
     const updateTime = () => {
       const now = new Date();
 
       // Get time in Bucharest timezone
-      const timeString = now.toLocaleTimeString('en-US', {
+      const timeString = now.toLocaleTimeString("en-US", {
         timeZone: timezone,
-        hour: '2-digit',
-        minute: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
         hour12: false,
       });
 
@@ -46,11 +47,11 @@ export default function LocationMapWidget() {
 
       // Determine if it's daytime (6 AM - 9 PM)
       const hour = parseInt(
-        now.toLocaleTimeString('en-US', {
+        now.toLocaleTimeString("en-US", {
           timeZone: timezone,
-          hour: '2-digit',
+          hour: "2-digit",
           hour12: false,
-        })
+        }),
       );
       setIsDaytime(hour >= 6 && hour < 21);
     };
@@ -58,37 +59,43 @@ export default function LocationMapWidget() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [active]);
 
   useEffect(() => {
+    if (!active) return;
     const fetchWeather = async () => {
       try {
-        const response = await fetch('/api/weather');
+        const response = await fetch("/api/weather");
 
         if (!response.ok) {
-          console.error('Weather API error:', response.status);
+          console.error("Weather API error:", response.status);
           return;
         }
 
         const data = await response.json();
 
         // Validate data structure
-        if (data && typeof data === 'object' &&
-            'location' in data && 'temp' in data &&
-            'condition' in data && 'icon' in data) {
+        if (
+          data &&
+          typeof data === "object" &&
+          "location" in data &&
+          "temp" in data &&
+          "condition" in data &&
+          "icon" in data
+        ) {
           setWeather(data as WeatherData);
         } else {
-          console.error('Invalid weather data structure:', data);
+          console.error("Invalid weather data structure:", data);
         }
       } catch (error) {
-        console.error('Failed to fetch weather:', error);
+        console.error("Failed to fetch weather:", error);
       }
     };
 
     fetchWeather();
     const interval = setInterval(fetchWeather, 10 * 60 * 1000); // Update every 10min
     return () => clearInterval(interval);
-  }, []);
+  }, [active]);
 
   return (
     <BentoBox span={1}>
@@ -103,7 +110,7 @@ export default function LocationMapWidget() {
         <div className="flex items-center justify-between text-xs">
           <button
             type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="text-muted-foreground hover:text-accent-dynamic cursor-pointer whitespace-nowrap transition-colors text-left"
           >
             {location}

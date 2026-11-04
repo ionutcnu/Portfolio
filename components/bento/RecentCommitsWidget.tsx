@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react";
 import { Activity, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import { type CommitData, fetchGitHubCommits, getLanguageColor } from "@/lib/api/github";
 import { BentoBox } from "./BentoGrid";
-import { fetchGitHubCommits, getLanguageColor, type CommitData } from "@/lib/api/github";
 
 export default function RecentCommitsWidget() {
   const [commitData, setCommitData] = useState<CommitData | null>(null);
@@ -13,13 +13,13 @@ export default function RecentCommitsWidget() {
     async function loadCommits() {
       try {
         // Use server-side API route to access token
-        const response = await fetch('/api/github/commits');
+        const response = await fetch("/api/github/commits");
 
         if (!response.ok) {
-          throw new Error('Failed to fetch commits');
+          throw new Error("Failed to fetch commits");
         }
 
-        const repoData = await response.json() as any[];
+        const repoData = (await response.json()) as any[];
 
         // Transform to CommitData format
         const allCommits: any[] = [];
@@ -40,10 +40,7 @@ export default function RecentCommitsWidget() {
 
             // Track languages
             if (repo.language) {
-              languageMap.set(
-                repo.language,
-                (languageMap.get(repo.language) || 0) + 1
-              );
+              languageMap.set(repo.language, (languageMap.get(repo.language) || 0) + 1);
             }
           }
         });
@@ -117,7 +114,7 @@ export default function RecentCommitsWidget() {
                   title={`${commit.repo}: ${commit.message}`}
                 >
                   <span className="text-foreground flex-shrink-0 font-medium">
-                    {commit.repo.split('/').pop() || commit.repo}:
+                    {commit.repo.split("/").pop() || commit.repo}:
                   </span>
                   <span className="min-w-0 flex-1 truncate">{commit.message}</span>
                 </a>
@@ -129,57 +126,57 @@ export default function RecentCommitsWidget() {
         )}
 
         <div className="mt-auto pt-3 flex items-center gap-3">
-        <a
-          href="https://github.com/ionutcnu"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group text-accent-dynamic inline-flex items-center gap-1 text-sm hover:underline"
-        >
-          <span>View on GitHub</span>
-          <ExternalLink
-            size={14}
-            className="inline-block transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          />
-        </a>
-
-        {langTotal > 0 && commitData?.languages && (
-          <div
-            className="ml-auto max-w-xs flex-1 sm:max-w-sm md:max-w-md"
-            role="img"
-            aria-label="Language breakdown"
+          <a
+            href="https://github.com/ionutcnu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group text-accent-dynamic inline-flex items-center gap-1 text-sm hover:underline"
           >
-            <div className="bg-muted h-2 w-full rounded-[3px]">
-              <div className="flex h-full w-full">
-                {commitData.languages.map((lang) => (
-                  <div
-                    key={lang.name}
-                    className="group relative h-full first:rounded-l-[3px] last:rounded-r-[3px]"
-                    style={{
-                      width: `${(lang.size / langTotal) * 100}%`,
-                      backgroundColor: lang.color,
-                      minWidth: '8px'
-                    }}
-                  >
-                    {/* Tooltip */}
-                    <div className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded border border-border bg-popover px-2 py-1 text-xs whitespace-nowrap opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
-                      <span className="inline-flex items-center gap-2">
-                        <span
-                          className="inline-block h-2 w-2 rounded"
-                          style={{ backgroundColor: lang.color }}
-                        ></span>
-                        <span className="text-foreground">{lang.name}</span>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-muted-foreground">
-                          {Math.round((lang.size / langTotal) * 100)}%
+            <span>View on GitHub</span>
+            <ExternalLink
+              size={14}
+              className="inline-block transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </a>
+
+          {langTotal > 0 && commitData?.languages && (
+            <div
+              className="ml-auto max-w-xs flex-1 sm:max-w-sm md:max-w-md"
+              role="img"
+              aria-label="Language breakdown"
+            >
+              <div className="bg-muted h-2 w-full rounded-[3px]">
+                <div className="flex h-full w-full">
+                  {commitData.languages.map((lang) => (
+                    <div
+                      key={lang.name}
+                      className="group relative h-full first:rounded-l-[3px] last:rounded-r-[3px]"
+                      style={{
+                        width: `${(lang.size / langTotal) * 100}%`,
+                        backgroundColor: lang.color,
+                        minWidth: "8px",
+                      }}
+                    >
+                      {/* Tooltip */}
+                      <div className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded border border-border bg-popover px-2 py-1 text-xs whitespace-nowrap opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                        <span className="inline-flex items-center gap-2">
+                          <span
+                            className="inline-block h-2 w-2 rounded"
+                            style={{ backgroundColor: lang.color }}
+                          ></span>
+                          <span className="text-foreground">{lang.name}</span>
+                          <span className="text-muted-foreground">•</span>
+                          <span className="text-muted-foreground">
+                            {Math.round((lang.size / langTotal) * 100)}%
+                          </span>
                         </span>
-                      </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </BentoBox>

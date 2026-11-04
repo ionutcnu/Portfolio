@@ -1,34 +1,44 @@
-import { Star, GitFork, Github, ExternalLink } from "lucide-react"
-import Image from "next/image"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import type { Contributor } from "@/types/github"
+import { BookMarked, ExternalLink, GitFork, Github, Star } from "lucide-react";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Contributor } from "@/types/github";
+import ProjectTechnologies from "./ProjectTechnologies";
+import TiltSurface from "./TiltSurface";
 
 interface ProjectCardProps {
-  name: string
-  owner: string
-  description: string
-  stars: number
-  forks: number
-  language: string | null
-  languages: string[]
-  topics: string[]
-  url: string
-  homepage: string | null
-  contributors: Contributor[]
-  contributorCount: number
-  title?: string
-  longDescription?: string
+  name: string;
+  owner: string;
+  description: string;
+  stars: number;
+  forks: number;
+  language: string | null;
+  languages: string[];
+  topics: string[];
+  url: string;
+  homepage: string | null;
+  contributors: Contributor[];
+  contributorCount: number;
+  compact?: boolean;
+  title?: string;
+  longDescription?: string;
 }
 
 function isValidUrl(urlString: string | null): boolean {
-  if (!urlString) return false
+  if (!urlString) return false;
   try {
-    const url = new URL(urlString)
-    return url.protocol === "http:" || url.protocol === "https:"
+    const url = new URL(urlString);
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -45,18 +55,95 @@ export default function ProjectCard({
   homepage,
   contributors,
   contributorCount,
+  compact = false,
   title,
   longDescription,
 }: ProjectCardProps) {
-  const validUrl = isValidUrl(url) ? url : "#"
-  const validHomepage = isValidUrl(homepage) ? homepage : null
+  const validUrl = isValidUrl(url) ? url : "#";
+  const validHomepage = isValidUrl(homepage) ? homepage : null;
+  if (compact)
+    return (
+      <TiltSurface className="portfolio-project-card project-brief project-from-github">
+        <div className="project-repo-header">
+          <span className="project-repo-owner">
+            <BookMarked size={18} aria-hidden="true" />
+            {owner}
+          </span>
+          <span className="project-repo-stats">
+            <span title="Stars">
+              <Star size={14} aria-hidden="true" />
+              {stars}
+            </span>
+            <span title="Forks">
+              <GitFork size={14} aria-hidden="true" />
+              {forks}
+            </span>
+          </span>
+        </div>
+        <div className="project-brief-body">
+          <h3>{title || name}</h3>
+          <p className="project-brief-description">
+            {longDescription || description || "Explore the source code and project details."}
+          </p>
+          <div className="project-card-meta">
+            <div className="project-card-technologies">
+              <span className="project-meta-label">Technologies</span>
+              <ProjectTechnologies
+                languages={languages.length ? languages : language ? [language] : []}
+                topics={topics}
+              />
+            </div>
+            <div className="project-card-destinations">
+              <span className="project-meta-label">Links</span>
+              <div className="project-icon-links">
+                <a
+                  href={validUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${name} on GitHub`}
+                  title="View code on GitHub"
+                >
+                  <Github size={22} aria-hidden="true" />
+                </a>
+                {validHomepage && (
+                  <a
+                    href={validHomepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit ${name} website`}
+                    title="Visit website"
+                  >
+                    <ExternalLink size={21} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="project-brief-bottom">
+            <details className="project-brief-details">
+              <summary>Details</summary>
+              <div>
+                <p>
+                  {stars} stars / {forks} forks / {contributorCount} contributors
+                </p>
+                {languages.length > 0 && <p>{languages.join(" / ")}</p>}
+                {topics.length > 0 && <p>{topics.join(" / ")}</p>}
+                {contributors.length > 0 && (
+                  <p>Contributors: {contributors.map((person) => person.login).join(", ")}</p>
+                )}
+              </div>
+            </details>
+          </div>
+        </div>
+      </TiltSurface>
+    );
   return (
-    <Card className="group flex flex-col h-full overflow-hidden border-gray-700/50 bg-gray-900/30 hover:border-[#e5a54b]/50 hover:shadow-xl transition-all duration-300">
+    <Card className="portfolio-project-card group flex flex-col h-full overflow-hidden border-gray-700/50 bg-gray-900/30 hover:border-[#e5a54b]/50 hover:shadow-xl transition-colors duration-300">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-semibold text-white group-hover:text-[#e5a54b] transition-colors">
           {title || name}
         </CardTitle>
-        <CardDescription className="text-gray-400 line-clamp-2">
+        <CardDescription className="text-gray-400 leading-relaxed">
           {longDescription || description}
         </CardDescription>
       </CardHeader>
@@ -90,17 +177,17 @@ export default function ProjectCard({
 
         {/* Tech Stack */}
         <div className="flex gap-2 flex-wrap">
-          {languages.length > 0 ? (
-            languages.slice(0, 6).map((lang) => (
-              <Badge key={lang} className="bg-blue-900/30 border-blue-700/50 text-blue-300">
-                {lang}
-              </Badge>
-            ))
-          ) : language && (
-            <Badge className="bg-blue-900/30 border-blue-700/50 text-blue-300">
-              {language}
-            </Badge>
-          )}
+          {languages.length > 0
+            ? languages.slice(0, 6).map((lang) => (
+                <Badge key={lang} className="bg-blue-900/30 border-blue-700/50 text-blue-300">
+                  {lang}
+                </Badge>
+              ))
+            : language && (
+                <Badge className="bg-blue-900/30 border-blue-700/50 text-blue-300">
+                  {language}
+                </Badge>
+              )}
           {topics.slice(0, 5).map((tag) => (
             <Badge key={tag} variant="outline" className="border-gray-700 text-gray-400">
               {tag}
@@ -121,10 +208,7 @@ export default function ProjectCard({
           </a>
         </Button>
         {validHomepage && (
-          <Button
-            className="flex-1 bg-[#e5a54b] hover:bg-[#e5a54b]/90 text-[#1e293b]"
-            asChild
-          >
+          <Button className="flex-1 bg-[#e5a54b] hover:bg-[#e5a54b]/90 text-[#1e293b]" asChild>
             <a href={validHomepage} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4 mr-2" />
               Visit Site
@@ -133,5 +217,5 @@ export default function ProjectCard({
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }

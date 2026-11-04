@@ -54,14 +54,14 @@ export class AnalyticsService {
   constructor(
     private analytics: AnalyticsEngineDataset,
     private request: Request,
-    private cf?: IncomingRequestCfProperties
+    private cf?: IncomingRequestCfProperties,
   ) {}
 
   /**
    * Track a click event with comprehensive data
    */
   async trackClick(clientData: ClickEventData): Promise<void> {
-    const event = this.buildEvent('click', clientData);
+    const event = this.buildEvent("click", clientData);
     await this.writeEvent(event);
   }
 
@@ -69,10 +69,9 @@ export class AnalyticsService {
    * Build a comprehensive event object from request + client data
    */
   private buildEvent(eventType: string, clientData: ClickEventData): AnalyticsEvent {
-
     // Parse headers
-    const userAgent = this.request.headers.get('user-agent') || undefined;
-    const referer = this.request.headers.get('referer') || undefined;
+    const userAgent = this.request.headers.get("user-agent") || undefined;
+    const referer = this.request.headers.get("referer") || undefined;
 
     return {
       // Geographic data from Cloudflare
@@ -119,17 +118,17 @@ export class AnalyticsService {
       // Analytics Engine uses writeDataPoint
       this.analytics.writeDataPoint({
         blobs: [
-          event.country || '',
-          event.city || '',
-          event.region || '',
-          event.timezone || '',
-          event.colo || '',
-          event.asOrganization || '',
-          event.userAgent || '',
-          event.referer || '',
-          event.httpProtocol || '',
-          event.tlsVersion || '',
-          event.sessionId || '',
+          event.country || "",
+          event.city || "",
+          event.region || "",
+          event.timezone || "",
+          event.colo || "",
+          event.asOrganization || "",
+          event.userAgent || "",
+          event.referer || "",
+          event.httpProtocol || "",
+          event.tlsVersion || "",
+          event.sessionId || "",
           event.eventType,
         ],
         doubles: [
@@ -138,14 +137,14 @@ export class AnalyticsService {
           event.clickX || 0,
           event.clickY || 0,
           event.timeOnPage || 0,
-          parseFloat(event.latitude || '0'),
-          parseFloat(event.longitude || '0'),
+          parseFloat(event.latitude || "0"),
+          parseFloat(event.longitude || "0"),
         ],
-        indexes: [event.sessionId || ''], // Can query by session
+        indexes: [event.sessionId || ""], // Can query by session
       });
     } catch (error) {
       // Don't fail the request if analytics fails
-      console.error('Analytics tracking failed:', error);
+      console.error("Analytics tracking failed:", error);
     }
   }
 }
@@ -156,10 +155,10 @@ export class AnalyticsService {
 export function createAnalyticsService(
   analytics: AnalyticsEngineDataset | undefined,
   request: Request,
-  cf?: IncomingRequestCfProperties
+  cf?: IncomingRequestCfProperties,
 ): AnalyticsService | null {
   if (!analytics) {
-    console.warn('[Analytics] Analytics Engine not available');
+    console.warn("[Analytics] Analytics Engine not available");
     return null;
   }
   return new AnalyticsService(analytics, request, cf);

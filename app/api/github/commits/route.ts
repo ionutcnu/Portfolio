@@ -1,7 +1,7 @@
 // GitHub API proxy for fetching recent commits
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME || "ionutcnu";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 interface GitHubRepo {
@@ -32,12 +32,12 @@ interface CommitData {
 
 function getHeaders() {
   const headers: HeadersInit = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'Portfolio-App',
+    Accept: "application/vnd.github.v3+json",
+    "User-Agent": "Portfolio-App",
   };
 
   if (GITHUB_TOKEN) {
-    headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
+    headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
   }
 
   return headers;
@@ -50,15 +50,15 @@ export async function GET() {
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10&type=owner`,
       {
         headers: getHeaders(),
-        next: { revalidate: 3600 } // Cache for 1 hour
-      }
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      },
     );
 
-    console.log('[GitHub API] Repos response status:', reposResponse.status);
+    console.log("[GitHub API] Repos response status:", reposResponse.status);
 
     if (!reposResponse.ok) {
       const errorText = await reposResponse.text();
-      console.error('[GitHub API] Error response:', errorText);
+      console.error("[GitHub API] Error response:", errorText);
       throw new Error(`Failed to fetch repositories: ${reposResponse.status}`);
     }
 
@@ -71,8 +71,8 @@ export async function GET() {
           `https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=10`,
           {
             headers: getHeaders(),
-            next: { revalidate: 3600 }
-          }
+            next: { revalidate: 3600 },
+          },
         );
 
         if (!commitsResponse.ok) {
@@ -86,7 +86,7 @@ export async function GET() {
           language: repo.language,
           commits: commits.slice(0, 10).map((c) => ({
             sha: c.sha.slice(0, 7),
-            message: c.commit.message.split('\n')[0], // First line only
+            message: c.commit.message.split("\n")[0], // First line only
             date: c.commit.author.date,
           })),
         };
@@ -97,32 +97,32 @@ export async function GET() {
     });
 
     const commitData = (await Promise.all(commitPromises)).filter(
-      (data): data is CommitData => data !== null
+      (data): data is CommitData => data !== null,
     );
 
     return Response.json(commitData);
   } catch (error) {
-    console.error('GitHub API error:', error);
+    console.error("GitHub API error:", error);
 
     // Return error status to distinguish from successful data
     return Response.json(
       {
-        error: 'Failed to fetch GitHub data',
+        error: "Failed to fetch GitHub data",
         fallback: [
           {
-            repo: 'Portfolio',
-            language: 'TypeScript',
+            repo: "Portfolio",
+            language: "TypeScript",
             commits: [
               {
-                sha: 'abc1234',
-                message: 'Add Nyx-inspired widgets and multi-page structure',
+                sha: "abc1234",
+                message: "Add Nyx-inspired widgets and multi-page structure",
                 date: new Date().toISOString(),
               },
             ],
           },
         ],
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }

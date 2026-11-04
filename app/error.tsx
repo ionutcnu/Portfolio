@@ -1,23 +1,22 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { RefreshCw, Home } from "lucide-react"
-import Link from "next/link"
+import { Home, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { useEffect } from "react";
 
 export default function AppError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to console
-    console.error('Application error:', error)
-  }, [error])
+    console.error("Application error:", error);
+  }, [error]);
 
-  // Generate a fake Ray ID (Cloudflare style)
-  const rayId = error.digest || Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const rayId = error.digest || "unavailable";
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">
@@ -43,7 +42,8 @@ export default function AppError({
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-300">What happened?</h2>
               <p className="text-sm text-gray-400">
-                The web server is not returning a connection. As a result, the web page is not displaying.
+                The web server is not returning a connection. As a result, the web page is not
+                displaying.
               </p>
             </div>
 
@@ -133,5 +133,5 @@ export default function AppError({
         </p>
       </div>
     </div>
-  )
+  );
 }

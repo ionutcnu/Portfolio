@@ -432,3 +432,19 @@ MIT License - Free to use as template
 ---
 
 Built with Next.js, Tailwind CSS, and Cloudflare Workers
+
+## Code checks
+
+Biome handles formatting, import organization, and linting. Generated output and
+vendored assets are excluded. React hook dependencies are checked for missing
+values; explicit retry and replay dependencies are permitted.
+
+```bash
+bun run check       # Lint, formatting, and imports (read-only)
+bun run check:fix   # Apply safe fixes and formatting
+bun run format     # Format source files
+bun run typecheck  # TypeScript checking
+```
+
+The migrated rules cover React hooks, JSX, accessibility, and supported Next.js
+checks. Biome does not replace every ESLint React Compiler diagnostic.

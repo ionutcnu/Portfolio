@@ -1,9 +1,9 @@
 // GET endpoint for weather data with caching
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-const LOCATION = 'Bucharest';
+const LOCATION = "Bucharest";
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 let cachedWeather: {
@@ -25,7 +25,7 @@ export async function GET() {
     const WEATHER_API_KEY = env.WEATHER_API_KEY as string;
 
     if (!WEATHER_API_KEY) {
-      throw new Error('WEATHER_API_KEY not configured');
+      throw new Error("WEATHER_API_KEY not configured");
     }
 
     // Return cached data if still valid
@@ -35,14 +35,14 @@ export async function GET() {
 
     // Fetch fresh weather data
     const response = await fetch(
-      `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${LOCATION}&aqi=no`
+      `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${LOCATION}&aqi=no`,
     );
 
     if (!response.ok) {
-      throw new Error('Weather API request failed');
+      throw new Error("Weather API request failed");
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       location: { name: string };
       current: {
         temp_c: number;
@@ -66,15 +66,15 @@ export async function GET() {
 
     return Response.json(weatherData);
   } catch (error) {
-    console.error('Failed to fetch weather:', error);
+    console.error("Failed to fetch weather:", error);
     return Response.json(
       {
-        location: 'Bucharest',
-        temp: '--',
-        condition: 'Unavailable',
-        icon: '🌡️',
+        location: "Bucharest",
+        temp: "--",
+        condition: "Unavailable",
+        icon: "🌡️",
       },
-      { status: 200 } // Return fallback data instead of error
+      { status: 200 }, // Return fallback data instead of error
     );
   }
 }
@@ -82,26 +82,26 @@ export async function GET() {
 // Map WeatherAPI condition codes to emojis
 function getWeatherEmoji(code: number, isDay: number): string {
   // Sunny/Clear
-  if (code === 1000) return isDay ? '☀️' : '🌙';
+  if (code === 1000) return isDay ? "☀️" : "🌙";
 
   // Partly cloudy
-  if (code === 1003) return isDay ? '⛅' : '☁️';
+  if (code === 1003) return isDay ? "⛅" : "☁️";
 
   // Cloudy/Overcast
-  if (code === 1006 || code === 1009) return '☁️';
+  if (code === 1006 || code === 1009) return "☁️";
 
   // Fog/Mist
-  if (code >= 1030 && code <= 1147) return '🌫️';
+  if (code >= 1030 && code <= 1147) return "🌫️";
 
   // Rain
-  if ((code >= 1063 && code <= 1072) || (code >= 1150 && code <= 1201)) return '🌧️';
+  if ((code >= 1063 && code <= 1072) || (code >= 1150 && code <= 1201)) return "🌧️";
 
   // Snow
-  if ((code >= 1066 && code <= 1117) || (code >= 1210 && code <= 1282)) return '❄️';
+  if ((code >= 1066 && code <= 1117) || (code >= 1210 && code <= 1282)) return "❄️";
 
   // Thunderstorm
-  if (code >= 1273 && code <= 1282) return '⛈️';
+  if (code >= 1273 && code <= 1282) return "⛈️";
 
   // Default
-  return '🌡️';
+  return "🌡️";
 }

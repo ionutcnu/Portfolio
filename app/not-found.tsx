@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Home, ArrowLeft } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { ArrowLeft, Home } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function NotFound() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const handleGoBack = () => {
     if (window.history.length > 1) {
-      window.history.back()
+      window.history.back();
     } else {
-      window.location.href = '/'
+      window.location.href = "/";
     }
-  }
+  };
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">
@@ -22,20 +22,16 @@ export default function NotFound() {
         <div className="rounded-xl border border-gray-700/50 bg-gray-900/80 p-8 shadow-2xl backdrop-blur-sm">
           <div className="mb-6 font-mono">
             <div className="mb-2 text-sm text-gray-500">
-              ionut@portfolio:~$ cd {pathname || '/page-not-found'}
+              ionut@portfolio:~$ cd {pathname || "/page-not-found"}
             </div>
             <div className="text-sm text-red-400">
-              bash: cd: {pathname || '/page-not-found'}: No such file or directory
+              bash: cd: {pathname || "/page-not-found"}: No such file or directory
             </div>
           </div>
 
-          <h1 className="mb-4 text-6xl font-bold text-[#e5a54b] md:text-8xl">
-            404
-          </h1>
+          <h1 className="mb-4 text-6xl font-bold text-[#e5a54b] md:text-8xl">404</h1>
 
-          <h2 className="mb-2 text-2xl font-semibold text-white md:text-3xl">
-            Page Not Found
-          </h2>
+          <h2 className="mb-2 text-2xl font-semibold text-white md:text-3xl">Page Not Found</h2>
 
           <p className="mb-8 text-gray-400">
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
@@ -65,7 +61,7 @@ export default function NotFound() {
         <div className="text-sm text-gray-500">
           <p className="mb-2">Try one of these instead:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/about" className="hover:text-[#e5a54b] transition-colors">
+            <Link href="/#about" className="hover:text-[#e5a54b] transition-colors">
               About
             </Link>
             <span className="text-gray-700">•</span>
@@ -85,5 +81,5 @@ export default function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

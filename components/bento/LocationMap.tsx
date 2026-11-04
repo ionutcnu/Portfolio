@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react";
 import L from "leaflet";
+import { useEffect, useRef } from "react";
 
 interface LocationMapProps {
   onRecenter?: () => void;
@@ -35,8 +35,9 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
     // Add dark tile layer - using exact nyx format with {r} for retina
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
-      attribution: "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, © <a href='https://carto.com/attributions'>CARTO</a>",
-      subdomains: ['a', 'b', 'c', 'd'],
+      attribution:
+        "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, © <a href='https://carto.com/attributions'>CARTO</a>",
+      subdomains: ["a", "b", "c", "d"],
       keepBuffer: 4,
       updateWhenIdle: false,
       updateWhenZooming: false,
@@ -44,7 +45,7 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
 
     // Add custom pin marker
     const customIcon = L.divIcon({
-      className: 'custom-map-marker',
+      className: "custom-map-marker",
       html: `<div style="
         width: 24px;
         height: 24px;
@@ -73,8 +74,15 @@ export default function LocationMap({ onRecenter }: LocationMapProps) {
 
     mapRef.current = map;
 
+    // Tabs can hide and reveal the container without remounting the map.
+    const observer = new ResizeObserver(() => {
+      if (containerRef.current?.offsetWidth) map.invalidateSize();
+    });
+    observer.observe(containerRef.current);
+
     // Cleanup on unmount
     return () => {
+      observer.disconnect();
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;

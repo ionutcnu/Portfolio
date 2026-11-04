@@ -1,5 +1,5 @@
 // Cloudflare KV cache utility with stale-while-revalidate support
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export interface CacheOptions {
   key: string;
@@ -16,22 +16,19 @@ interface CachedData<T> {
  * Get data from KV cache or fetch fresh data
  * Implements stale-while-revalidate pattern for optimal performance
  */
-export async function getCached<T>(
-  options: CacheOptions,
-  fetcher: () => Promise<T>
-): Promise<T> {
+export async function getCached<T>(options: CacheOptions, fetcher: () => Promise<T>): Promise<T> {
   const { key, ttl, staleWhileRevalidate = 0 } = options;
 
   try {
     const { env } = await getCloudflareContext({ async: true });
 
     if (!env.KV) {
-      console.warn('[Cache] KV binding not available, fetching fresh data');
+      console.warn("[Cache] KV binding not available, fetching fresh data");
       return await fetcher();
     }
 
     // Try to get cached data
-    const cached = await env.KV.get(key, { type: 'json' }) as CachedData<T> | null;
+    const cached = (await env.KV.get(key, { type: "json" })) as CachedData<T> | null;
 
     if (cached && cached.data) {
       const age = Date.now() - cached.timestamp;
@@ -57,13 +54,13 @@ export async function getCached<T>(
                 data: fresh,
                 timestamp: Date.now(),
               }),
-              { expirationTtl: ttl + staleWhileRevalidate }
+              { expirationTtl: ttl + staleWhileRevalidate },
             ).catch((error) => {
-              console.error('[Cache] Failed to update cache:', error);
+              console.error("[Cache] Failed to update cache:", error);
             });
           })
           .catch((error) => {
-            console.error('[Cache] Background revalidation failed:', error);
+            console.error("[Cache] Background revalidation failed:", error);
           });
 
         return cached.data;
@@ -80,14 +77,14 @@ export async function getCached<T>(
         data: fresh,
         timestamp: Date.now(),
       }),
-      { expirationTtl: ttl + staleWhileRevalidate }
+      { expirationTtl: ttl + staleWhileRevalidate },
     ).catch((error) => {
-      console.error('[Cache] Failed to cache data:', error);
+      console.error("[Cache] Failed to cache data:", error);
     });
 
     return fresh;
   } catch (error) {
-    console.error('[Cache] Error in getCached:', error);
+    console.error("[Cache] Error in getCached:", error);
     // Fallback to fetching fresh data
     return await fetcher();
   }
@@ -103,7 +100,7 @@ export async function invalidateCache(key: string): Promise<void> {
       await env.KV.delete(key);
     }
   } catch (error) {
-    console.error('[Cache] Failed to invalidate cache:', error);
+    console.error("[Cache] Failed to invalidate cache:", error);
   }
 }
 
@@ -119,11 +116,7 @@ export async function invalidateCache(key: string): Promise<void> {
  * @param data - Data to cache
  * @param ttl - Time-to-live in seconds (exact expiration, no padding)
  */
-export async function setCache<T>(
-  key: string,
-  data: T,
-  ttl: number
-): Promise<void> {
+export async function setCache<T>(key: string, data: T, ttl: number): Promise<void> {
   try {
     const { env } = await getCloudflareContext({ async: true });
     if (env.KV) {
@@ -133,11 +126,11 @@ export async function setCache<T>(
           data,
           timestamp: Date.now(),
         }),
-        { expirationTtl: ttl }
+        { expirationTtl: ttl },
       );
     }
   } catch (error) {
-    console.error('[Cache] Failed to set cache:', error);
+    console.error("[Cache] Failed to set cache:", error);
   }
 }
 
@@ -158,10 +151,10 @@ export async function getCache<T>(key: string): Promise<T | null> {
     const { env } = await getCloudflareContext({ async: true });
     if (!env.KV) return null;
 
-    const cached = await env.KV.get(key, { type: 'json' }) as CachedData<T> | null;
+    const cached = (await env.KV.get(key, { type: "json" })) as CachedData<T> | null;
     return cached?.data || null;
   } catch (error) {
-    console.error('[Cache] Failed to get cache:', error);
+    console.error("[Cache] Failed to get cache:", error);
     return null;
   }
 }
