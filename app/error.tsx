@@ -1,41 +1,29 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { RefreshCw, Home } from "lucide-react"
-import Link from "next/link"
+import { Home, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { useEffect } from "react";
 
 export default function AppError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to console
-    console.error('Application error:', error)
-  }, [error])
-
-  // Generate a fake Ray ID (Cloudflare style)
-  const rayId = error.digest || Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    console.error("Application error:", error);
+  }, [error]);
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">
       <div className="w-full max-w-3xl space-y-6">
-        {/* Cloudflare-style error page */}
         <div className="rounded-xl border border-red-900/30 bg-gray-900/80 p-8 shadow-2xl backdrop-blur-sm">
           {/* Header */}
-          <div className="mb-8 flex items-start justify-between">
-            <div>
-              <h1 className="mb-2 text-4xl font-bold text-white md:text-5xl">
-                Error <span className="text-red-500">521</span>
-              </h1>
-              <p className="text-lg text-gray-400">Web server is down</p>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-gray-500">ionut.dev</div>
-              <div className="text-xs text-gray-600">Cloudflare</div>
-            </div>
+          <div className="mb-8">
+            <h1 className="mb-2 text-4xl font-bold text-white md:text-5xl">Something went wrong</h1>
+            <p className="text-lg text-gray-400">This page could not be displayed.</p>
           </div>
 
           {/* Error details */}
@@ -43,15 +31,14 @@ export default function AppError({
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-300">What happened?</h2>
               <p className="text-sm text-gray-400">
-                The web server is not returning a connection. As a result, the web page is not displaying.
+                An unexpected error interrupted rendering. The issue has been logged.
               </p>
             </div>
 
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-300">What can I do?</h2>
               <ul className="list-inside list-disc space-y-1 text-sm text-gray-400">
-                <li>Try refreshing the page</li>
-                <li>Clear your browser cache and cookies</li>
+                <li>Try again — the error may be temporary</li>
                 <li>Return to the homepage</li>
                 <li>Contact the site owner if the problem persists</li>
               </ul>
@@ -77,27 +64,12 @@ export default function AppError({
             </Link>
           </div>
 
-          {/* Cloudflare footer */}
-          <div className="mt-8 border-t border-gray-800 pt-6">
-            <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:justify-between">
-              <div>
-                <span className="font-semibold">Cloudflare Ray ID:</span>{" "}
-                <span className="font-mono">{rayId}</span>
-              </div>
-              <div>Your IP: [Hidden for privacy]</div>
+          {/* Digest, when the runtime provides one */}
+          {error.digest && (
+            <div className="mt-8 border-t border-gray-800 pt-6 text-xs text-gray-500">
+              Reference: <span className="font-mono">{error.digest}</span>
             </div>
-            <div className="mt-2 text-xs text-gray-600">
-              Performance & security by{" "}
-              <a
-                href="https://cloudflare.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#e5a54b] transition-colors"
-              >
-                Cloudflare
-              </a>
-            </div>
-          </div>
+          )}
 
           {/* Technical details (collapsed by default) */}
           {process.env.NODE_ENV === "development" && error.message && (
@@ -133,5 +105,5 @@ export default function AppError({
         </p>
       </div>
     </div>
-  )
+  );
 }

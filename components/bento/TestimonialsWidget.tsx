@@ -1,23 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Quote } from "lucide-react"
-import { BentoBox } from "./BentoGrid"
-import { testimonials } from "@/lib/data/testimonials"
+import { Quote } from "lucide-react";
+import { useState } from "react";
+import { testimonials } from "@/lib/data/testimonials";
+import { BentoBox } from "./BentoGrid";
 
 export default function TestimonialsWidget() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [expandedIndices, setExpandedIndices] = useState(() =>
+    testimonials.map((_, index) => index),
+  );
 
   const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index)
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent, index: number) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      toggleExpand(index)
-    }
-  }
+    setExpandedIndices((current) =>
+      current.includes(index) ? current.filter((item) => item !== index) : [...current, index],
+    );
+  };
 
   return (
     <BentoBox span={2}>
@@ -30,18 +27,20 @@ export default function TestimonialsWidget() {
 
       <div className="space-y-3">
         {testimonials.map((testimonial, index) => {
-          const isExpanded = expandedIndex === index
+          const isExpanded = expandedIndices.includes(index);
 
           return (
             <button
               key={index}
               type="button"
               onClick={() => toggleExpand(index)}
-              onKeyDown={(e) => handleKeyPress(e, index)}
+              aria-expanded={isExpanded}
               className="w-full cursor-pointer rounded-lg border border-gray-700/30 bg-gray-800/20 p-3 text-left transition-all hover:border-accent-dynamic/50 hover:bg-gray-800/30"
             >
               {/* Quote */}
-              <p className={`text-sm text-gray-200 italic leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+              <p
+                className={`text-sm text-gray-200 italic leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}
+              >
                 &quot;{testimonial.quote}&quot;
               </p>
 
@@ -66,13 +65,13 @@ export default function TestimonialsWidget() {
 
                 {/* Expand indicator */}
                 <div className="text-muted-foreground flex-shrink-0 text-xs">
-                  {isExpanded ? '▲' : '▼'}
+                  {isExpanded ? "▲" : "▼"}
                 </div>
               </div>
             </button>
-          )
+          );
         })}
       </div>
     </BentoBox>
-  )
+  );
 }

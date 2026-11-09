@@ -4,17 +4,16 @@
  * Reference: https://opennext.js.org/cloudflare/howtos/custom-worker
  */
 
-// Import CounterDO class
-import { CounterDO as CounterDOClass } from './durable-objects/CounterDO.ts';
-
 // Import OpenNext generated worker
-import opennextHandler from './.open-next/worker.js';
+import opennextHandler from "./.open-next/worker.js";
+// Import CounterDO class
+import { CounterDO as CounterDOClass } from "./durable-objects/CounterDO.ts";
 
 // Export custom Durable Object
 export const CounterDO = CounterDOClass;
 
 // Re-export OpenNext built-in Durable Objects
-export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from './.open-next/worker.js';
+export { BucketCachePurge, DOQueueHandler, DOShardedTagCache } from "./.open-next/worker.js";
 
 // Custom fetch handler with WebSocket support
 export default {
@@ -23,24 +22,24 @@ export default {
 
     // Handle WebSocket upgrade requests BEFORE passing to Next.js
     // Next.js API routes don't support protocol upgrades
-    if (url.pathname === '/api/clicks/ws' && request.headers.get('Upgrade') === 'websocket') {
+    if (url.pathname === "/api/clicks/ws" && request.headers.get("Upgrade") === "websocket") {
       try {
         // Get Durable Object stub
-        const id = env.COUNTER_DO.idFromName('global-counter');
+        const id = env.COUNTER_DO.idFromName("global-counter");
         const stub = env.COUNTER_DO.get(id);
 
         // Forward WebSocket upgrade to Durable Object
         return await stub.fetch(request);
       } catch (error) {
-        console.error('[Worker] WebSocket upgrade failed:', error);
-        return new Response('WebSocket upgrade failed: ' + error.message, {
+        console.error("[Worker] WebSocket upgrade failed:", error);
+        return new Response("WebSocket upgrade failed: " + error.message, {
           status: 500,
-          headers: { 'Content-Type': 'text/plain' }
+          headers: { "Content-Type": "text/plain" },
         });
       }
     }
 
     // All other requests go to Next.js via OpenNext
     return opennextHandler.fetch(request, env, ctx);
-  }
+  },
 };

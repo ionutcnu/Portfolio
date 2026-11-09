@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface BentoGridProps {
   children: ReactNode;
@@ -21,12 +21,12 @@ interface BentoBoxProps {
   span?: 1 | 2 | 3 | 4;
 }
 
-export function BentoBox({ children, className = '', span = 1 }: BentoBoxProps) {
+export function BentoBox({ children, className = "", span = 1 }: BentoBoxProps) {
   const spanClasses = {
-    1: 'lg:col-span-1',
-    2: 'sm:col-span-2 lg:col-span-2',
-    3: 'sm:col-span-2 lg:col-span-3',
-    4: 'sm:col-span-2 lg:col-span-4',
+    1: "lg:col-span-1",
+    2: "sm:col-span-2 lg:col-span-2",
+    3: "sm:col-span-2 lg:col-span-3",
+    4: "sm:col-span-2 lg:col-span-4",
   };
 
   return (

@@ -1,8 +1,10 @@
 name = "portfolio"
 main = "worker.js"
+# Keep serialized next-themes scripts free of esbuild's __name helper.
+keep_names = false
 # Preserve runtime variables configured in the Cloudflare dashboard.
 keep_vars = true
-compatibility_date = "2025-11-14"
+compatibility_date = "2026-11-03"
 compatibility_flags = ["nodejs_compat"]
 
 # Environment variables 

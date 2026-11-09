@@ -19,5 +19,5 @@ export default function ProjectCardSkeleton() {
         <div className="h-9 flex-1 bg-muted rounded" />
       </div>
     </div>
-  )
+  );
 }

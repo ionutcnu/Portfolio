@@ -54,7 +54,7 @@ class D1Visitors implements VisitorService {
 
   async trackVisitor(sessionId: string): Promise<void> {
     const now = Math.floor(Date.now() / 1000);
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
     // Insert or update visitor record
     await this.db
@@ -71,17 +71,17 @@ class D1Visitors implements VisitorService {
 
   async getTotalVisitors(): Promise<number> {
     const result = await this.db
-      .prepare('SELECT COUNT(DISTINCT session_id) as count FROM visitors')
+      .prepare("SELECT COUNT(DISTINCT session_id) as count FROM visitors")
       .first<{ count: number }>();
 
     return result?.count || 0;
   }
 
   async getTodayVisitors(): Promise<number> {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     const result = await this.db
-      .prepare('SELECT COUNT(DISTINCT session_id) as count FROM visitors WHERE visit_date = ?')
+      .prepare("SELECT COUNT(DISTINCT session_id) as count FROM visitors WHERE visit_date = ?")
       .bind(today)
       .first<{ count: number }>();
 
@@ -89,7 +89,7 @@ class D1Visitors implements VisitorService {
   }
 
   async getBatchedStats(): Promise<VisitorStats> {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     // Single query to get both counts - much more efficient
     const result = await this.db
@@ -114,18 +114,18 @@ export function createVisitorService(db?: D1Database): VisitorService {
   if (db) {
     return new D1Visitors(db);
   }
-  console.warn('[Visitors] D1 database not available, using in-memory fallback');
+  console.warn("[Visitors] D1 database not available, using in-memory fallback");
   return new InMemoryVisitors();
 }
 
 // Helper to get or create session ID
 export function getSessionId(): string {
-  if (typeof window === 'undefined') return 'server';
+  if (typeof window === "undefined") return "server";
 
-  let sessionId = localStorage.getItem('analytics-session-id');
+  let sessionId = localStorage.getItem("analytics-session-id");
   if (!sessionId) {
     sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-    localStorage.setItem('analytics-session-id', sessionId);
+    localStorage.setItem("analytics-session-id", sessionId);
   }
   return sessionId;
 }

@@ -2,28 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Compact portfolio shell. Existing widget styles remain available inside Extras. */
+.portfolio-shell {
+  --accent-dynamic: 35 75% 60%;
+  --ring: 35 75% 60%;
+}
+.portfolio-panel[hidden] {
+  display: none;
+}
+.portfolio-extras-grid > div > div {
+  height: 100%;
+  padding: 20px;
+  background: hsl(var(--background) / 0.6);
+}
+.portfolio-extras-grid h3 {
+  margin-bottom: 14px;
+}
+.portfolio-shell :is(a, button, summary):focus-visible {
+  outline: 2px solid hsl(var(--accent-dynamic));
+  outline-offset: 4px;
+}
+.portfolio-shell :is(a, summary):hover {
+  color: hsl(var(--accent-dynamic));
+}
+html,
+body {
+  overflow-x: clip;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .portfolio-shell *,
+  .portfolio-shell *::before,
+  .portfolio-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer base {
   /* Catppuccin Latte (Light Theme) */
   :root {
-    --background: 220 23% 95%;     /* base */
-    --foreground: 234 16% 35%;     /* text */
-    --card: 220 23% 95%;           /* base */
+    --background: 220 23% 95%; /* base */
+    --foreground: 234 16% 35%; /* text */
+    --card: 220 23% 95%; /* base */
     --card-foreground: 234 16% 35%; /* text */
-    --popover: 220 23% 95%;        /* base */
+    --popover: 220 23% 95%; /* base */
     --popover-foreground: 234 16% 35%; /* text */
-    --primary: 220 91% 54%;        /* blue */
+    --primary: 220 91% 54%; /* blue */
     --primary-foreground: 220 23% 95%; /* base */
-    --secondary: 217 24% 85%;      /* surface0 */
+    --secondary: 217 24% 85%; /* surface0 */
     --secondary-foreground: 234 16% 35%; /* text */
-    --muted: 217 24% 85%;          /* surface0 */
+    --muted: 217 24% 85%; /* surface0 */
     --muted-foreground: 233 13% 41%; /* subtext0 */
-    --accent: 220 91% 54%;         /* blue */
+    --accent: 220 91% 54%; /* blue */
     --accent-foreground: 220 23% 95%; /* base */
-    --destructive: 347 87% 44%;    /* red */
+    --destructive: 347 87% 44%; /* red */
     --destructive-foreground: 220 23% 95%; /* base */
-    --border: 217 16% 76%;         /* surface1 */
-    --input: 217 16% 76%;          /* surface1 */
-    --ring: 220 91% 54%;           /* blue */
+    --border: 217 16% 76%; /* surface1 */
+    --input: 217 16% 76%; /* surface1 */
+    --ring: 220 91% 54%; /* blue */
     --radius: 0.5rem;
 
     /* Dynamic accent color (user-selectable) - default: blue */
@@ -32,26 +73,26 @@
 
   /* Catppuccin Mocha (Dark Theme) */
   .dark {
-    --background: 240 21% 15%;     /* base */
-    --foreground: 226 64% 88%;     /* text */
-    --card: 240 21% 15%;           /* base */
+    --background: 240 21% 15%; /* base */
+    --foreground: 226 64% 88%; /* text */
+    --card: 240 21% 15%; /* base */
     --card-foreground: 226 64% 88%; /* text */
-    --popover: 240 21% 15%;        /* base */
+    --popover: 240 21% 15%; /* base */
     --popover-foreground: 226 64% 88%; /* text */
-    --primary: 217 92% 76%;        /* blue */
+    --primary: 217 92% 76%; /* blue */
     --primary-foreground: 240 21% 15%; /* base */
-    --secondary: 233 12% 22%;      /* surface0 */
+    --secondary: 233 12% 22%; /* surface0 */
     --secondary-foreground: 226 64% 88%; /* text */
-    --muted: 233 12% 22%;          /* surface0 */
+    --muted: 233 12% 22%; /* surface0 */
     --muted-foreground: 227 17% 53%; /* subtext0 */
-    --accent: 217 92% 76%;         /* blue */
+    --accent: 217 92% 76%; /* blue */
     --accent-foreground: 240 21% 15%; /* base */
     --accent-dynamic: 217 92% 76%; /* blue */
-    --destructive: 343 81% 75%;    /* red */
+    --destructive: 343 81% 75%; /* red */
     --destructive-foreground: 240 21% 15%; /* base */
-    --border: 232 10% 26%;         /* surface1 */
-    --input: 232 10% 26%;          /* surface1 */
-    --ring: 217 92% 76%;           /* blue */
+    --border: 232 10% 26%; /* surface1 */
+    --input: 232 10% 26%; /* surface1 */
+    --ring: 217 92% 76%; /* blue */
   }
 }
 
@@ -64,7 +105,10 @@
   [class*="bg-"],
   [class*="text-"],
   [class*="border-"] {
-    transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease,
+      color 300ms ease;
   }
 
   body {
@@ -75,12 +119,12 @@
 /* Hide scrollbar but keep functionality */
 html {
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 html::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, Opera */
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Leaflet map styling */
@@ -104,4 +148,200 @@ html::-webkit-scrollbar {
 
 .leaflet-popup-tip {
   @apply bg-card border-border;
+}
+
+.portfolio-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  outline: none;
+}
+.portfolio-avatar-wrap .portfolio-avatar {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.portfolio-avatar-wrap:is(:hover, :focus) .portfolio-avatar {
+  border-color: #d6a34d;
+  box-shadow: 0 0 22px #e5a54b30;
+}
+.portfolio-avatar-tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, -3px);
+  padding: 5px 10px;
+  border: 1px solid #e5a54b40;
+  border-radius: 6px;
+  background: #181825;
+  color: #edc17a;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.portfolio-avatar-wrap:is(:hover, :focus) .portfolio-avatar-tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.portfolio-avatar-wrap:focus-visible {
+  outline: 2px solid #e5a54b;
+  outline-offset: 5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-avatar-wrap .portfolio-avatar,
+  .portfolio-avatar-tooltip {
+    transition: none;
+  }
+  .portfolio-avatar-wrap:is(:hover, :focus) .portfolio-avatar {
+    transform: none;
+  }
+}
+
+.portfolio-avatar-art {
+  position: relative;
+  display: block;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+}
+.portfolio-avatar-wrap:is(:hover, :focus) .portfolio-avatar-art {
+  transform: rotate(-4deg);
+}
+.portfolio-avatar-pupils {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  pointer-events: none;
+}
+.portfolio-pupil-motion {
+  transform: translate(var(--pupil-x, 0px), var(--pupil-y, 0px));
+  transition: transform 0.14s ease-out;
+}
+@media (max-width: 640px) {
+  .portfolio-avatar-pupils {
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-avatar-art,
+  .portfolio-pupil-motion {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+/* Featured card sits flush inside its framed container. */
+.portfolio-featured-project .project-brief {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.portfolio-featured-project .project-brief h3 {
+  font-size: 21px;
+}
+.project-tilt {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    border-color 0.2s ease-out !important;
+}
+.project-tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    280px circle at var(--shine-x, 50%) var(--shine-y, 50%),
+    #e5a54b0b,
+    transparent 75%
+  );
+  transition: opacity 0.2s;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .project-tilt:hover,
+  .portfolio-project-card.project-brief.project-tilt:hover {
+    transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+      translateY(-3px);
+    border-color: #e5a54b60;
+    box-shadow: 0 8px 20px #00000020;
+  }
+  .project-tilt:hover::after {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-tilt,
+  .project-tilt::after {
+    transition: none !important;
+  }
+}
+
+/* Extras: the widget cards keep their shared inner padding. */
+.extras-summary > div > div {
+  height: 100%;
+  padding: 20px;
+  background: hsl(var(--background) / 0.6);
+}
+.portfolio-extras-grid .waka-card {
+  display: flex;
+  flex-direction: column;
+  padding: 26px;
+  background:
+    radial-gradient(ellipse at top left, #cba6f70a, transparent 65%), hsl(var(--background) / 0.6);
+}
+.portfolio-extras-grid .waka-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+@media (max-width: 640px) {
+  .portfolio-extras-grid .waka-card {
+    padding: 20px;
+  }
+}
+
+/* Keep short content compact instead of stretching it into empty cards. */
+.portfolio-extras-grid h3 {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.extras-map > div {
+  display: flex;
+  flex-direction: column;
+}
+.extras-map .leaflet-container {
+  flex: 1;
+  min-height: 180px;
+}
+.extras-map > div > div:last-child {
+  margin-top: 12px;
+}
+.extras-activity > div > div > div:first-child {
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.extras-activity h3 {
+  margin-bottom: 0;
+}
+.extras-activity li a > span:first-child {
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .extras-map .leaflet-container {
+    flex: none;
+    height: 190px !important;
+  }
 }

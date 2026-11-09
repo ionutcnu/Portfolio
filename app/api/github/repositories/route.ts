@@ -1,5 +1,5 @@
 // GitHub API route to fetch all public repositories with metadata
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'ionutcnu';
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME || "ionutcnu";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 interface GitHubRepo {
@@ -45,12 +45,12 @@ interface EnrichedRepo {
 
 function getHeaders() {
   const headers: HeadersInit = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'Portfolio-App',
+    Accept: "application/vnd.github.v3+json",
+    "User-Agent": "Portfolio-App",
   };
 
   if (GITHUB_TOKEN) {
-    headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
+    headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
   }
 
   return headers;
@@ -58,7 +58,7 @@ function getHeaders() {
 
 export async function GET() {
   try {
-    console.log('[GitHub API] Fetching repositories for:', GITHUB_USERNAME);
+    console.log("[GitHub API] Fetching repositories for:", GITHUB_USERNAME);
 
     // Fetch all public repositories
     const reposResponse = await fetch(
@@ -66,8 +66,8 @@ export async function GET() {
       {
         headers: getHeaders(),
         signal: AbortSignal.timeout(10000),
-        next: { revalidate: 3600 } // Cache for 1 hour
-      }
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      },
     );
 
     if (!reposResponse.ok) {
@@ -78,7 +78,7 @@ export async function GET() {
 
     // Filter out forks and sort by most recent push
     const publicRepos = repos
-      .filter(repo => !repo.fork)
+      .filter((repo) => !repo.fork)
       .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
       .slice(0, 10);
 
@@ -94,8 +94,8 @@ export async function GET() {
             {
               headers: getHeaders(),
               signal: AbortSignal.timeout(10000),
-              next: { revalidate: 3600 }
-            }
+              next: { revalidate: 3600 },
+            },
           );
 
           let contributors: Contributor[] = [];
@@ -109,7 +109,7 @@ export async function GET() {
               contributors = contributorsData;
 
               // Get total contributor count from Link header if available
-              const linkHeader = contributorsResponse.headers.get('Link');
+              const linkHeader = contributorsResponse.headers.get("Link");
               if (linkHeader) {
                 const match = linkHeader.match(/page=(\d+)>; rel="last"/);
                 contributorCount = match ? parseInt(match[1], 10) * 5 : contributors.length;
@@ -125,20 +125,20 @@ export async function GET() {
             {
               headers: getHeaders(),
               signal: AbortSignal.timeout(10000),
-              next: { revalidate: 3600 }
-            }
+              next: { revalidate: 3600 },
+            },
           );
 
           let languages: string[] = [];
           if (languagesResponse.ok) {
-            const languagesData = await languagesResponse.json() as Record<string, number>;
+            const languagesData = (await languagesResponse.json()) as Record<string, number>;
             languages = Object.keys(languagesData);
           }
 
           return {
             name: repo.name,
             owner: GITHUB_USERNAME,
-            description: repo.description || 'No description provided',
+            description: repo.description || "No description provided",
             stars: repo.stargazers_count,
             forks: repo.forks_count,
             language: repo.language,
@@ -157,7 +157,7 @@ export async function GET() {
           return {
             name: repo.name,
             owner: GITHUB_USERNAME,
-            description: repo.description || 'No description provided',
+            description: repo.description || "No description provided",
             stars: repo.stargazers_count,
             forks: repo.forks_count,
             language: repo.language,
@@ -172,19 +172,19 @@ export async function GET() {
             contributorCount: 0,
           };
         }
-      })
+      }),
     );
 
     return Response.json(enrichedRepos);
   } catch (error) {
-    console.error('GitHub API error:', error);
+    console.error("GitHub API error:", error);
 
     return Response.json(
       {
-        error: 'Failed to fetch GitHub repositories',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to fetch GitHub repositories",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }

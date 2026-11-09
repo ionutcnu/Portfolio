@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as Popover from "@radix-ui/react-popover";
 import { Calendar, ExternalLink, X } from "lucide-react";
@@ -80,9 +80,7 @@ export default function Experience() {
                         <span className={past ? "" : "font-medium text-foreground"}>
                           {item.company}
                         </span>
-                        {past && (
-                          <span className="text-muted-foreground/50 text-xs"> (Past)</span>
-                        )}
+                        {past && <span className="text-muted-foreground/50 text-xs"> (Past)</span>}
                       </span>
                     </span>
                   </button>

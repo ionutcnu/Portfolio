@@ -51,7 +51,7 @@ class D1Counter implements CounterService {
 
   async getCount(id: string): Promise<number> {
     const result = await this.db
-      .prepare('SELECT value FROM counters WHERE id = ?')
+      .prepare("SELECT value FROM counters WHERE id = ?")
       .bind(id)
       .first<{ value: number }>();
 
@@ -84,13 +84,13 @@ class D1Counter implements CounterService {
 
     // Clean up old rate limit entries
     await this.db
-      .prepare('DELETE FROM rate_limits WHERE window_start < ?')
+      .prepare("DELETE FROM rate_limits WHERE window_start < ?")
       .bind(now - windowDuration)
       .run();
 
     // Ensure a row exists for this IP in the current window (atomic initialization)
     await this.db
-      .prepare('INSERT OR IGNORE INTO rate_limits (ip, requests, window_start) VALUES (?, 0, ?)')
+      .prepare("INSERT OR IGNORE INTO rate_limits (ip, requests, window_start) VALUES (?, 0, ?)")
       .bind(ip, now)
       .run();
 
@@ -118,26 +118,26 @@ export function createCounterService(db?: D1Database): CounterService {
   if (db) {
     return new D1Counter(db);
   }
-  console.warn('[Counter] D1 database not available, using in-memory fallback');
+  console.warn("[Counter] D1 database not available, using in-memory fallback");
   return new InMemoryCounter();
 }
 
 // Helper to extract client IP from request
 export function getClientIP(request: Request): string {
   // Try Cloudflare headers first
-  const cfConnectingIP = request.headers.get('cf-connecting-ip');
+  const cfConnectingIP = request.headers.get("cf-connecting-ip");
   if (cfConnectingIP) return cfConnectingIP;
 
   // Fallback to x-forwarded-for
-  const xForwardedFor = request.headers.get('x-forwarded-for');
+  const xForwardedFor = request.headers.get("x-forwarded-for");
   if (xForwardedFor) {
-    return xForwardedFor.split(',')[0].trim();
+    return xForwardedFor.split(",")[0].trim();
   }
 
   // Fallback to x-real-ip
-  const xRealIP = request.headers.get('x-real-ip');
+  const xRealIP = request.headers.get("x-real-ip");
   if (xRealIP) return xRealIP;
 
   // Default fallback
-  return 'unknown';
+  return "unknown";
 }

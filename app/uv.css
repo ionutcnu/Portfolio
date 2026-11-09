@@ -1,0 +1,335 @@
+/* UV easter-egg and intro-inspection styles, extracted from globals.css. */
+
+.arrival-replay {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-left: auto;
+}
+.arrival-replay button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: hsl(var(--foreground) / 0.55);
+  font-size: 11px;
+  padding: 6px 0;
+}
+.arrival-replay button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.arrival-replay [role="status"] {
+  color: hsl(var(--foreground) / 0.65);
+  font-size: 11px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrival-replay-button {
+    display: none !important;
+  }
+}
+
+.inspection-stage {
+  --lens-x: 250px;
+  --lens-y: 160px;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  overflow: clip;
+  color: #e5a54b;
+}
+.inspection-lens {
+  position: absolute;
+  left: var(--lens-x);
+  top: var(--lens-y);
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+}
+.inspection-lens {
+  background: radial-gradient(circle, #b487ff25, #8652e512 45%, transparent 72%);
+}
+.inspection-secrets {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(
+    circle 90px at var(--lens-x) var(--lens-y),
+    #000 55%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 90px at var(--lens-x) var(--lens-y),
+    #000 55%,
+    transparent 100%
+  );
+}
+.inspection-detail {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  color: #d9b8ff;
+}
+.inspection-detail > svg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1px 2px #11111b);
+}
+.inspection-detail > span {
+  position: absolute;
+  left: -55px;
+  top: 16px;
+  width: 110px;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.5;
+  font-style: italic;
+  color: #e4caff;
+  text-shadow:
+    0 1px 4px #11111b,
+    0 0 5px #11111b;
+  transform: rotate(-5deg);
+}
+.inspection-crack > svg,
+.inspection-circuit > svg {
+  width: 120px;
+  height: 80px;
+  fill: none;
+  stroke: #d9b8ffcc;
+  stroke-width: 1;
+}
+.inspection-code {
+  color: #89b4fa;
+}
+.inspection-code > span {
+  color: #a7c9f7;
+  font-style: normal;
+  font-size: 8px;
+}
+.inspection-note > span {
+  top: -8px;
+}
+.inspection-handle {
+  position: absolute;
+  left: var(--handle-x);
+  top: var(--handle-y);
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #ffffff44;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #33254b;
+  color: #dfc5ff;
+  opacity: 0;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  box-shadow: inset 0 1px 2px #ffffff15;
+}
+.inspection-handle:active {
+  cursor: grabbing;
+}
+.inspection-handle:focus-visible {
+  outline: 2px solid #c4a0ff;
+  outline-offset: 3px;
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .inspection-handle {
+    width: 44px;
+    height: 44px;
+    opacity: 0.8;
+  }
+}
+
+/* Small UV discoveries; decorative layers never intercept page controls. */
+.uv-gimmicks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+.uv-gimmick {
+  position: absolute;
+  color: #c5a1f2;
+  pointer-events: none;
+}
+.uv-shy-bug {
+  width: 24px;
+  height: 24px;
+  opacity: 0.85;
+}
+.uv-shy-bug > svg {
+  transition:
+    transform 0.65s ease-out,
+    opacity 0.5s 0.15s;
+}
+.uv-shy-bug.is-shy > svg {
+  transform: translate(var(--flee-x), var(--flee-y)) rotate(var(--flee-angle));
+  opacity: 0;
+}
+.uv-repair {
+  transform: translateX(-24px);
+}
+.uv-repair svg {
+  fill: none;
+  stroke: #c5a1f2;
+  stroke-width: 1;
+}
+.uv-fracture {
+  stroke-dasharray: 1;
+  animation: uv-repair 17s infinite;
+}
+.uv-stitches {
+  animation: uv-stitch 17s infinite;
+}
+.uv-loose-letter {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  transition: transform 0.65s cubic-bezier(0.2, 1.8, 0.4, 1);
+}
+.portfolio-intro h1:hover .uv-loose-letter {
+  transform: rotate(-15deg) translateY(2px);
+}
+.uv-runaway {
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: #c5a1f2;
+  animation: uv-pixel 21s infinite;
+}
+.uv-rescuer {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  fill: #211b30;
+  animation: uv-rescue 21s infinite;
+}
+@keyframes uv-repair {
+  0%,
+  12%,
+  55%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  18%,
+  32% {
+    opacity: 0.55;
+    stroke-dashoffset: 0;
+  }
+  48% {
+    opacity: 0.4;
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes uv-stitch {
+  0%,
+  30%,
+  54%,
+  100% {
+    opacity: 0;
+  }
+  36%,
+  43% {
+    opacity: 0.65;
+  }
+}
+@keyframes uv-pixel {
+  0%,
+  64%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
+  72%,
+  79% {
+    transform: translate(-28px, -18px);
+    opacity: 0.8;
+  }
+  87% {
+    transform: translate(0, 0);
+    opacity: 0.8;
+  }
+}
+@keyframes uv-rescue {
+  0%,
+  69%,
+  92%,
+  100% {
+    opacity: 0;
+    transform: translate(18px, 8px);
+  }
+  74%,
+  79% {
+    opacity: 0.7;
+    transform: translate(-28px, -18px);
+  }
+  87% {
+    opacity: 0.7;
+    transform: translate(0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .uv-gimmick *,
+  .uv-loose-letter {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .uv-repair,
+  .uv-rescuer {
+    display: none;
+  }
+}
+
+.inspection-crack > svg {
+  width: 12px;
+  height: 48px;
+}
+
+/* UV notes occupy checked whitespace rather than covering the page copy. */
+.inspection-detail:not(.inspection-crack) {
+  width: 240px;
+  height: 24px;
+}
+.inspection-detail:not(.inspection-crack) > svg {
+  left: 0;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  transform: none;
+}
+.inspection-detail > span {
+  left: 21px;
+  top: 0;
+  width: calc(100% - 21px);
+  line-height: 20px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  transform: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+.inspection-note > span {
+  left: 0;
+  width: 100%;
+}
+
+.uv-species-0 {
+  color: #c4a0df;
+}
+.uv-species-1 {
+  color: #8fc6ce;
+}
+.uv-species-2 {
+  color: #d6b385;
+}

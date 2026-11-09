@@ -31,26 +31,29 @@ export class CounterDO implements DurableObject {
     const url = new URL(request.url);
 
     // Handle WebSocket upgrade requests
-    if (request.headers.get('Upgrade')?.toLowerCase().trim() === 'websocket') {
+    if (request.headers.get("Upgrade")?.toLowerCase().trim() === "websocket") {
       return this.handleWebSocketUpgrade(request);
     }
 
     // Handle broadcast requests (from increment API)
-    if (request.method === 'POST' && url.pathname === '/broadcast') {
+    if (request.method === "POST" && url.pathname === "/broadcast") {
       return this.handleBroadcast(request);
     }
 
     // Health check
-    if (request.method === 'GET' && url.pathname === '/health') {
-      return new Response(JSON.stringify({
-        connections: this.sessions.size,
-        status: 'healthy'
-      }), {
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (request.method === "GET" && url.pathname === "/health") {
+      return new Response(
+        JSON.stringify({
+          connections: this.sessions.size,
+          status: "healthy",
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
-    return new Response('Not found', { status: 404 });
+    return new Response("Not found", { status: 404 });
   }
 
   /**
@@ -74,9 +77,10 @@ export class CounterDO implements DurableObject {
       // If we don't have cached data, fetch from D1
       if (!this.initialized) {
         const db = this.env.DB as D1Database;
-        const result = await db.prepare('SELECT value FROM counters WHERE id = ?')
-          .bind('global-clicks')
-          .first() as { value: number } | null;
+        const result = (await db
+          .prepare("SELECT value FROM counters WHERE id = ?")
+          .bind("global-clicks")
+          .first()) as { value: number } | null;
 
         currentCount = result?.value || 0;
         currentTimestamp = Date.now();
@@ -89,24 +93,26 @@ export class CounterDO implements DurableObject {
 
       // Send initial state to new client
       if (server.readyState === WebSocket.OPEN) {
-        server.send(JSON.stringify({
-          clicks: currentCount,
-          timestamp: currentTimestamp
-        }));
+        server.send(
+          JSON.stringify({
+            clicks: currentCount,
+            timestamp: currentTimestamp,
+          }),
+        );
       }
     } catch (error) {
-      console.error('[CounterDO] Failed to send initial state:', error);
+      console.error("[CounterDO] Failed to send initial state:", error);
       // Don't fail the connection, client will use fallback
     }
 
     // Handle disconnect
-    server.addEventListener('close', () => {
+    server.addEventListener("close", () => {
       this.sessions.delete(server);
       console.log(`[CounterDO] Client disconnected. Active: ${this.sessions.size}`);
     });
 
-    server.addEventListener('error', () => {
-      console.error('[CounterDO] WebSocket error occurred');
+    server.addEventListener("error", () => {
+      console.error("[CounterDO] WebSocket error occurred");
       this.sessions.delete(server);
     });
 
@@ -124,20 +130,23 @@ export class CounterDO implements DurableObject {
   private async handleBroadcast(request: Request): Promise<Response> {
     try {
       // Validate authentication header (internal API calls only)
-      const authHeader = request.headers.get('X-Counter-Secret');
-      const expectedSecret = this.env.COUNTER_BROADCAST_SECRET || 'internal-only';
+      const authHeader = request.headers.get("X-Counter-Secret");
+      const expectedSecret = this.env.COUNTER_BROADCAST_SECRET || "internal-only";
 
       if (authHeader !== expectedSecret) {
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'Unauthorized'
-        }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Unauthorized",
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
       }
 
-      const { clicks, timestamp } = await request.json() as { clicks: number; timestamp: number };
+      const { clicks, timestamp } = (await request.json()) as { clicks: number; timestamp: number };
 
       // Update cached count
       this.lastCount = clicks;
@@ -161,31 +170,39 @@ export class CounterDO implements DurableObject {
           }
           // Skip CONNECTING state - will receive next broadcast when open
         } catch (error) {
-          console.error('[CounterDO] Failed to send to client:', error);
+          console.error("[CounterDO] Failed to send to client:", error);
           this.sessions.delete(ws);
           failCount++;
         }
       }
 
-      console.log(`[CounterDO] Broadcast: ${successCount} sent, ${failCount} failed, ${this.sessions.size} active`);
+      console.log(
+        `[CounterDO] Broadcast: ${successCount} sent, ${failCount} failed, ${this.sessions.size} active`,
+      );
 
-      return new Response(JSON.stringify({
-        success: true,
-        sent: successCount,
-        failed: failCount,
-        active: this.sessions.size
-      }), {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          sent: successCount,
+          failed: failCount,
+          active: this.sessions.size,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     } catch (error) {
-      console.error('[CounterDO] Broadcast error:', error);
-      return new Response(JSON.stringify({
-        success: false,
-        error: String(error)
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      console.error("[CounterDO] Broadcast error:", error);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: String(error),
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
   }
 }
