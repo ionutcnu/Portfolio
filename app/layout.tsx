@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import "@fontsource/jetbrains-mono";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
+import "./uv.css";
 import Footer from "@/components/layout/Footer";
 import Navigation from "@/components/layout/Navigation";
 
@@ -64,7 +65,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <div className="portfolio-shell">
+          <div className="portfolio-shell mx-auto flex min-h-screen w-[min(100%_-_64px,1200px)] flex-col max-sm:w-[calc(100%_-_32px)]">
             <Navigation />
             {children}
             <Footer />

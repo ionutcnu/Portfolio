@@ -121,18 +121,28 @@ export default function PortfolioTabs() {
   function projects(items: Repository[], compact = true) {
     if (loading)
       return (
-        <div className="portfolio-projects">
-          {[0, 1].map((i) => (
+        <div className="portfolio-projects grid grid-cols-1 gap-4 min-[641px]:grid-cols-2 min-[1001px]:grid-cols-3">
+          {[0, 1, 2].map((i) => (
             <ProjectCardSkeleton key={i} />
           ))}
         </div>
       );
     if (error)
       return (
-        <div role="status" className="portfolio-empty">
+        <div role="status" className="py-5 text-sm leading-[2]">
           <p>Projects couldn’t load right now.</p>
-          <button onClick={() => setAttempt((value) => value + 1)}>Try again</button>
-          <a href="https://github.com/ionutcnu?tab=repositories">Browse on GitHub</a>
+          <button
+            onClick={() => setAttempt((value) => value + 1)}
+            className="mt-4 mr-5 inline-block text-accent-dynamic underline"
+          >
+            Try again
+          </button>
+          <a
+            href="https://github.com/ionutcnu?tab=repositories"
+            className="mt-4 mr-5 inline-block text-accent-dynamic underline"
+          >
+            Browse on GitHub
+          </a>
         </div>
       );
     if (!items.length)
@@ -143,7 +153,7 @@ export default function PortfolioTabs() {
         </p>
       );
     return (
-      <div className="portfolio-projects">
+      <div className="portfolio-projects grid grid-cols-1 gap-4 min-[641px]:grid-cols-2 min-[1001px]:grid-cols-3">
         {items.map((repo) => (
           <ProjectCard key={`${repo.owner}/${repo.name}`} {...repo} compact={compact} />
         ))}
@@ -152,22 +162,34 @@ export default function PortfolioTabs() {
   }
 
   return (
-    <main className="portfolio-main">
-      <header className="portfolio-intro">
+    <main className="flex-1 pt-8 max-sm:pt-4">
+      <header className="portfolio-intro mb-[42px] flex items-center justify-between gap-9 max-sm:mb-[30px] max-sm:items-start max-sm:gap-3">
         <div>
-          <h1>
+          <h1 className="text-[clamp(26px,3.5vw,38px)] leading-[1.25] tracking-[-0.055em] [font-weight:650] max-sm:text-[27px]">
             Hey, I’m Ionut <span className="uv-loose-letter">C</span>ioncu.
           </h1>
-          <p>
+          <p className="mt-4 max-w-[650px] text-[15px] leading-[1.85] text-foreground/70 [&_strong]:font-semibold [&_strong]:text-foreground max-sm:text-[13px]">
             <strong>QA Engineer at Endava.</strong> I <strong>test with context</strong> —
             understanding why we’re building something, not just checking if it works.
           </p>
-          <div className="portfolio-actions">
-            <ContactDialog className="portfolio-primary">Let’s connect</ContactDialog>
-            <a href="/Ionut_Cioncu_QA_Engineer.pdf" target="_blank" rel="noopener noreferrer">
+          <div className="portfolio-actions mt-6 flex flex-wrap items-center gap-[22px] text-[13px] max-sm:gap-4 max-sm:text-xs">
+            <ContactDialog className="inline-flex min-h-11 items-center rounded-[7px] bg-accent-dynamic px-[18px] py-2.5 font-semibold text-background">
+              Let’s connect
+            </ContactDialog>
+            <a
+              href="/Ionut_Cioncu_QA_Engineer.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-[5px]"
+            >
               View my CV
             </a>
-            <a href="https://www.linkedin.com/in/cioncu/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.linkedin.com/in/cioncu/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-[5px]"
+            >
               LinkedIn
             </a>
           </div>
@@ -185,7 +207,7 @@ export default function PortfolioTabs() {
               width={140}
               height={140}
               priority
-              className="portfolio-avatar"
+              className="h-[140px] w-[140px] flex-shrink-0 rounded-full border-4 border-border object-cover max-sm:h-24 max-sm:w-24 max-sm:border-2"
             />
             <svg className="portfolio-avatar-pupils" viewBox="0 0 1024 1024" aria-hidden="true">
               {[
@@ -223,7 +245,11 @@ export default function PortfolioTabs() {
         </span>
       </header>
 
-      <div className="portfolio-tabs" role="tablist" aria-label="Portfolio sections">
+      <div
+        className="portfolio-tabs mb-6 flex w-fit gap-1 rounded-[10px] border border-border bg-foreground/[0.06] p-[5px] max-sm:w-full max-sm:overflow-x-auto"
+        role="tablist"
+        aria-label="Portfolio sections"
+      >
         {tabs.map((label, i) => (
           <button
             key={ids[i]}
@@ -235,6 +261,7 @@ export default function PortfolioTabs() {
             aria-controls={`panel-${ids[i]}`}
             aria-selected={active === ids[i]}
             tabIndex={active === ids[i] ? 0 : -1}
+            className="flex items-center justify-center gap-2 rounded-[6px] px-5 py-[11px] text-[13px] text-foreground/70 aria-selected:bg-foreground aria-selected:text-background max-sm:flex-none max-sm:whitespace-nowrap max-sm:px-3 max-sm:text-[11px]"
             onClick={() => select(ids[i])}
             onKeyDown={(event) => {
               let next = i;
@@ -250,11 +277,14 @@ export default function PortfolioTabs() {
           >
             {(() => {
               const Icon = tabIcons[i];
-              return <Icon size={16} aria-hidden="true" />;
+              return <Icon size={16} aria-hidden="true" className="max-sm:hidden" />;
             })()}
             <span>{label}</span>
             {ids[i] === "projects" && !loading && !error && (
-              <span className="portfolio-tab-count" aria-hidden="true">
+              <span
+                className="rounded-[4px] bg-foreground/10 px-[5px] py-px text-[10px] max-sm:hidden"
+                aria-hidden="true"
+              >
                 {repos.length}
               </span>
             )}
@@ -262,35 +292,37 @@ export default function PortfolioTabs() {
         ))}
       </div>
       <section
-        className="portfolio-panel"
+        className="portfolio-panel min-h-[340px] rounded-[13px] border border-border bg-foreground/[0.025] p-[30px] max-sm:p-5"
         id="panel-projects"
         role="tabpanel"
         aria-labelledby="tab-projects"
         tabIndex={0}
         hidden={active !== "projects"}
       >
-        <h2>Projects</h2>
-        <p className="portfolio-description">
+        <h2 className="text-[23px] font-semibold leading-[1.4] tracking-[-0.04em] max-sm:text-[21px]">
+          Projects
+        </h2>
+        <p className="my-3 mb-7 text-[13px] leading-[1.8] text-foreground/65">
           Personal projects, experiments and tools. Explore the code or try a live demo.
         </p>
         {!loading && !error && featuredProjects.length > 0 && (
           <>
-            <h3 className="portfolio-more-projects">Featured project</h3>
-            <div className="portfolio-featured-project">
-              <div className="portfolio-featured-preview">
+            <h3 className="mb-3 text-[13px] text-foreground/65">Featured project</h3>
+            <div className="portfolio-featured-project mb-[30px] grid grid-cols-[240px_minmax(0,1fr)] items-center gap-[26px] rounded-lg border border-border bg-background/25 p-5 max-sm:grid-cols-1 max-sm:gap-[18px] max-sm:p-4">
+              <div className="flex min-w-0 flex-col justify-center gap-2.5">
                 <Image
                   src="/catchy-preview.png"
                   alt="Catchy extension settings and error toast preview"
                   width={1280}
                   height={800}
                   sizes="(max-width: 640px) 90vw, 240px"
-                  className="portfolio-featured-image"
+                  className="block h-auto w-full rounded object-contain object-left max-sm:max-h-[170px]"
                 />
               </div>
-              <ProjectCard {...featuredProjects[0]} compact />
+              <ProjectCard {...featuredProjects[0]} compact showPreview={false} />
             </div>
             {remainingProjects.length > 0 && (
-              <h3 className="portfolio-more-projects">More projects</h3>
+              <h3 className="mb-3 text-[13px] text-foreground/65">More projects</h3>
             )}
           </>
         )}
@@ -298,15 +330,17 @@ export default function PortfolioTabs() {
           projects(remainingProjects)}
       </section>
       <section
-        className="portfolio-panel"
+        className="portfolio-panel min-h-[340px] rounded-[13px] border border-border bg-foreground/[0.025] p-[30px] max-sm:p-5"
         id="panel-about"
         role="tabpanel"
         aria-labelledby="tab-about"
         tabIndex={0}
         hidden={active !== "about"}
       >
-        <h2>A bit of my story!</h2>
-        <div className="portfolio-prose">
+        <h2 className="text-[23px] font-semibold leading-[1.4] tracking-[-0.04em] max-sm:text-[21px]">
+          A bit of my story!
+        </h2>
+        <div className="portfolio-prose my-5 mb-[30px] max-w-[960px] space-y-4 text-sm leading-[1.9] text-foreground/75 [&_strong]:font-semibold [&_strong]:text-foreground/95">
           <p>
             I’m a <strong>QA Engineer with 4+ years of experience</strong> across{" "}
             <strong>Maritime Logistics and Payments</strong>. I <strong>test with context</strong>:
@@ -327,24 +361,27 @@ export default function PortfolioTabs() {
             <strong>AI-assisted engineering, LLM testing and MCP</strong>.
           </p>
         </div>
-        <h3>My tech stack</h3>
-        <dl className="portfolio-skills">
+        <h3 className="text-[17px] font-semibold">My tech stack</h3>
+        <dl className="portfolio-skills mt-[18px] text-[13px] leading-[1.8]">
           {skills.map((skill) => (
-            <div key={skill.category}>
-              <dt>{skill.category}</dt>
-              <dd>{skill.skills}</dd>
+            <div
+              key={skill.category}
+              className="grid grid-cols-[190px_1fr] gap-4 border-b border-border/60 py-[13px] max-sm:grid-cols-1 max-sm:gap-1"
+            >
+              <dt className="font-bold text-foreground">{skill.category}</dt>
+              <dd className="text-foreground/70">{skill.skills}</dd>
             </div>
           ))}
         </dl>
-        <div className="portfolio-site-information">
-          <h3>Experience</h3>
-          <div className="portfolio-experience">
+        <div className="portfolio-site-information mt-7 border-t border-border pt-6">
+          <h3 className="mb-4 text-[17px] font-semibold">Experience</h3>
+          <div className="portfolio-experience my-[22px] mb-9">
             <Experience />
           </div>
         </div>
       </section>
       <section
-        className="portfolio-panel"
+        className="portfolio-panel min-h-[340px] rounded-[13px] border border-border bg-foreground/[0.025] p-[30px] max-sm:p-5"
         id="panel-testimonials"
         role="tabpanel"
         aria-labelledby="tab-testimonials"
@@ -354,7 +391,7 @@ export default function PortfolioTabs() {
         <TestimonialsWidget />
       </section>
       <section
-        className="portfolio-panel"
+        className="portfolio-panel min-h-[340px] rounded-[13px] border border-border bg-foreground/[0.025] p-[30px] max-sm:p-5"
         id="panel-extras"
         role="tabpanel"
         aria-labelledby="tab-extras"

@@ -98,7 +98,7 @@ const Navigation = () => {
   };
 
   return (
-    <div className="header portfolio-navigation relative z-10 flex items-center justify-between py-5 select-none">
+    <div className="header portfolio-navigation relative z-10 flex items-center justify-between py-5 text-[13px] select-none">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumbs">
         <div className="text-md flex items-center">

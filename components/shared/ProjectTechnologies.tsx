@@ -32,30 +32,37 @@ export default function ProjectTechnologies({
     )
     .slice(0, 7);
   return (
-    <div className="project-tech-icons">
+    <div className="flex min-h-8 flex-wrap items-center gap-2">
       {technologies.map((value) => {
         if (!icons[value])
           return (
-            <span key={value} className="project-tech-fallback">
+            <span
+              key={value}
+              className="inline-flex items-center gap-1.5 text-[10px] text-foreground/50"
+            >
               <Code2 size={16} aria-hidden="true" />
               {languages.find((language) => language.toLowerCase() === value)}
             </span>
           );
         const [label, icon] = icons[value];
         return (
-          <span key={value} className="project-tech-icon" title={label}>
+          <span
+            key={value}
+            className="inline-flex h-8 w-7 items-center justify-center"
+            title={label}
+          >
             <Image
               src={`/logos/${icon}.svg`}
               width={22}
               height={22}
               alt={label}
-              className={icon === "nextjs" ? "project-icon-next" : undefined}
+              className={`object-contain${icon === "nextjs" ? " rounded-full bg-white" : ""}`}
             />
           </span>
         );
       })}
       {!technologies.length && (
-        <span className="project-tech-fallback">
+        <span className="inline-flex items-center gap-1.5 text-[10px] text-foreground/50">
           <Code2 size={20} aria-hidden="true" />
           Repository
         </span>

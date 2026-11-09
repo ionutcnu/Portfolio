@@ -8,10 +8,10 @@ export default function Footer() {
   const pathname = usePathname();
   const router = useRouter();
   return (
-    <footer className="portfolio-footer">
+    <footer className="portfolio-footer flex flex-wrap justify-between gap-[18px] py-7 text-[11px] text-foreground/60">
       <VisitorTracker />
       <span>&copy; {new Date().getFullYear()} Ionut Cioncu</span>
-      <div>
+      <div className="flex gap-[18px]">
         <button
           type="button"
           onClick={() => {

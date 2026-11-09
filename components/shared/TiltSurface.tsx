@@ -31,8 +31,8 @@ export default function TiltSurface({
         const rect = bounds.current;
         const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
         const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-        event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 4}deg`);
-        event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 4}deg`);
+        event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 6}deg`);
+        event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 6}deg`);
         event.currentTarget.style.setProperty("--shine-x", `${x * 100}%`);
         event.currentTarget.style.setProperty("--shine-y", `${y * 100}%`);
       }}

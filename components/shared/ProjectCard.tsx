@@ -28,9 +28,40 @@ interface ProjectCardProps {
   contributors: Contributor[];
   contributorCount: number;
   compact?: boolean;
+  showPreview?: boolean;
   title?: string;
   longDescription?: string;
 }
+
+const languageColors: Record<string, string> = {
+  TypeScript: "#89b4fa",
+  JavaScript: "#f9e2af",
+  "C#": "#cba6f7",
+  Shell: "#a6e3a1",
+  HTML: "#fab387",
+  CSS: "#89dceb",
+  Python: "#f9e2af",
+  PHP: "#b4befe",
+  Vue: "#a6e3a1",
+  Dockerfile: "#89b4fa",
+  Batchfile: "#a6e3a1",
+};
+function languageColor(language: string): string {
+  return languageColors[language] ?? "hsl(var(--accent-dynamic))";
+}
+const languageLogos: Record<string, string> = {
+  TypeScript: "typescript",
+  JavaScript: "javascript",
+  CSS: "css3",
+  HTML: "html5",
+  "C#": "csharp",
+  PHP: "php",
+  Vue: "vuejs",
+  Dockerfile: "docker",
+};
+const previews: Record<string, string> = {
+  catchy: "/catchy-preview.png",
+};
 
 function isValidUrl(urlString: string | null): boolean {
   if (!urlString) return false;
@@ -56,87 +87,117 @@ export default function ProjectCard({
   contributors,
   contributorCount,
   compact = false,
+  showPreview = true,
   title,
   longDescription,
 }: ProjectCardProps) {
   const validUrl = isValidUrl(url) ? url : "#";
   const validHomepage = isValidUrl(homepage) ? homepage : null;
-  if (compact)
+  if (compact) {
+    const preview = previews[name.toLowerCase()];
+    const logo = language ? languageLogos[language] : undefined;
     return (
-      <TiltSurface className="portfolio-project-card project-brief project-from-github">
-        <div className="project-repo-header">
-          <span className="project-repo-owner">
-            <BookMarked size={18} aria-hidden="true" />
-            {owner}
-          </span>
-          <span className="project-repo-stats">
-            <span title="Stars">
-              <Star size={14} aria-hidden="true" />
-              {stars}
+      <TiltSurface className="portfolio-project-card project-brief flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-[linear-gradient(180deg,rgba(205,214,244,.035),rgba(205,214,244,.015))]">
+        {showPreview && preview && (
+          <div className="relative aspect-[16/10] flex-none overflow-hidden bg-[#11111b]">
+            <Image
+              src={preview}
+              alt={`${title || name} preview`}
+              fill
+              sizes="(max-width: 640px) 90vw, (max-width: 1000px) 45vw, 30vw"
+              className="object-cover"
+            />
+            <span className="absolute right-2.5 top-2.5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-[#11111b]/60 px-2.5 py-1 text-[10px] tabular-nums backdrop-blur">
+              <span className="inline-flex items-center gap-1">
+                <Star size={11} aria-hidden="true" />
+                {stars}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <GitFork size={11} aria-hidden="true" />
+                {forks}
+              </span>
             </span>
-            <span title="Forks">
-              <GitFork size={14} aria-hidden="true" />
-              {forks}
+          </div>
+        )}
+        <div
+          className={`flex flex-1 flex-col gap-1.5 px-4 pt-3.5 pb-3 ${
+            showPreview && preview ? "" : "justify-center"
+          }`}
+        >
+          <div className="flex items-baseline justify-between gap-2.5">
+            <h3 className="text-[15px] font-semibold leading-[1.35] tracking-[-0.02em] [overflow-wrap:anywhere]">
+              {title || name}
+            </h3>
+            <span className="flex flex-none items-center gap-2">
+              {!(showPreview && preview) && (
+                <span className="inline-flex items-center gap-2 text-[10px] tabular-nums text-foreground/60">
+                  <span className="inline-flex items-center gap-1">
+                    <Star size={11} aria-hidden="true" />
+                    {stars}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <GitFork size={11} aria-hidden="true" />
+                    {forks}
+                  </span>
+                </span>
+              )}
+              {language &&
+                (logo ? (
+                  <Image
+                    src={`/logos/${logo}.svg`}
+                    alt={language}
+                    title={language}
+                    width={15}
+                    height={15}
+                    className="object-contain"
+                  />
+                ) : (
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{ background: languageColor(language) }}
+                    title={language}
+                  />
+                ))}
             </span>
-          </span>
-        </div>
-        <div className="project-brief-body">
-          <h3>{title || name}</h3>
-          <p className="project-brief-description">
+          </div>
+          <p className="line-clamp-1 text-[11.5px] leading-[1.65] text-foreground/70">
             {longDescription || description || "Explore the source code and project details."}
           </p>
-          <div className="project-card-meta">
-            <div className="project-card-technologies">
-              <span className="project-meta-label">Technologies</span>
-              <ProjectTechnologies
-                languages={languages.length ? languages : language ? [language] : []}
-                topics={topics}
-              />
-            </div>
-            <div className="project-card-destinations">
-              <span className="project-meta-label">Links</span>
-              <div className="project-icon-links">
-                <a
-                  href={validUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`View ${name} on GitHub`}
-                  title="View code on GitHub"
-                >
-                  <Github size={22} aria-hidden="true" />
-                </a>
-                {validHomepage && (
-                  <a
-                    href={validHomepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Visit ${name} website`}
-                    title="Visit website"
-                  >
-                    <ExternalLink size={21} aria-hidden="true" />
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="project-brief-bottom">
-            <details className="project-brief-details">
-              <summary>Details</summary>
-              <div>
-                <p>
-                  {stars} stars / {forks} forks / {contributorCount} contributors
-                </p>
-                {languages.length > 0 && <p>{languages.join(" / ")}</p>}
-                {topics.length > 0 && <p>{topics.join(" / ")}</p>}
-                {contributors.length > 0 && (
-                  <p>Contributors: {contributors.map((person) => person.login).join(", ")}</p>
-                )}
-              </div>
-            </details>
+          <ProjectTechnologies
+            languages={languages.length ? languages : language ? [language] : []}
+            topics={topics}
+          />
+        </div>
+        <div className="mt-auto flex items-center justify-between gap-2.5 border-t border-border/70 px-4 py-2.5">
+          <span className="text-[10px] text-foreground/45">{owner}</span>
+          <div className="flex items-center gap-1">
+            <a
+              href={validUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View ${name} on GitHub`}
+              title="View code on GitHub"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-foreground/80 hover:bg-foreground/[0.08] hover:text-gold-soft"
+            >
+              <Github size={15} aria-hidden="true" />
+            </a>
+            {validHomepage && (
+              <a
+                href={validHomepage}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visit ${name} website`}
+                title="Visit website"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-foreground/80 hover:bg-foreground/[0.08] hover:text-gold-soft"
+              >
+                <ExternalLink size={14} aria-hidden="true" />
+              </a>
+            )}
           </div>
         </div>
       </TiltSurface>
     );
+  }
   return (
     <Card className="portfolio-project-card group flex flex-col h-full overflow-hidden border-gray-700/50 bg-gray-900/30 hover:border-[#e5a54b]/50 hover:shadow-xl transition-colors duration-300">
       <CardHeader className="pb-3">
