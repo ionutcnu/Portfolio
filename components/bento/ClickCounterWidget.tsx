@@ -52,13 +52,16 @@ export default function ClickCounterWidget({ active = true }: { active?: boolean
       console.warn("[Counter] localStorage not available:", error);
     }
 
+    // Ignore responses that arrive after this activation has been cleaned up.
+    let currentActivation = true;
+
     // Fetch initial count immediately (before WebSocket connects)
     const fetchInitialCount = async () => {
       try {
         const response = await fetch("/api/clicks");
         if (response.ok) {
           const data = (await response.json()) as { clicks: number };
-          setGlobalClicks(data.clicks);
+          if (currentActivation) setGlobalClicks(data.clicks);
         }
       } catch (error) {
         console.error("[Counter] Failed to fetch initial count:", error);
@@ -144,6 +147,7 @@ export default function ClickCounterWidget({ active = true }: { active?: boolean
     connect();
 
     return () => {
+      currentActivation = false;
       isIntentionallyClosed = true;
       clearTimeout(reconnectTimeout);
       if (ws) {

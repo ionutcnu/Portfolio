@@ -28,13 +28,15 @@ export default function ProjectTechnologies({
   const unique = [...new Set(values.map((value) => value.toLowerCase()))];
   const technologies = unique
     .filter(
-      (value) => icons[value] || languages.some((language) => language.toLowerCase() === value),
+      (value) =>
+        Object.hasOwn(icons, value) ||
+        languages.some((language) => language.toLowerCase() === value),
     )
     .slice(0, 7);
   return (
     <div className="flex min-h-8 flex-wrap items-center gap-2">
       {technologies.map((value) => {
-        if (!icons[value])
+        if (!Object.hasOwn(icons, value))
           return (
             <span
               key={value}

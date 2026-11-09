@@ -28,7 +28,7 @@ export default function PortfolioExtras({ active }: { active: boolean }) {
         </a>
       </div>
       <div className="portfolio-extras-grid mt-6 grid grid-cols-1 items-stretch gap-[18px] min-[641px]:grid-cols-2 min-[1001px]:grid-cols-3">
-        <div className="extras-wakatime col-span-2 min-w-0">
+        <div className="extras-wakatime col-span-1 min-w-0 min-[641px]:col-span-2">
           <WakaTimeWidget />
         </div>
         <div className="extras-summary col-span-1 grid min-w-0 grid-cols-1 gap-[18px] p-0 min-[641px]:col-span-2 min-[641px]:grid-cols-2 min-[1001px]:col-span-1 min-[1001px]:grid-cols-1">

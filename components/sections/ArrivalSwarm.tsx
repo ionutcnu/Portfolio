@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { RotateCcw } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -73,6 +73,7 @@ export default function ArrivalSwarm() {
         const engine = await loadEngine();
         if (cancelled || reduced.matches) return;
         window.dispatchEvent(new Event("portfolio:rebuild"));
+        if (cancelled) return;
         engine.start();
         ownsEngine = true;
       } catch {
@@ -85,7 +86,6 @@ export default function ArrivalSwarm() {
     window.addEventListener("portfolio:section-change", stop);
     window.addEventListener("popstate", stop);
     window.addEventListener("pagehide", stop);
-    window.addEventListener("resize", stop);
     reduced.addEventListener("change", stop);
     return () => {
       cancelAnimationFrame(frame);
@@ -94,7 +94,6 @@ export default function ArrivalSwarm() {
       window.removeEventListener("portfolio:section-change", stop);
       window.removeEventListener("popstate", stop);
       window.removeEventListener("pagehide", stop);
-      window.removeEventListener("resize", stop);
       reduced.removeEventListener("change", stop);
     };
   }, [pathname, replay]);

@@ -63,6 +63,8 @@ export default function LocationMapWidget({ active = true }: { active?: boolean 
 
   useEffect(() => {
     if (!active) return;
+    // Ignore responses that arrive after this activation has been cleaned up.
+    let currentActivation = true;
     const fetchWeather = async () => {
       try {
         const response = await fetch("/api/weather");
@@ -83,7 +85,7 @@ export default function LocationMapWidget({ active = true }: { active?: boolean 
           "condition" in data &&
           "icon" in data
         ) {
-          setWeather(data as WeatherData);
+          if (currentActivation) setWeather(data as WeatherData);
         } else {
           console.error("Invalid weather data structure:", data);
         }
@@ -94,7 +96,10 @@ export default function LocationMapWidget({ active = true }: { active?: boolean 
 
     fetchWeather();
     const interval = setInterval(fetchWeather, 10 * 60 * 1000); // Update every 10min
-    return () => clearInterval(interval);
+    return () => {
+      currentActivation = false;
+      clearInterval(interval);
+    };
   }, [active]);
 
   return (

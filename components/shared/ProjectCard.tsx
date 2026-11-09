@@ -94,7 +94,8 @@ export default function ProjectCard({
   const validUrl = isValidUrl(url) ? url : "#";
   const validHomepage = isValidUrl(homepage) ? homepage : null;
   if (compact) {
-    const preview = previews[name.toLowerCase()];
+    const previewKey = name.toLowerCase();
+    const preview = Object.hasOwn(previews, previewKey) ? previews[previewKey] : undefined;
     const logo = language ? languageLogos[language] : undefined;
     return (
       <TiltSurface className="portfolio-project-card project-brief flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-[linear-gradient(180deg,rgba(205,214,244,.035),rgba(205,214,244,.015))]">

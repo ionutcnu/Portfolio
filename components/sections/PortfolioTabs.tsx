@@ -33,16 +33,21 @@ export default function PortfolioTabs() {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
-    // Accept old section bookmarks once, then keep the address at the homepage.
-    const hash = window.location.hash.slice(1).split("-")[0];
-    if (hash === "work") selectPortfolioSection("projects");
-    else if (ids.includes(hash as Tab)) selectPortfolioSection(hash as Tab);
-    if (window.location.hash)
-      window.history.replaceState(
-        window.history.state,
-        "",
-        window.location.pathname + window.location.search,
-      );
+    // Accept old section bookmarks, then keep the address at the homepage.
+    const applyHash = () => {
+      const hash = window.location.hash.slice(1).split("-")[0];
+      if (hash === "work") selectPortfolioSection("projects");
+      else if (ids.includes(hash as Tab)) selectPortfolioSection(hash as Tab);
+      if (window.location.hash)
+        window.history.replaceState(
+          window.history.state,
+          "",
+          window.location.pathname + window.location.search,
+        );
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
   }, []);
 
   useEffect(() => {
